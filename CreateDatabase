@@ -1,0 +1,9 @@
+-- this file creates the database schema
+CREATE TABLE WEAPONS
+CREATE TABLE RESERVED
+CREATE TABLE DAMAGE
+CREATE TABLE RELOAD
+CREATE TABLE SWAP -- the swap speed of weapons
+CREATE TABLE MAGAZINE
+CREATE TABLE RPM -- rounds per minute (fire rate)
+CREATE TABLE SLOTS -- tracks the slotability
