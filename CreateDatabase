@@ -1,9 +1,63 @@
--- this file creates the database schema
-CREATE TABLE WEAPONS
-CREATE TABLE RESERVED
-CREATE TABLE DAMAGE
-CREATE TABLE RELOAD
-CREATE TABLE SWAP -- the swap speed of weapons
-CREATE TABLE MAGAZINE
-CREATE TABLE RPM -- rounds per minute (fire rate)
-CREATE TABLE SLOTS -- tracks the slotability
+CREATE SCHEMA destiny_damage;
+
+CREATE TABLE weapons (
+	weapon_id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_type TEXT NOT NULL,
+    frame TEXT NOT NULL
+);
+    
+CREATE TABLE slotability (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT NOT NULL,
+    FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
+		ON DELETE CASCADE,
+    in_kinetic BOOLEAN DEFAULT FALSE,
+    in_energy BOOLEAN DEFAULT FALSE,
+    in_power BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE reserves (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT,
+    FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
+		ON DELETE CASCADE,
+    reserve INT DEFAULT 0
+    CHECK (reserve >= 0)
+);
+
+CREATE TABLE fire_rate (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT NOT NULL,
+    FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
+		ON DELETE CASCADE,
+    fire_rate INT DEFAULT 0,
+    CHECK (fire_rate >= 0)
+);
+
+CREATE TABLE reload_speed(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT NOT NULL,
+    FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
+		ON DELETE CASCADE,
+    reload_speed INT DEFAULT 0,
+    CHECK (reload_speed >= 0)
+);
+
+CREATE TABLE magazine(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT NOT NULL,
+    FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
+		ON DELETE CASCADE,
+    magazine INT DEFAULT 0,
+    CHECK (magazine >= 0)
+);
+
+CREATE TABLE damage(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    weapon_id INT NOT NULL,
+    FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
+		ON DELETE CASCADE,
+	body_damage INT DEFAULT 0,
+    precision_damage INT DEFAULT 0,
+    CHECK (body_damage >= 0 & precision_damage >= body_damage)
+);
