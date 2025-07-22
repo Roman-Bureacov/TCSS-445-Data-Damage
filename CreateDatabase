@@ -2,21 +2,21 @@ CREATE SCHEMA destiny_damage;
 
 CREATE TABLE weapons (
 	weapon_id INT AUTO_INCREMENT PRIMARY KEY,
-    weapon_type TEXT NOT NULL,
-    frame TEXT NOT NULL,
-    in_kinetic BOOLEAN DEFAULT FALSE,
-    in_energy BOOLEAN DEFAULT FALSE,
-    in_power BOOLEAN DEFAULT FALSE,
-    reserve INT DEFAULT 0
+	weapon_type TEXT NOT NULL,
+	frame TEXT NOT NULL,
+	in_kinetic BOOLEAN DEFAULT FALSE,
+	in_energy BOOLEAN DEFAULT FALSE,
+	in_power BOOLEAN DEFAULT FALSE,
+	reserve INT DEFAULT 0
 		CHECK (reserve >= 0),
 	fire_rate INT DEFAULT 0
 		CHECK (fire_rate >= 0),
 	reload_speed INT DEFAULT 0
 		CHECK (reload_speed >= 0),
-    magazine INT DEFAULT 0
+	magazine INT DEFAULT 0
 		CHECK (magazine >= 0),
 	body_damage INT DEFAULT 0
 		CHECK (body_damage >= 0),
-    precision_damage INT DEFAULT 0
+	precision_damage INT DEFAULT 0
 		 CHECK (precision_damage >= 0)
 );
