@@ -1,0 +1,26 @@
+-- Q1 find every weapon that can exist in the power slot
+SELECT weapon_type, frame
+FROM 
+	(weapons JOIN slotability ON weapon_id) AS slots 
+	JOIN damage ON slots
+WHERE slots.inPower = TRUE
+
+-- Q2 find all simulations that used a shotgun in the kinetic slot
+
+-- Q3 
+
+-- Q4 
+
+-- Q5 
+
+-- Q6 find the power weapon that has the greatest body damage
+
+-- Q7 Find the sustained DPS of all power weapons
+
+-- Q8 
+
+-- Q9 find all special ammo weapons that will deal more damage 
+-- than a heavy weapon if they have a "Surge" damage modifier
+
+
+-- Q10 find 
