@@ -14,13 +14,25 @@ WHERE slots.inPower = TRUE
 -- Q5 
 
 -- Q6 find the power weapon that has the greatest body damage
+SELECT weapon_type, frame
+FROM weapons NATURAL JOIN damage
+HAVING body_damage = MAX(body_damage)
 
 -- Q7 Find the sustained DPS of all power weapons
+SELECT weapon_type, frame, (precision_damage * magazine / (magazine/fire_rate + reload_speed))
+FROM weapons NATRUAL JOIN damage
+WHERE weapon_id IN (SELECT weapon_id WHERE inPower)
 
 -- Q8 
 
--- Q9 find all special ammo weapons that will deal more damage 
--- than a heavy weapon if they have a "Surge" damage modifier
-
+-- Q9 find all primary ammo weapons that will deal more precision damage 
+-- than a machine gun if they have a "Surge" damage modifier
+SELECT weapon_type, frame, 
+FROM (weapons NATURAL JOIN damage) CROSS JOIN (SELECT damage_delta FROM modifiers WHERE name = "surge")
+WHERE precision_damage * damage_delta > (
+	SELECT MAX(precision_damage) 
+	FROM weapons NATURAL JOIN frame
+	WHERE weapon_type = "Machine Gun"
+)
 
 -- Q10 find 
