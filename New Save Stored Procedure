@@ -1,0 +1,46 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `new_save`(
+    IN the_save_name VARCHAR(64),
+    IN the_kinetic_id INT,
+    IN the_energy_id INT,
+    IN the_power_id INT,
+    IN the_avg_dps DOUBLE,
+    IN the_total_damage INT,
+    IN the_save_date DATE
+)
+BEGIN
+    DECLARE new_id INT;
+    START TRANSACTION;
+
+    INSERT INTO saves (save_name, kinetic, energy, power, average_dps, total_damage, save_date)
+    VALUES (the_save_name, the_kinetic_id, the_energy_id, the_power_id, the_avg_dps, the_total_damage, the_save_date);
+
+    SET new_id = LAST_INSERT_ID();
+
+    SET @create_main_table = CONCAT(
+        'CREATE TABLE save_', new_id, ' (',
+        'timestamp DOUBLE PRIMARY KEY, ',
+        'cumulative_damage INT, ',
+        'damage_instance INT)'
+    );
+    
+	SET @create_event_table = CONCAT(
+        'CREATE TABLE save_', new_id, '_events (',
+            'id INT AUTO_INCREMENT PRIMARY KEY, ',
+            'timestamp DOUBLE, ',
+            'FOREIGN KEY (timestamp) REFERENCES save_', new_id, '(timestamp) ',            
+				'ON DELETE CASCADE ',
+				'ON UPDATE CASCADE,',
+            'event VARCHAR(64)',
+        ')'
+    );
+
+    PREPARE stmt FROM @create_main_table;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+    
+	PREPARE stmt FROM @create_event_table;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+
+    COMMIT;
+END
