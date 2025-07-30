@@ -7,9 +7,10 @@ CREATE TABLE weapons (
 );
 
 CREATE TABLE damage (
+	weapon_id INT,
 	FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
 		ON DELETE CASCADE
-		ON UPDATE CASCADE, 
+        ON UPDATE CASCADE, 
 	PRIMARY KEY (weapon_id),
 	reserve INT DEFAULT 0
 		CHECK (reserve >= 0),
@@ -26,39 +27,44 @@ CREATE TABLE damage (
 );
 
 CREATE TABLE slotability (
+	weapon_id INT,
 	FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
 		ON DELETE CASCADE
-		ON UPDATE CASCADE, 
-	PRIMARY KEY (weapon_id),
+        ON UPDATE CASCADE, 
+    	PRIMARY KEY (weapon_id),
 	in_kinetic BOOLEAN DEFAULT FALSE,
-	in_energy BOOLEAN DEFAULT FALSE,
-	in_power BOOLEAN DEFAULT FALSE
+    	in_energy BOOLEAN DEFAULT FALSE,
+    	in_power BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE weapon_info (
+	weapon_id INT,
 	FOREIGN KEY (weapon_id) REFERENCES weapons(weapon_id)
 		ON DELETE CASCADE
-        	ON UPDATE CASCADE, 
-	PRIMARY KEY (weapon_id),
+        ON UPDATE CASCADE, 
+   	PRIMARY KEY (weapon_id),
 	weapon_disc TEXT,
 	image BLOB
 );
 
 CREATE TABLE saves (
 	id INT AUTO_INCREMENT PRIMARY KEY,
-	save_name VARCHAR(64) UNIQUE,
+    	save_name VARCHAR(64) UNIQUE,
+	kinetic INT,
 	FOREIGN KEY (kinetic) REFERENCES weapons(weapon_id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
+	energy INT,
 	FOREIGN KEY (energy) REFERENCES weapons(weapon_id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
+	power INT,
 	FOREIGN KEY (power) REFERENCES weapons(weapon_id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	average_dps DOUBLE DEFAULT 0,
-	total_damage INT DEFAULT 0,
-	save_date DATE
+    	total_damage INT DEFAULT 0,
+    	save_date DATE
 );
 
 CREATE TABLE modifiers (
