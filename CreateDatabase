@@ -68,18 +68,18 @@ CREATE TABLE sims (
         ON DELETE CASCADE ON UPDATE CASCADE,
     average_dps DOUBLE DEFAULT 0,
     total_damage INT DEFAULT 0,
-    save_date DATE,
+    save_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     script BLOB
 );
 
 CREATE TABLE saved_sims_times (
     id INT,
     FOREIGN KEY (id)
-        REFERENCES saves (id)
+        REFERENCES sims (id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    sim_timestamp DOUBLE,
+    sim_timestamp DOUBLE CHECK (sim_timestamp >= 0),
     PRIMARY KEY (id , sim_timestamp),
-    damage_instance INT
+    damage_instance INT DEFAULT 0 CHECK (damage_instance >= 0)
 );
 
 CREATE TABLE sim_time_events (
@@ -89,5 +89,5 @@ CREATE TABLE sim_time_events (
     FOREIGN KEY (save_id , sim_timestamp)
         REFERENCES saved_sims_times (id , sim_timestamp)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    sim_event VARCHAR(64)
+    sim_event VARCHAR(64) NOT NULL
 );
