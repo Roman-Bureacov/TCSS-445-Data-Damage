@@ -11,7 +11,22 @@ WHERE slots.inPower = TRUE
 
 -- Q4 
 
--- Q5 
+-- Q5 find all weapons with a body damage > 100 and precision damage > 150
+SELECT weapon_type
+FROM weapons
+WHERE weapon_id IN (
+    SELECT weapon_id
+    FROM damage
+    WHERE body_damage > 100
+)
+UNION
+SELECT weapon_type
+FROM weapons
+WHERE weapon_id IN (
+    SELECT weapon_id
+    FROM damage
+    WHERE precision_damage > 150
+);
 
 -- Q6 find the power weapon that has the greatest body damage
 SELECT weapon_type, frame
