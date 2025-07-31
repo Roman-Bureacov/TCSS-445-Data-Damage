@@ -5,9 +5,18 @@ FROM
 	JOIN damage ON slots
 WHERE slots.inPower = TRUE
 
--- Q2 find all simulations that used a shotgun in the kinetic slot
+-- Q2 find all simulations that used a rocket launcher in the power slot and their average total damage
+SELECT weapon_frame, AVG(total_damage) AS total_avg
+FROM sims
+WHERE power IN (
+	SELECT weapon_id
+	FROM weapons NATURAL JOIN damage
+	WHERE weapon_type = "Rocket Launcher"
+)
+GROUP BY weapon_frame
+ORDER BY total_avg
 
--- Q3 
+-- Q3 find all 
 
 -- Q4 
 
