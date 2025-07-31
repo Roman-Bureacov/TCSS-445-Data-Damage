@@ -1,16 +1,6 @@
 CREATE SCHEMA destiny_damage;
 
 CREATE TABLE weapons (
-	weapon_id INT AUTO_INCREMENT PRIMARY KEY,
-	weapon_type TEXT NOT NULL,
-	frame TEXT NOT NULL
-);
-
-CREATE TABLE damage (
-	weapon_id INT,
-	FOREIGN KEY (weapon_id) REFERENCECREATE SCHEMA destiny_damage;
-
-CREATE TABLE weapons (
     weapon_id INT AUTO_INCREMENT PRIMARY KEY,
     weapon_type TEXT NOT NULL,
     frame TEXT NOT NULL
@@ -61,7 +51,7 @@ CREATE TABLE modifiers (
     precision_damage_mult DOUBLE DEFAULT 1
 );
 
-CREATE TABLE saves (
+CREATE TABLE sims (
     id INT AUTO_INCREMENT PRIMARY KEY,
     save_name VARCHAR(64) UNIQUE,
     kinetic INT,
@@ -89,7 +79,6 @@ CREATE TABLE saved_sims_times (
         ON DELETE CASCADE ON UPDATE CASCADE,
     sim_timestamp DOUBLE,
     PRIMARY KEY (id , sim_timestamp),
-    cumulative_damage INT,
     damage_instance INT
 );
 
@@ -97,8 +86,8 @@ CREATE TABLE sim_time_events (
     id INT AUTO_INCREMENT PRIMARY KEY,
     save_id INT,
     sim_timestamp DOUBLE,
-    FOREIGN KEY (save_id, sim_timestamp)
-        REFERENCES saved_sims_times (id, sim_timestamp)
+    FOREIGN KEY (save_id , sim_timestamp)
+        REFERENCES saved_sims_times (id , sim_timestamp)
         ON DELETE CASCADE ON UPDATE CASCADE,
     sim_event VARCHAR(64)
 );
