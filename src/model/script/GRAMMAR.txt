@@ -1,0 +1,85 @@
+GRAMMAR
+    File
+        "kinetic " weapon
+        "energy " weapon
+        "power " weapon
+
+        script
+
+    Weapon
+        // the weapon additional stats will be sourced from the database
+        weapon_frame " " weapon_type
+
+    weapon_frame
+        string
+
+    weapon_type
+        string
+
+    Script
+        statement
+        statement \n script
+
+    Statement
+        conditional
+        loop
+        action
+
+    Action
+        slot "." function "!"
+
+    Slot
+        "equipped"
+        "kinetic"
+        "energy"
+        "power"
+
+    function
+        "equip"
+        "shootAtPrecision"
+        "shootAtBody"
+        "reload"
+
+    Conditional
+        "if " boolExpr " then " \n script
+
+    boolExpr
+        condition
+        conjunction
+        condition "OR" boolExpr
+        conjunction "OR" boolExpr
+        "NOT" condition
+        "NOT" condition "AND" boolExpr
+        "NOT" condition "OR" boolExpr
+
+    conjunction
+        condition "AND" condition
+
+    condition
+        stat comparator stat
+
+    Stat
+        slot "." member "?"
+        number
+
+    Member
+        "magazine"
+        "magazineMax"
+        "reloadSpeed"
+        "reserves"
+        "reservesMax"
+
+    Number
+        float
+        integer
+
+    Comparator
+        "<"
+        ">"
+        "="
+        "<="
+        ">="
+        "<>"
+
+    Loop
+        "loop " field " {" \n script \n "}"
