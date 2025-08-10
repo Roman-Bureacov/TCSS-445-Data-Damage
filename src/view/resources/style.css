@@ -1,0 +1,40 @@
+.background-dark {
+    -fx-background-color: #1e1f22;
+}
+
+.foreground-dark{
+    -fx-background-color: #2b2d30;
+}
+
+.dark-menu{
+    -fx-text-fill: #dee0d8;
+    -fx-background-color: #2b2d30;
+    -fx-font-size: 12;
+    -fx-border-color: #232323;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+}
+
+.dark-menu .label{
+    -fx-text-fill: #dee0d8;
+}
+
+.side-menu{
+    -fx-text-fill: #dee0d8;
+    -fx-background-color: #2b2d30;
+    -fx-font-size: 12;
+    -fx-padding: 25px;
+    -fx-border-color: #232323;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+}
+
+.side-menu .buttons{
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-border-insets: 10;
+    -fx-text-fill: #dee0d8;
+    -fx-font-size: 16;
+}
