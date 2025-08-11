@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane styleClass="foreground-dark"
+            AnchorPane.topAnchor="20.0"
+            AnchorPane.rightAnchor="20.0"
+            AnchorPane.bottomAnchor="20.0"
+            AnchorPane.leftAnchor="0.0" xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.GraphDisplayController">
+    <center>
+        <Label text="GRAPH DISPLAY" BorderPane.alignment="CENTER" textFill="white"/>
+    </center>
+</BorderPane>

@@ -5,9 +5,26 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0">
+            AnchorPane.topAnchor="0.0"
+            AnchorPane.rightAnchor="0.0"
+            AnchorPane.bottomAnchor="0.0"
+            AnchorPane.leftAnchor="0.0"
+            fx:controller="Controller.SideMenuController">
 
+    <VBox styleClass="side-menu" VBox.vgrow="ALWAYS" minWidth="200" fillWidth="true" alignment="TOP_LEFT"
+          AnchorPane.topAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0">
+        <Button styleClass="buttons" onAction="#onWeapons">WEAPONS</Button>
+        <Button styleClass="buttons" onAction="#onScripts">SCRIPTS</Button>
+        <Button styleClass="buttons" onAction="#onSimulator">SIMULATOR</Button>
+        <opaqueInsets>
+            <Insets />
+        </opaqueInsets>
+    </VBox>
 </AnchorPane>

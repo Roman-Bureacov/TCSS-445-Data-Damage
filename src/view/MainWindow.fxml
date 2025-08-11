@@ -4,55 +4,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="background-dark" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane styleClass="background-dark" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainWindowController">
     <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane fx:id="rootBorder"
+                    AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
             <top>
                 <fx:include source="DDMenuBar.fxml" />
             </top>
             <left>
-                <VBox styleClass="side-menu" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-                    <Button styleClass="buttons">WEAPONS</Button>
-                    <Button styleClass="buttons">SCRIPTS</Button>
-                    <Button styleClass="buttons">SIMULATOR</Button>
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
-                </VBox>
+                <fx:include source="SideMenu.fxml" fx:id="sideMenu"/>
             </left>
             <center>
-                <AnchorPane>
-                    <HBox AnchorPane.topAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0"
-                          AnchorPane.bottomAnchor="0.0"
-                          AnchorPane.leftAnchor="0.0"
-                          spacing="20" fillHeight="true">
-
-                        <AnchorPane HBox.hgrow="ALWAYS" minWidth="0.0">
-                            <BorderPane styleClass="foreground-dark"
-                                        AnchorPane.topAnchor="20.0"
-                                        AnchorPane.rightAnchor="10.0"
-                                        AnchorPane.bottomAnchor="20.0"
-                                        AnchorPane.leftAnchor="20.0">
-                                <center>
-                                    <Label text="SCRIPT EDITOR" BorderPane.alignment="CENTER" textFill="white"/>
-                                </center>
-                            </BorderPane>
-                        </AnchorPane>
-
-                        <AnchorPane HBox.hgrow="ALWAYS" minWidth="0.0">
-                            <BorderPane styleClass="foreground-dark"
-                                        AnchorPane.topAnchor="20.0"
-                                        AnchorPane.rightAnchor="20.0"
-                                        AnchorPane.bottomAnchor="20.0"
-                                        AnchorPane.leftAnchor="10.0">
-                                <center>
-                                    <Label text="GRAPH DISPLAY" BorderPane.alignment="CENTER" textFill="white"/>
-                                </center>
-                            </BorderPane>
-                        </AnchorPane>
-                    </HBox>
-                </AnchorPane>
             </center>
         </BorderPane>
     </children>
