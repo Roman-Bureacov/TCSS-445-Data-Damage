@@ -43,19 +43,22 @@ GRAMMAR
     Conditional
         "if " boolExpr " then " \n script
 
-    boolExpr
-        condition
+    BoolExpr
+        disjunction
+
+    Disjunction
         conjunction
-        condition "OR" boolExpr
-        conjunction "OR" boolExpr
-        "NOT" condition
-        "NOT" condition "AND" boolExpr
-        "NOT" condition "OR" boolExpr
+        disjunction "OR" conjunction
 
-    conjunction
-        condition "AND" condition
+    Conjunction
+        negation
+        conjunction "AND" negation
 
-    condition
+    Negation
+        "NOT" negation
+        condition
+
+    Condition
         stat comparator stat
 
     Stat
