@@ -15,7 +15,6 @@ public class ScriptEditorController {
 
     @FXML
     private void initialize() {
-        // Example: Ctrl+S to save
         editor.setOnKeyPressed(e -> {
             if (Objects.requireNonNull(e.getCode()) == KeyCode.S) {
                 if (e.isControlDown() || e.isMetaDown()) saveToFile();
@@ -26,7 +25,6 @@ public class ScriptEditorController {
     public String getText() { return editor.getText(); }
     public void setText(String text) { editor.setText(text); }
 
-    // super simple file ops (optional)
     public void saveToFile() {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files", "*.txt", "*.md", "*.cfg", "*.*"));

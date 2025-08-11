@@ -17,14 +17,12 @@ public class MainWindowController {
     @FXML
     private BorderPane rootBorder;
 
-    // This field name MUST be: <fx:id of include> + "Controller"
     @FXML private SideMenuController sideMenuController;
 
     private final Map<String, Node> cache = new HashMap<>();
 
     @FXML
     private void initialize() {
-        // give side menu a back-reference so it can call us
         sideMenuController.setMainController(this);
     }
 
