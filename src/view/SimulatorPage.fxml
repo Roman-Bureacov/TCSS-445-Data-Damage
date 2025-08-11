@@ -8,8 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Controller.SimulatorPageController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="Controller.SimulatorPageController">
 
         <HBox AnchorPane.topAnchor="0.0"
               AnchorPane.rightAnchor="0.0"
