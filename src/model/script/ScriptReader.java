@@ -22,13 +22,13 @@ import model.database.Database;
 public final class ScriptReader {
     // see the GRAMMAR.txt for the grammar description of how scripts are to be structured
 
-    private static enum damageType {
+    public enum damageType {
         PRECISION,
         BODY
     }
 
     /** String that represents the output data */
-    private static List<Integer[]> data;
+    private static TimeSheet data;
     private static List<String> in;
     private static List<Integer> lastBrace;
     private static int position;
@@ -47,8 +47,8 @@ public final class ScriptReader {
      * @param script the script to base the simulation upon.
      * @return the simulation data
      */
-    public static List<Integer[]> readData(final String script) throws IllegalArgumentException {
-        data = new LinkedList<>();
+    public static TimeSheet readData(final String script) throws IllegalArgumentException {
+        data = new TimeSheet();
         final Scanner input = new Scanner(script);
         in = new ArrayList<>();
         lastBrace = new LinkedList<>();
@@ -261,8 +261,7 @@ public final class ScriptReader {
     }
 
     private static void equip(final Weapon w) {
-        // TODO: what happens on equip?
-        throw new IllegalStateException("unfinished code");
+        w.equip(data);
     }
 
     private static void shoot(final damageType t) {
@@ -271,13 +270,11 @@ public final class ScriptReader {
             case BODY -> equipped.getBodyDamage();
         };
 
-        // TODO: what happens on firing?
-        throw new IllegalStateException("unfinished code");
+        equipped.shoot(data, t);
     }
 
     private static void reload() {
-        // TODO: what happens on reload?
-        throw new IllegalStateException("unfinished code");
+        equipped.reload(data);
     }
 
     private static Weapon readWeaponSlot(final String slot) {
@@ -290,10 +287,4 @@ public final class ScriptReader {
         };
     }
 
-    /**
-     * Class that represents a
-     */
-    private static final class Playhead {
-
-    }
 }

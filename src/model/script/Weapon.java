@@ -55,4 +55,23 @@ public interface Weapon {
      * @return positiveinteger or zero if this weapon has reserves to work with, -1 otherwise
      */
     int getReservesMax();
+
+    /**
+     * Marks on the timesheet the equip event.
+     * @param t the timesheet to mark on
+     */
+    void equip(TimeSheet t);
+
+    /**
+     * Marks on the timesheet the shoot event.
+     * @param t the timesheet to mark on
+     * @param d the damage type
+     */
+    void shoot(TimeSheet t, ScriptReader.damageType d);
+
+    /**
+     * Marks on the timesheet the reload event
+     * @param t the timesheet to mark on
+     */
+    void reload(TimeSheet t);
 }

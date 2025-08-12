@@ -1,5 +1,7 @@
 package model.database;
 
+import model.script.ScriptReader;
+import model.script.TimeSheet;
 import model.script.Weapon;
 
 /**
@@ -8,9 +10,10 @@ import model.script.Weapon;
  * @author Roman Bureacov
  * @version July 2025
  */
-public class ConcreteWeapon implements Weapon {
+public class GenericWeapon implements Weapon {
     private final int precisionDamage;
     private final int bodyDamage;
+    private final int rpm;
     private final int reloadSpeed;
     private final int swapSpeed;
     private final int magazineMax;
@@ -18,7 +21,7 @@ public class ConcreteWeapon implements Weapon {
     private final int reservesCurrent;
     private final int reservesMax;
 
-    protected ConcreteWeapon(final String theWeaponType, final String theWeaponFrame) {
+    protected GenericWeapon(final String theWeaponType, final String theWeaponFrame) {
         precisionDamage = 0;
         bodyDamage = 0;
         reloadSpeed = 0;
@@ -67,5 +70,27 @@ public class ConcreteWeapon implements Weapon {
     @Override
     public int getReservesMax() {
         return reservesMax;
+    }
+
+    @Override
+    public void equip(final TimeSheet t) {
+        t.writeEvent(swapSpeed, 0, "swap weapons");
+    }
+
+    @Override
+    public void shoot(final TimeSheet t, final ScriptReader.damageType d) {
+        final int damage = switch(d) {
+            case PRECISION -> precisionDamage;
+            case BODY -> bodyDamage;
+            default -> throw new IllegalArgumentException("Unknown damage type enum");
+        };
+
+        final int secPerMin = 60;
+        t.writeEvent(1/rpm * secPerMin, damage, "fire");
+    }
+
+    @Override
+    public void reload(final TimeSheet t) {
+        t.writeEvent(reloadSpeed, 0, "reload");
     }
 }
