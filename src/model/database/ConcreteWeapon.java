@@ -19,7 +19,14 @@ public class ConcreteWeapon implements Weapon {
     private final int reservesMax;
 
     protected ConcreteWeapon(final String theWeaponType, final String theWeaponFrame) {
-
+        precisionDamage = 0;
+        bodyDamage = 0;
+        reloadSpeed = 0;
+        swapSpeed = 0;
+        magazineMax = 0;
+        magazineCurrent = 0;
+        reservesCurrent = 0;
+        reservesMax = 0;
     }
 
     @Override

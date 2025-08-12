@@ -41,7 +41,8 @@ GRAMMAR
         "reload"
 
     Conditional
-        "if " boolExpr " then " \n script
+        "if " boolExpr " then { " script " } "
+        "if " boolExpr " then { " script " } " script
 
     BoolExpr
         disjunction
@@ -62,8 +63,19 @@ GRAMMAR
         stat comparator stat
 
     Stat
-        slot "." member "?"
-        number
+        booleanStat
+        numericStat
+
+    BooleanStat
+        slot "." booleanMember "?"
+
+    NumericStat
+        slot "." numericMember "#"
+
+    BooleanMember
+        "isEmpty"
+        "isReservesEmpty"
+        "isMagazineEmpty"
 
     Member
         "magazine"
