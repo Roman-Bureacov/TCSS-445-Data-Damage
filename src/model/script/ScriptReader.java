@@ -289,4 +289,11 @@ public final class ScriptReader {
             default -> throw new IllegalArgumentException("Unknown weapon slot " + slot);
         };
     }
+
+    /**
+     * Class that represents a
+     */
+    private static final class Playhead {
+
+    }
 }
