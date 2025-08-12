@@ -3,6 +3,7 @@ GRAMMAR
         "kinetic " weapon
         "energy " weapon
         "power " weapon
+        "start" slot
 
         script
 
@@ -84,9 +85,11 @@ GRAMMAR
         "reserves"
         "reservesMax"
 
-    Number
-        float
+    Integer
         integer
+
+    Float
+        float
 
     Comparator
         "<"
@@ -97,4 +100,4 @@ GRAMMAR
         "<>"
 
     Loop
-        "loop " field " {" \n script \n "}"
+        "loop " Integer " {" \n script \n "}"

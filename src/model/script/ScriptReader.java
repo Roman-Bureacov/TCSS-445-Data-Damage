@@ -22,6 +22,11 @@ import model.database.Database;
 public final class ScriptReader {
     // see the GRAMMAR.txt for the grammar description of how scripts are to be structured
 
+    private static enum damageType {
+        PRECISION,
+        BODY
+    }
+
     /** String that represents the output data */
     private static List<Integer[]> data;
     private static List<String> in;
@@ -30,6 +35,7 @@ public final class ScriptReader {
     private static Weapon kinetic;
     private static Weapon energy;
     private static Weapon power;
+    private static Weapon equipped;
 
     private ScriptReader() {
         super();
@@ -45,14 +51,15 @@ public final class ScriptReader {
         data = new LinkedList<>();
         final Scanner input = new Scanner(script);
         in = new ArrayList<>();
+        lastBrace = new LinkedList<>();
         while (input.hasNext()) in.addLast(input.next());
 
-        readTokens();
+        readHeader(); // initiates the grammar
 
         return data;
     }
 
-    private static void readTokens() throws IllegalArgumentException {
+    private static void readHeader() throws IllegalArgumentException {
         String weaponType, weaponFrame;
 
         // build the three weapons from the database
@@ -98,9 +105,12 @@ public final class ScriptReader {
         if (!"{".equals(in.get(position))) throw new IllegalArgumentException("Expected opening brace '{'");
         position++;
 
-        if (result) readScript();
-
-        if (!"}".equals(in.get(position))) throw new IllegalArgumentException("Expected separated closing brace '}'");
+        if (result) {
+            readScript();
+            if (!"}".equals(in.get(position)))
+                throw new IllegalArgumentException("Expected separated closing brace '}'");
+        }
+        else while(!"}".equals(in.get(position))) position++;
         position++;
 
         readScript();
@@ -151,8 +161,8 @@ public final class ScriptReader {
     private static boolean readBooleanStat() {
         final String token = in.get(position);
         // split on non-word to get the word tokens
-        final String weapon = token.split("\\W")[0];
-        final String booleanStat = token.split("\\W")[1];
+        final String weapon = token.split("[.?]")[0];
+        final String booleanStat = token.split("[.?]")[1];
         position++;
 
         return switch (weapon) {
@@ -173,8 +183,8 @@ public final class ScriptReader {
     }
 
     private static boolean readNumericStatComparison() {
-        final String[] queryL = in.get(position).split("\\W");
-        final String[] queryR = in.get(position + 2).split("\\W");
+        final String[] queryL = in.get(position).split("[.#]");
+        final String[] queryR = in.get(position + 2).split("[.#]");
         // split on non-word to get the word tokens
         final int statL = readNumericStat(queryL[0], queryL[1]);
         final int statR = readNumericStat(queryR[0], queryR[1]);
@@ -195,12 +205,7 @@ public final class ScriptReader {
     }
 
     private static int readNumericStat(final String slot, final String numericStat) {
-        final Weapon w = switch(slot) {
-            case "kinetic" -> kinetic;
-            case "energy" -> energy;
-            case "power" -> power;
-            default -> throw new IllegalArgumentException("Unknown slot " + slot);
-        };
+        final Weapon w = readWeaponSlot(slot);
 
         return switch(numericStat) {
             case "magazine" -> w.getMagazineCurrent();
@@ -208,22 +213,80 @@ public final class ScriptReader {
             case "reloadSpeed" -> w.getReloadSpeed();
             case "reserves" -> w.getReservesCurrent();
             case "reservesMax" -> w.getReservesMax();
-            default -> throw new IllegalArgumentException("Unkown numeric stat " + numericStat);
+            default -> throw new IllegalArgumentException("Unknown numeric stat " + numericStat);
         };
 
     }
 
-
-
-
-
     private static void readLoop() {
+        final String loopCountToken = in.get(position);
+        position++;
 
+        int loopCount;
+        if (loopCountToken.matches("\\d+")) loopCount = Integer.parseInt(loopCountToken);
+        else throw new IllegalArgumentException("Expected loop count but instead found " + loopCountToken);
 
+        lastBrace.add(position); // right now we are on a brace
+
+        while (loopCount > 0) {
+            loopCount--;
+            position = lastBrace.getLast();
+            position++;
+            readScript();
+        }
+
+        lastBrace.removeLast();
+        if (!"}".equals(in.get(position)))
+            throw new IllegalArgumentException("Expected ending loop brace but instead found " + in.get(position));
     }
     
     private static void readAction() {
-        
+        final String token = in.get(position);
+        position++;
+
+        if (token.endsWith("!")) throw new IllegalArgumentException("Unknown action " + token);
+        final String[] splitToken = token.split("[.!]");
+        readFunction(splitToken[0], splitToken[1]);
     }
 
+    private static void readFunction(final String slot, final String function) {
+        final Weapon w = readWeaponSlot(slot);
+        switch(function) {
+            case "equip" -> equip(w);
+            case "shootAtPrecision" -> shoot(damageType.PRECISION);
+            case "shootAtBody" -> shoot(damageType.BODY);
+            case "reload" -> reload();
+            default -> throw new IllegalArgumentException("Unknown weapon function " + function);
+        }
+    }
+
+    private static void equip(final Weapon w) {
+        // TODO: what happens on equip?
+        throw new IllegalStateException("unfinished code");
+    }
+
+    private static void shoot(final damageType t) {
+        final int damage = switch(t) {
+            case PRECISION -> equipped.getPrecisionDamage();
+            case BODY -> equipped.getBodyDamage();
+        };
+
+        // TODO: what happens on firing?
+        throw new IllegalStateException("unfinished code");
+    }
+
+    private static void reload() {
+        // TODO: what happens on reload?
+        throw new IllegalStateException("unfinished code");
+    }
+
+    private static Weapon readWeaponSlot(final String slot) {
+        return switch(slot) {
+            case "kinetic" -> kinetic;
+            case "energy" -> energy;
+            case "power" -> power;
+            case "equipped" -> equipped;
+            default -> throw new IllegalArgumentException("Unknown weapon slot " + slot);
+        };
+    }
 }
