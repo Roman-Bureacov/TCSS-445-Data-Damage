@@ -2,7 +2,6 @@ package model.database;
 
 import model.script.ScriptReader;
 import model.script.TimeSheet;
-import model.script.Weapon;
 
 /**
  * Class that represents a weapon and will be responsible for advancing
@@ -11,25 +10,37 @@ import model.script.Weapon;
  * @version July 2025
  */
 public class GenericWeapon implements Weapon {
+    private final String weaponType;
+    private final String weaponFrame;
+    private final Ammo ammo;
     private final int precisionDamage;
     private final int bodyDamage;
     private final int rpm;
     private final int reloadSpeed;
     private final int swapSpeed;
     private final int magazineMax;
-    private final int magazineCurrent;
-    private final int reservesCurrent;
+    private int magazineCurrent;
     private final int reservesMax;
+    private int reservesCurrent;
 
-    protected GenericWeapon(final String theWeaponType, final String theWeaponFrame) {
-        precisionDamage = 0;
-        bodyDamage = 0;
-        reloadSpeed = 0;
-        swapSpeed = 0;
-        magazineMax = 0;
-        magazineCurrent = 0;
-        reservesCurrent = 0;
-        reservesMax = 0;
+    /**
+     * Constructs a weapon based on the skeleton
+     * @param skeleton the weapon skeleton specifying immutable parameters
+     */
+    GenericWeapon(final WeaponSkeleton skeleton) {
+        super();
+        weaponType = skeleton.theWeaponType;
+        weaponFrame = skeleton.theWeaponFrame;
+        ammo = skeleton.theAmmo;
+        precisionDamage = skeleton.thePrecisionDamage;
+        bodyDamage = skeleton.theBodyDamage;
+        rpm = skeleton.theRPM;
+        reloadSpeed = skeleton.theReloadSpeed;
+        swapSpeed = skeleton.theEquipSpeed;
+        magazineMax = skeleton.theMagazineMax;
+        magazineCurrent = magazineMax;
+        reservesMax = skeleton.theReservesMax;
+        reservesCurrent = reservesMax;
     }
 
     @Override
@@ -73,24 +84,100 @@ public class GenericWeapon implements Weapon {
     }
 
     @Override
-    public void equip(final TimeSheet t) {
+    public Ammo getAmmoType() {
+        return ammo;
+    }
+
+    @Override
+    public String getWeaponFrame() {
+        return weaponFrame;
+    }
+
+    @Override
+    public String getWeaponType() {
+        return weaponType;
+    }
+
+    @Override
+    public void writeEquipEvent(final TimeSheet t) {
         t.writeEvent(swapSpeed, 0, "swap weapons");
     }
 
     @Override
-    public void shoot(final TimeSheet t, final ScriptReader.damageType d) {
-        final int damage = switch(d) {
-            case PRECISION -> precisionDamage;
-            case BODY -> bodyDamage;
-            default -> throw new IllegalArgumentException("Unknown damage type enum");
-        };
+    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) {
+        if (magazineCurrent > 0) {
+            fire(1);
+            final int damage = getDamageFromType(d);
 
-        final int secPerMin = 60;
-        t.writeEvent(1/rpm * secPerMin, damage, "fire");
+            final int secPerMin = 60;
+            t.writeEvent(1 / rpm * secPerMin, damage, "fire");
+        }
     }
 
     @Override
-    public void reload(final TimeSheet t) {
-        t.writeEvent(reloadSpeed, 0, "reload");
+    public void writeReloadEvent(final TimeSheet t) {
+        if (magazineCurrent != magazineMax) {
+            reload();
+            if (magazineCurrent != magazineMax)
+                t.writeEvent(reloadSpeed, 0, "reload");
+        }
+    }
+
+    /**
+     * Reduces the magazine by a fixed delta, down to zero.
+     * @param delta the amount to change the current magazine capacity by
+     */
+    void decrementMagazine(final int delta) {
+        if (magazineCurrent != 0) magazineCurrent = Integer.max(0, magazineCurrent - delta);
+    }
+
+    /**
+     * Reduces the reserves by a fixed delta.
+     * @param delta the amount to change the current reserves by
+     */
+    void changeMagazine(final int delta) {
+        if (reservesCurrent != 0) reservesCurrent = Integer.max(0, reservesCurrent - delta);
+    }
+
+    /**
+     * Reloads the weapon based on the current magazine capacity, only
+     * drawing as much from the reserves as necessary.
+     */
+    void reload() {
+        reservesCurrent -= (magazineMax - magazineCurrent);
+        magazineCurrent = magazineMax;
+    }
+
+    /**
+     * Fire the necessary amount of rounds to decrement the magazine.
+     * @param rounds the number of rounds to fire.
+     */
+    void fire(final int rounds) {
+        if (magazineCurrent > 0) magazineCurrent -= rounds;
+    }
+
+    /**
+     * Returns the respective damage based on the type provided
+     * @param t the damage type
+     * @return the damage based on the type provided
+     */
+    int getDamageFromType(ScriptReader.damageType t) {
+        return switch (t) {
+            case BODY -> bodyDamage;
+            case PRECISION -> precisionDamage;
+            default -> throw new IllegalArgumentException("Unknown enum");
+        };
+    }
+
+    /**
+     * Sets the current magazine.
+     * @param theNewMagazine the new magazine size
+     */
+    void setMagazineCurrent(final int theNewMagazine) {
+        magazineCurrent = Integer.max(0, Integer.min(magazineMax, theNewMagazine));
+    }
+
+    void setReservesCurrent(final int theNewReserves) {
+        reservesCurrent = Integer.max(0, theNewReserves);
     }
 }

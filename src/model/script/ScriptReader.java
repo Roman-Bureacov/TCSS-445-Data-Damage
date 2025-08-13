@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import model.database.Database;
+import model.database.Weapon;
 
 /**
  * Static class that takes in a script and produces a csv data set based on the
@@ -22,8 +23,13 @@ import model.database.Database;
 public final class ScriptReader {
     // see the GRAMMAR.txt for the grammar description of how scripts are to be structured
 
+    /**
+     * the different damage types that may be used.
+     */
     public enum damageType {
+        /** precision damage type. */
         PRECISION,
+        /** body damage type. */
         BODY
     }
 
@@ -261,7 +267,7 @@ public final class ScriptReader {
     }
 
     private static void equip(final Weapon w) {
-        w.equip(data);
+        w.writeEquipEvent(data);
     }
 
     private static void shoot(final damageType t) {
@@ -270,11 +276,11 @@ public final class ScriptReader {
             case BODY -> equipped.getBodyDamage();
         };
 
-        equipped.shoot(data, t);
+        equipped.writeFireEvent(data, t);
     }
 
     private static void reload() {
-        equipped.reload(data);
+        equipped.writeReloadEvent(data);
     }
 
     private static Weapon readWeaponSlot(final String slot) {

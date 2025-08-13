@@ -1,4 +1,7 @@
-package model.script;
+package model.database;
+
+import model.script.ScriptReader;
+import model.script.TimeSheet;
 
 /**
  * Class that represents a weapon and will be responsible for advancing
@@ -7,6 +10,18 @@ package model.script;
  * @version July 2025
  */
 public interface Weapon {
+
+    /**
+     * Represents the ammo type of weapon.
+     */
+    enum Ammo {
+        /** primary ammo. */
+        PRIMARY,
+        /** special ammo. */
+        SPECIAL,
+        /** heavy ammo, for power weapons exclusively. */
+        HEAVY
+    }
 
     /**
      * Returns the precision damage of this weapon.
@@ -57,21 +72,41 @@ public interface Weapon {
     int getReservesMax();
 
     /**
+     * Returns the ammo type of this weapon.
+     * @return the ammo type of this weapon
+     */
+    Ammo getAmmoType();
+
+    /**
+     * Returns the frame of this weapon.
+     * @return the weapon frame, camel-case and no-space
+     */
+    String getWeaponFrame();
+
+    /**
+     * Returns the type of this weapon.
+     * @return the weapon type, camel-case and no-space
+     */
+    String getWeaponType();
+
+    /**
      * Marks on the timesheet the equip event.
      * @param t the timesheet to mark on
      */
-    void equip(TimeSheet t);
+    void writeEquipEvent(TimeSheet t);
 
     /**
      * Marks on the timesheet the shoot event.
+     * Does nothing if the weapon magazine has no more ammo.
      * @param t the timesheet to mark on
      * @param d the damage type
      */
-    void shoot(TimeSheet t, ScriptReader.damageType d);
+    void writeFireEvent(TimeSheet t, ScriptReader.damageType d);
 
     /**
-     * Marks on the timesheet the reload event
+     * Marks on the timesheet the reload event.
+     * Does nothing if the weapon is at magazine capacity.
      * @param t the timesheet to mark on
      */
-    void reload(TimeSheet t);
+    void writeReloadEvent(TimeSheet t);
 }
