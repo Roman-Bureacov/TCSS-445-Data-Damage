@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.stage.StageStyle;
+import model.database.Database;
 
 public class Main extends Application{
     @Override
@@ -20,6 +21,7 @@ public class Main extends Application{
     }
 
     public static void main(String[] args) {
+        Database.getInstance();
         launch(args);
     }
 }
