@@ -17,7 +17,8 @@ public class GenericWeapon implements Weapon {
     private final int bodyDamage;
     private final int rpm;
     private final int reloadSpeed;
-    private final int swapSpeed;
+    private final int equipSpeed;
+    private final int stowSpeed;
     private final int magazineMax;
     private int magazineCurrent;
     private final int reservesMax;
@@ -36,7 +37,8 @@ public class GenericWeapon implements Weapon {
         bodyDamage = skeleton.theBodyDamage;
         rpm = skeleton.theRPM;
         reloadSpeed = skeleton.theReloadSpeed;
-        swapSpeed = skeleton.theEquipSpeed;
+        equipSpeed = skeleton.theEquipSpeed;
+        stowSpeed = skeleton.theStowSpeed;
         magazineMax = skeleton.theMagazineMax;
         magazineCurrent = magazineMax;
         reservesMax = skeleton.theReservesMax;
@@ -59,8 +61,13 @@ public class GenericWeapon implements Weapon {
     }
 
     @Override
-    public int getSwapSpeed() {
-        return swapSpeed;
+    public int getEquipSpeed() {
+        return equipSpeed;
+    }
+
+    @Override
+    public int getStowSpeed() {
+        return stowSpeed;
     }
 
     @Override
@@ -100,7 +107,12 @@ public class GenericWeapon implements Weapon {
 
     @Override
     public void writeEquipEvent(final TimeSheet t) {
-        t.writeEvent(swapSpeed, 0, "swap weapons");
+        t.writeEvent(equipSpeed, 0, "equipping weapon");
+    }
+
+    @Override
+    public void writeStowEvent(final TimeSheet t) {
+        t.writeEvent(stowSpeed, 0, "stowing weapon");
     }
 
     @Override

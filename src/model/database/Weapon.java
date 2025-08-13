@@ -42,10 +42,16 @@ public interface Weapon {
     int getReloadSpeed();
 
     /**
-     * Returns the swap speed of this weapon.
-     * @return the swap speed in milliseconds
+     * Returns the equip speed of this weapon.
+     * @return the equip speed in milliseconds
      */
-    int getSwapSpeed();
+    int getEquipSpeed();
+
+    /**
+     * Returns the stow speed of this weapon.
+     * @return the stow speed in milliseconds
+     */
+    int getStowSpeed();
 
     /**
      * Returns the maximum magazine size of this weapon.
@@ -88,6 +94,12 @@ public interface Weapon {
      * @return the weapon type, camel-case and no-space
      */
     String getWeaponType();
+
+    /**
+     * Markso n the timesheet the stow event.
+     * @param t the timesheet to mark on
+     */
+    void writeStowEvent(TimeSheet t);
 
     /**
      * Marks on the timesheet the equip event.
