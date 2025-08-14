@@ -67,30 +67,24 @@ public class WeaponsPageController {
     @FXML
     public void onSearch() {
         try {
-            // run your query; returns a live ResultSet
             ResultSet rs = queryWeapons();
             Connection conn = rs.getStatement().getConnection();
 
-            try (rs; conn) { // auto-close both when done
-                // clear current table contents
+            try (rs; conn) {
+
                 weaponsTable.getItems().clear();
 
                 while (rs.next()) {
-                    WeaponRow row = new WeaponRow(); // defaults already 0/false in your model
+                    WeaponRow row = new WeaponRow();
 
-                    // strings (null -> "")
-                    row.setWeaponType(rs.getString("weapon_type") == null ? "" : rs.getString("weapon_type"));
-                    row.setFrame     (rs.getString("frame")       == null ? "" : rs.getString("frame"));
-
-                    // ints/doubles: getInt/getDouble returns 0/0.0 if DB value is NULL — which is what you want
+                    row.setWeaponType(rs.getString("weapon_type"));
+                    row.setFrame     (rs.getString("frame"));
                     row.setReserve (rs.getInt("reserve"));
                     row.setMagazine(rs.getInt("magazine"));
                     row.setFireRate(rs.getInt("fire_rate"));
                     row.setReload  (rs.getDouble("reload_speed"));
                     row.setBody    (rs.getInt("body_damage"));
                     row.setPrecision(rs.getInt("precision_damage"));
-
-                    // booleans stored as 0/1
                     row.setKinetic(rs.getInt("in_kinetic") == 1);
                     row.setEnergy (rs.getInt("in_energy")  == 1);
                     row.setPower  (rs.getInt("in_power")   == 1);
@@ -100,8 +94,6 @@ public class WeaponsPageController {
                     row.setTrueDps(rs.getDouble("true_dps"));
                     row.setDescription(rs.getString("weapon_disc"));
 
-
-                    // push it straight into the table
                     weaponsTable.getItems().add(row);
                 }
             }
@@ -160,7 +152,7 @@ public class WeaponsPageController {
             LEFT JOIN slotability s ON s.weapon_id = w.weapon_id
             WHERE s.in_energy = ?
         """);
-            params.add(1); // SQLite expects 0/1
+            params.add(1);
         }
         if (kineticField.isSelected()) {
             queries.add("""

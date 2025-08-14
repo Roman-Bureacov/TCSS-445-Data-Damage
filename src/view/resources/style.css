@@ -79,6 +79,7 @@
     -fx-text-fill: #e6e6e6;
 }
 
+/*Theres apparently no way to edit the table headers so...*/
 .weapons-table .column-header{
     -fx-background-color: #232323;
     -fx-text-fill: #e6e6e6;
