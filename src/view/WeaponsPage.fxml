@@ -6,14 +6,98 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.WeaponsPageController"
             prefHeight="400.0" prefWidth="600.0">
 
-    <BorderPane>
+    <BorderPane AnchorPane.leftAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.rightAnchor="0"
+                AnchorPane.topAnchor="0">
+        <left>
+            <GridPane styleClass="weapons-form" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                <Label styleClass="label" text="Type" GridPane.rowIndex="0"/>
+                <TextField fx:id="typeField" promptText="Type" GridPane.rowIndex="1" prefWidth="100"/>
+
+                <Label text="Frame" GridPane.rowIndex="2"/>
+                <TextField fx:id="frameField" promptText="Type" GridPane.rowIndex="3"/>
+
+                <Label text="Energy Slot" GridPane.rowIndex="4"/>
+                <CheckBox fx:id="energyField" GridPane.rowIndex="5"/>
+
+                <Label text="Kinetic Slot" GridPane.rowIndex="6"/>
+                <CheckBox fx:id="kineticField" GridPane.rowIndex="7"/>
+
+                <Label text="Power Slot" GridPane.rowIndex="8"/>
+                <CheckBox fx:id="powerField" GridPane.rowIndex="9"/>
+
+                <Label text="True DPS" GridPane.rowIndex="10"/>
+                <TextField fx:id="trueDPSField" promptText="Type" GridPane.rowIndex="11"/>
+
+                <Label text="Sustained DPS" GridPane.rowIndex="12"/>
+                <TextField fx:id="sustainedDPSField" promptText="Type" GridPane.rowIndex="13"/>
+
+                <Label text="Theoretical Total Damage" GridPane.rowIndex="14"/>
+                <TextField fx:id="theoreticalTotalDamageField" promptText="Type" GridPane.rowIndex="15"/>
+
+                <Label text="1 Mag Damage" GridPane.rowIndex="16"/>
+                <TextField fx:id="oneMagDamageField" promptText="Type" GridPane.rowIndex="17"/>
+
+                <Label text="Magazine Capacity" GridPane.rowIndex="18"/>
+                <TextField fx:id="magCapacityField" promptText="Type" GridPane.rowIndex="19"/>
+
+                <Label text="Reserves + Magazine" GridPane.rowIndex="20"/>
+                <TextField fx:id="reservesMagazineField" promptText="Type" GridPane.rowIndex="21"/>
+
+                <Label text="Fire Rate (RPM)" GridPane.rowIndex="22"/>
+                <TextField fx:id="fireRateField" promptText="Type" GridPane.rowIndex="23"/>
+
+                <Label text="Reload Speed (s)" GridPane.rowIndex="24"/>
+                <TextField fx:id="reloadSpeedField" promptText="Type" GridPane.rowIndex="25"/>
+
+                <Label text="Time to Empty (s)" GridPane.rowIndex="26"/>
+                <TextField fx:id="timeToEmptyField" promptText="Type" GridPane.rowIndex="27"/>
+
+                <Label text="Body Damage" GridPane.rowIndex="28"/>
+                <TextField fx:id="bodyDamageField" promptText="Type" GridPane.rowIndex="29"/>
+
+                <Label text="Precision Damage" GridPane.rowIndex="30"/>
+                <TextField fx:id="precisionDamageField" promptText="Type" GridPane.rowIndex="31"/>
+
+                <Button onAction="#onSearch" GridPane.rowIndex="32">SEARCH</Button >
+
+            </GridPane>
+        </left>
         <center>
-            <Label text="WEAPONS SEARCHES" BorderPane.alignment="CENTER" textFill="white"/>
+            <StackPane alignment="CENTER">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                <TableView styleClass="weapons-table" fx:id="weaponsTable"
+                           maxWidth="1500">
+                    <columns>
+                        <TableColumn styleClass="weapons-table" fx:id="colImage"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colType"        text="Type"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colFrame"       text="Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colDescription" text="Description"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colOneMag"      text="1-Mag Dmg"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colTheo"        text="Theo Total"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colSust"        text="Sustained DPS"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colTrue"        text="True DPS"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colReserve"     text="Reserve"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colMagazine"    text="Mag"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colFireRate"    text="RPM"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colReload"      text="Reload(s)"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colBody"        text="Body"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPrecision"   text="Precision"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colKinetic"     text="Kinetic"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colEnergy"      text="Energy"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPower"       text="Power"/>
+                    </columns>
+                </TableView>
+            </StackPane>
         </center>
     </BorderPane>
 </AnchorPane>
