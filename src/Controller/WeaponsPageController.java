@@ -1,14 +1,10 @@
 package Controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import model.database.Database;
-import model.database.Weapon;
-
 import java.sql.*;
 import java.util.*;
 
@@ -78,16 +74,16 @@ public class WeaponsPageController {
                     WeaponRow row = new WeaponRow();
 
                     row.setWeaponType(rs.getString("weapon_type"));
-                    row.setFrame     (rs.getString("frame"));
-                    row.setReserve (rs.getInt("reserve"));
+                    row.setFrame(rs.getString("frame"));
+                    row.setReserve(rs.getInt("reserve"));
                     row.setMagazine(rs.getInt("magazine"));
                     row.setFireRate(rs.getInt("fire_rate"));
-                    row.setReload  (rs.getDouble("reload_speed"));
-                    row.setBody    (rs.getInt("body_damage"));
+                    row.setReload(rs.getDouble("reload_speed"));
+                    row.setBody(rs.getInt("body_damage"));
                     row.setPrecision(rs.getInt("precision_damage"));
                     row.setKinetic(rs.getInt("in_kinetic") == 1);
-                    row.setEnergy (rs.getInt("in_energy")  == 1);
-                    row.setPower  (rs.getInt("in_power")   == 1);
+                    row.setEnergy(rs.getInt("in_energy")  == 1);
+                    row.setPower(rs.getInt("in_power")   == 1);
                     row.setOneMagDamage(rs.getInt("one_mag_damage"));
                     row.setTheoreticalTotalDamage(rs.getInt("theoretical_total_damage"));
                     row.setSustainedDps(rs.getDouble("sustained_dps"));
@@ -116,11 +112,11 @@ public class WeaponsPageController {
                      ELSE ROUND ((d.magazine * d.precision_damage) / (((d.magazine - 1) * (60.0 / d.fire_rate)) + d.reload_speed ),1)
                 END AS sustained_dps,
                 CASE WHEN d.fire_rate IS NULL OR d.fire_rate = 0 THEN NULL
-                     ELSE ROUND ((d.magazine * d.precision_damage) / ( d.magazine * (60.0 / d.fire_rate) ), 1) 
+                     ELSE ROUND ((d.magazine * d.precision_damage) / (d.magazine * (60.0 / d.fire_rate)), 1) 
                 END AS true_dps 
             FROM weapons w
-            LEFT JOIN damage d       ON d.weapon_id = w.weapon_id
-            LEFT JOIN slotability s  ON s.weapon_id = w.weapon_id
+            LEFT JOIN damage d ON d.weapon_id = w.weapon_id
+            LEFT JOIN slotability s ON s.weapon_id = w.weapon_id
             LEFT JOIN weapon_info wi ON wi.weapon_id = w.weapon_id
         """);
 
@@ -243,7 +239,7 @@ public class WeaponsPageController {
                 SELECT w.weapon_id
                 FROM weapons w
                 LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE (d.magazine * d.precision_damage) / (((d.magazine - 1) * (60.0 / d.fire_rate)) + d.reload_speed )
+                WHERE (d.magazine * d.precision_damage) / (((d.magazine - 1) * (60.0 / d.fire_rate)) + d.reload_speed)
             """);
             params.add(Double.parseDouble(sustainedDPSField.getText().trim()));
         }

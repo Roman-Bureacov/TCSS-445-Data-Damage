@@ -109,22 +109,22 @@
                            maxWidth="1500">
                     <columns>
                         <TableColumn styleClass="weapons-table" fx:id="colImage"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colType"        text="Type"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colFrame"       text="Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colType" text="Type"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colFrame" text="Frame"/>
                         <TableColumn styleClass="weapons-table" fx:id="colDescription" text="Description"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colOneMag"      text="1-Mag Dmg"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colTheo"        text="Theo Total"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colSust"        text="Sustained DPS"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colTrue"        text="True DPS"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colReserve"     text="Reserve"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colMagazine"    text="Mag"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colFireRate"    text="RPM"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colReload"      text="Reload(s)"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colBody"        text="Body"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colPrecision"   text="Precision"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colKinetic"     text="Kinetic"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colEnergy"      text="Energy"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colPower"       text="Power"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colOneMag" text="1-Mag Dmg"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colTheo" text="Theo Total"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colSust" text="Sustained DPS"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colTrue" text="True DPS"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colReserve" text="Reserve"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colMagazine" text="Mag"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colFireRate" text="RPM"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colReload" text="Reload(s)"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colBody" text="Body"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPrecision" text="Precision"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colKinetic" text="Kinetic"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colEnergy" text="Energy"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPower" text="Power"/>
                     </columns>
                 </TableView>
             </StackPane>
