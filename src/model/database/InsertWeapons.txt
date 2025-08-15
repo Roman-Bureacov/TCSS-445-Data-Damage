@@ -67,7 +67,7 @@ VALUES
 (51, 'BreechGrenadeLauncher', 'Lightweight'),
 (52, 'BreechGrenadeLauncher', 'Wave'),
 (53, 'BreechGrenadeLauncher', 'Micro-Missile'),
-(54, 'BreechGrenadeLauncher', 'Area Denial'),
+-- (54, 'BreechGrenadeLauncher', 'Area Denial'), -- might implement later, has some quirks about it
 
 (55, 'Glaive', 'Rapid-Fire'),
 (56, 'Glaive', 'Adaptive'),
