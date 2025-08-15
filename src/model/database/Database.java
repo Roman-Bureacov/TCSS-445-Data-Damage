@@ -108,26 +108,57 @@ public final class Database {
         };
     }
 
+    /**
+     * Constructs a generic weapon. Most weapons can be modeled this way.
+     * @param weaponFrame the weapon frame name
+     * @param weaponType the weapon type name
+     * @return a generic weapon model
+     */
     private static Weapon buildGenericWeapon(final String weaponFrame, final String weaponType) {
         return null;
     }
 
+    /**
+     * Constructs a sword model
+     * @param weaponFrame the sword frame name
+     * @return a sword weapon model
+     */
     private static Weapon buildSword(final String weaponFrame) {
         return null;
     }
 
+    /**
+     * Constructs a shotgun model
+     * @param weaponFrame the shotgun frame name
+     * @return a shotgun weapon model
+     */
     private static Weapon buildShotgun(final String weaponFrame) {
         return null;
     }
 
+    /**
+     * Constructs a pulse rifle model
+     * @param weaponFrame the pulse rifle frame name
+     * @return a pulse rifle weapon model
+     */
     private static Weapon buildPulseRifle(final String weaponFrame) {
         return null;
     }
 
+    /**
+     * Constructs a fusion rifle model
+     * @param weaponFrame the fusion rifle frame name
+     * @return a fusion rifle weapon model
+     */
     private static Weapon buildFusionRifle(final String weaponFrame) {
         return null;
     }
 
+    /**
+     * Constructs a bow model
+     * @param weaponFrame the bow frame name
+     * @return a bow weapon model
+     */
     private static Weapon buildBow(final String weaponFrame) {
         return null;
     }
