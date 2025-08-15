@@ -82,6 +82,13 @@ public final class Database {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return
+     * @throws SQLException
+     */
     public ResultSet executeQuery(String sql, Object... params) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL);
         PreparedStatement preparedStatementstmt = conn.prepareStatement(sql);
