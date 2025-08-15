@@ -130,8 +130,8 @@ public final class Database {
             case "Bow" -> buildBow(weaponFrame, skeleton, s);
             case "FusionRifle" -> buildFusionRifle(weaponFrame, skeleton, s);
             case "PulseRifle" -> buildPulseRifle(weaponFrame, skeleton, s);
-            case "Shotgun" -> buildShotgun(weaponFrame, skeleton, s);
-            case "Sword" -> buildSword(weaponFrame, skeleton, s);
+            case "Shotgun" -> buildShotgun(skeleton);
+            case "Sword" -> buildSword(skeleton);
             default -> buildGenericWeapon(skeleton);
         };
     }
@@ -162,28 +162,23 @@ public final class Database {
      * @return a generic weapon model
      */
     private static Weapon buildGenericWeapon(final WeaponSkeleton skeleton) {
-
         return new GenericWeapon(skeleton);
     }
 
     /**
      * Constructs a sword model
-     * @param weaponFrame the sword frame name
      * @return a sword weapon model
      */
-    private static Weapon buildSword(final String weaponFrame,
-                                     final WeaponSkeleton skeleton, final Statement s) {
-        return null;
+    private static Weapon buildSword(final WeaponSkeleton skeleton) {
+        return new Sword(skeleton);
     }
 
     /**
      * Constructs a shotgun model
-     * @param weaponFrame the shotgun frame name
      * @return a shotgun weapon model
      */
-    private static Weapon buildShotgun(final String weaponFrame,
-                                       final WeaponSkeleton skeleton, final Statement s) {
-        return null;
+    private static Weapon buildShotgun(final WeaponSkeleton skeleton) {
+        return new Shotgun(skeleton);
     }
 
     /**
@@ -192,8 +187,24 @@ public final class Database {
      * @return a pulse rifle weapon model
      */
     private static Weapon buildPulseRifle(final String weaponFrame,
-                                          final WeaponSkeleton skeleton, final Statement s) {
-        return null;
+                                          final WeaponSkeleton skeleton, final Statement s) throws SQLException {
+
+        final String sql =
+                """
+                SELECT * FROM PulseRifleSpecifics
+                WHERE weapon_id = (
+                    SELECT weapon_id
+                    FROM weapons
+                    WHERE weapon_type = 'PulseRifle' AND weaponFrame = '%s'
+                )
+                """.formatted(weaponFrame);
+        s.execute(sql);
+        final ResultSet r = s.getResultSet();
+
+        return new PulseRifle(skeleton,
+                r.getInt("BurstCount"),
+                r.getInt("BurstRecovery")
+        );
     }
 
     /**
@@ -202,8 +213,24 @@ public final class Database {
      * @return a fusion rifle weapon model
      */
     private static Weapon buildFusionRifle(final String weaponFrame,
-                                           final WeaponSkeleton skeleton, final Statement s) {
-        return null;
+                                           final WeaponSkeleton skeleton, final Statement s) throws SQLException {
+        final String sql =
+                """
+                SELECT * FROM FusionRifleSpecifics
+                WHERE weapon_id = (
+                    SELECT weapon_id
+                    FROM weapons
+                    WHERE weapon_type = 'FusionRifle' AND weaponFrame = '%s'
+                )
+                """.formatted(weaponFrame);
+        s.execute(sql);
+        final ResultSet r = s.getResultSet();
+
+        return new FusionRifle(skeleton,
+                r.getInt("ChargeTime"),
+                r.getInt("BoltCount"),
+                r.getInt("ChargeRecovery")
+        );
     }
 
     /**
@@ -213,6 +240,6 @@ public final class Database {
      */
     private static Weapon buildBow(final String weaponFrame,
                                    final WeaponSkeleton skeleton, final Statement s) {
-        return null;
+        return new Bow(skeleton);
     }
 }
