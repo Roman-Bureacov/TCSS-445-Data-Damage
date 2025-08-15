@@ -48,7 +48,8 @@ public class Sword extends GenericWeapon {
     }
 
     private int getNextSwingTime() {
-        return switch(swing++ % 3) {
+        swing = (swing + 1) % 3;
+        return switch(swing) {
             case 0 -> FIRST_SWING;
             case 1 -> SECOND_SWING;
             default -> THIRD_SWING;
