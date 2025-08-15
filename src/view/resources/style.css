@@ -71,7 +71,15 @@
 }
 
 .weapons-form .label{
+    -fx-start-margin: 10;
     -fx-text-fill: #e6e6e6;
+}
+
+.weapons-form .field{
+    -fx-text-fill: #e6e6e6;
+    -fx-background-color: #232323;
+    -fx-end-margin: 10;
+
 }
 
 .weapons-table{
@@ -84,3 +92,4 @@
     -fx-background-color: #232323;
     -fx-text-fill: #e6e6e6;
 }
+
