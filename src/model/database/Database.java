@@ -25,6 +25,10 @@ public final class Database {
         createDatabaseIfNotExists();
     }
 
+    /**
+     * Returns the singleton database manager instance
+     * @return the database singleton
+     */
     public static synchronized Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -32,6 +36,9 @@ public final class Database {
         return instance;
     }
 
+    /**
+     * Constructs the database if it does not exist
+     */
     private void createDatabaseIfNotExists() {
         try {
             File dbFile = new File(DB_NAME);
@@ -50,6 +57,10 @@ public final class Database {
         }
     }
 
+    /**
+     * 
+     * @param conn
+     */
     private void runInitScript(Connection conn) {
         try {
             String sql = Files.readString(Paths.get(INIT_SCRIPT));
@@ -80,44 +91,44 @@ public final class Database {
         return preparedStatementstmt.executeQuery();
     }
 
-//    /**
-//     * Builds the appropriate weapon from the database.
-//     * @param weaponType the type name of the weapon
-//     * @param weaponFrame the frame name of the weapon
-//     * @return the built weapon object
-//     */
-//    public static Weapon buildWeapon(final String weaponFrame, final String weaponType) {
-//        return switch(weaponType) {
-//            case "Bow" -> buildBow(weaponFrame);
-//            case "FusionRifle" -> buildFusionRifle(weaponFrame);
-//            case "PulseRifle" -> buildPulseRifle(weaponFrame);
-//            case "Shotgun" -> buildShotgun(weaponFrame);
-//            case "Sword" -> buildSword(weaponFrame);
-//            default -> buildGenericWeapon(weaponFrame, weaponType);
-//        };
-//    }
-//
-//    private static Weapon buildGenericWeapon(final String weaponFrame, final String weaponType) {
-//        return null;
-//    }
-//
-//    private static Weapon buildSword(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildShotgun(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildPulseRifle(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildFusionRifle(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildBow(final String weaponFrame) {
-//        return null;
-//    }
+    /**
+     * Builds the appropriate weapon from the database.
+     * @param weaponType the type name of the weapon
+     * @param weaponFrame the frame name of the weapon
+     * @return the built weapon object
+     */
+    public static Weapon buildWeapon(final String weaponFrame, final String weaponType) {
+        return switch(weaponType) {
+            case "Bow" -> buildBow(weaponFrame);
+            case "FusionRifle" -> buildFusionRifle(weaponFrame);
+            case "PulseRifle" -> buildPulseRifle(weaponFrame);
+            case "Shotgun" -> buildShotgun(weaponFrame);
+            case "Sword" -> buildSword(weaponFrame);
+            default -> buildGenericWeapon(weaponFrame, weaponType);
+        };
+    }
+
+    private static Weapon buildGenericWeapon(final String weaponFrame, final String weaponType) {
+        return null;
+    }
+
+    private static Weapon buildSword(final String weaponFrame) {
+        return null;
+    }
+
+    private static Weapon buildShotgun(final String weaponFrame) {
+        return null;
+    }
+
+    private static Weapon buildPulseRifle(final String weaponFrame) {
+        return null;
+    }
+
+    private static Weapon buildFusionRifle(final String weaponFrame) {
+        return null;
+    }
+
+    private static Weapon buildBow(final String weaponFrame) {
+        return null;
+    }
 }
