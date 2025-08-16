@@ -25,8 +25,8 @@ public class Bow extends PrimaryAmmoWeapon {
     }
 
     @Override
-    public void writeEquipEvent(final TimeSheet t) {
-        super.writeEquipEvent(t);
+    public void writeReadyEvent(final TimeSheet t) {
+        super.writeReadyEvent(t);
         isLoaded = true;
     }
 

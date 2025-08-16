@@ -1,0 +1,9 @@
+INSERT INTO pulse_rifle_specifics (weapon_id, burst_count, burst_recovery)
+VALUES
+(10, 3, 200),
+(11, 3, 300),
+(12, 3, 300),
+(13, 3, 300),
+(14, 3, 400),
+(15, 4, 350),
+(16, 2, 200);

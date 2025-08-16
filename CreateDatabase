@@ -6,7 +6,7 @@ CREATE TABLE weapons (
     frame TEXT NOT NULL
 );
 
-CREATE TABLE damage (
+CREATE TABLE weapons_stats (
     weapon_id INT,
     FOREIGN KEY (weapon_id)
         REFERENCES weapons (weapon_id)
@@ -26,9 +26,9 @@ CREATE TABLE slotability (
         REFERENCES weapons (weapon_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (weapon_id),
-    in_kinetic BOOLEAN DEFAULT FALSE,
-    in_energy BOOLEAN DEFAULT FALSE,
-    in_power BOOLEAN DEFAULT FALSE
+    kinetic BOOLEAN DEFAULT FALSE,
+    energy BOOLEAN DEFAULT FALSE,
+    power BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE weapon_info (
@@ -37,8 +37,8 @@ CREATE TABLE weapon_info (
         REFERENCES weapons (weapon_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (weapon_id),
-    weapon_disc TEXT,
-    image BLOB
+    weapon_desc TEXT,
+    weapon_image BLOB
 );
 
 CREATE TABLE modifiers (
@@ -91,6 +91,12 @@ CREATE TABLE sim_time_events (
         ON DELETE CASCADE ON UPDATE CASCADE,
     sim_event VARCHAR(64) NOT NULL
 );
+
+
+-- &&&&&&&
+-- might want to use the script defined in
+-- &&&&&&&
+
 
 INSERT INTO weapons (weapon_id, weapon_type, frame) VALUES
 (1, 'Hand Cannon', 'Aggressive'),

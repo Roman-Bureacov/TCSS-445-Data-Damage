@@ -8,7 +8,7 @@ class WeaponSkeleton {
     public int theBodyDamage;
     public int theRPM;
     public int theReloadSpeed;
-    public int theEquipSpeed;
+    public int theReadySpeed;
     public int theStowSpeed;
     public int theMagazineMax;
     public int theReservesMax;

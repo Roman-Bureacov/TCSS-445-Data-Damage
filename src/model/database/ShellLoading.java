@@ -22,9 +22,9 @@ public abstract class ShellLoading extends GenericWeapon {
     private boolean initialShell;
 
     @Override
-    public void writeEquipEvent(final TimeSheet t) {
+    public void writeReadyEvent(final TimeSheet t) {
         initialShell = true;
-        super.writeEquipEvent(t);
+        super.writeReadyEvent(t);
     }
 
     @Override
@@ -37,10 +37,12 @@ public abstract class ShellLoading extends GenericWeapon {
     public void writeReloadEvent(final TimeSheet t) {
         if (getMagazineCurrent() < getMagazineMax()) {
             t.writeEvent(getInitialShellTime(), 0, "loading initial shell");
+            initialShell = false;
             while (getMagazineCurrent() < getMagazineMax()) {
                 t.writeEvent(getSubsequentShellTime(), 0, "loading shell");
             }
         }
+        initialShell = true;
     }
 
     /**

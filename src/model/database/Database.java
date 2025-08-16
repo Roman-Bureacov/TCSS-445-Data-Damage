@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.List;
+
+import org.sqlite.SQLiteDataSource;
 
 //import model.script.Weapon;
 
@@ -18,6 +19,12 @@ public final class Database {
     private static final String DB_NAME = "datadamage.db";
     private static final String DB_URL = "jdbc:sqlite:" + DB_NAME;
     private static final String INIT_SCRIPT = "CreateMySQLDatabase.txt";
+    private static final SQLiteDataSource SOURCE;
+
+    static {
+        SOURCE = new SQLiteDataSource();
+        SOURCE.setUrl(DB_URL);
+    }
 
     private static Database instance;
 
@@ -25,6 +32,10 @@ public final class Database {
         createDatabaseIfNotExists();
     }
 
+    /**
+     * Returns the singleton database manager instance
+     * @return the database singleton
+     */
     public static synchronized Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -32,6 +43,9 @@ public final class Database {
         return instance;
     }
 
+    /**
+     * Constructs the database if it does not exist
+     */
     private void createDatabaseIfNotExists() {
         try {
             File dbFile = new File(DB_NAME);
@@ -50,6 +64,10 @@ public final class Database {
         }
     }
 
+    /**
+     * 
+     * @param conn
+     */
     private void runInitScript(Connection conn) {
         try {
             String sql = Files.readString(Paths.get(INIT_SCRIPT));
@@ -71,6 +89,13 @@ public final class Database {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return
+     * @throws SQLException
+     */
     public ResultSet executeQuery(String sql, Object... params) throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL);
         PreparedStatement preparedStatementstmt = conn.prepareStatement(sql);
@@ -80,44 +105,140 @@ public final class Database {
         return preparedStatementstmt.executeQuery();
     }
 
-//    /**
-//     * Builds the appropriate weapon from the database.
-//     * @param weaponType the type name of the weapon
-//     * @param weaponFrame the frame name of the weapon
-//     * @return the built weapon object
-//     */
-//    public static Weapon buildWeapon(final String weaponFrame, final String weaponType) {
-//        return switch(weaponType) {
-//            case "Bow" -> buildBow(weaponFrame);
-//            case "FusionRifle" -> buildFusionRifle(weaponFrame);
-//            case "PulseRifle" -> buildPulseRifle(weaponFrame);
-//            case "Shotgun" -> buildShotgun(weaponFrame);
-//            case "Sword" -> buildSword(weaponFrame);
-//            default -> buildGenericWeapon(weaponFrame, weaponType);
-//        };
-//    }
-//
-//    private static Weapon buildGenericWeapon(final String weaponFrame, final String weaponType) {
-//        return null;
-//    }
-//
-//    private static Weapon buildSword(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildShotgun(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildPulseRifle(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildFusionRifle(final String weaponFrame) {
-//        return null;
-//    }
-//
-//    private static Weapon buildBow(final String weaponFrame) {
-//        return null;
-//    }
+    /**
+     * Builds the appropriate weapon from the database.
+     * @param weaponType the type name of the weapon
+     * @param weaponFrame the frame name of the weapon
+     * @return the built weapon object
+     */
+    public static Weapon buildWeapon(final String weaponFrame, final String weaponType) throws SQLException {
+        final String sql =
+                """
+                SELECT * FROM weapons NATURAL JOIN weapon_stats USING weapon_id
+                """;
+
+        ResultSet r;
+
+        final Connection c = SOURCE.getConnection();
+        final Statement s = c.createStatement();
+        r = s.executeQuery(sql);
+
+        final WeaponSkeleton skeleton = buildWeaponSkeleton(r);
+
+        return switch(weaponType) {
+            case "Bow" -> buildBow(weaponFrame, skeleton, s);
+            case "FusionRifle" -> buildFusionRifle(weaponFrame, skeleton, s);
+            case "PulseRifle" -> buildPulseRifle(weaponFrame, skeleton, s);
+            case "Shotgun" -> buildShotgun(skeleton);
+            case "Sword" -> buildSword(skeleton);
+            default -> buildGenericWeapon(skeleton);
+        };
+    }
+
+    /**
+     * Constructs the basic weapon skeleton to be used when building weapon models.
+     * @param r the result set of the weapon stats
+     * @return the weapon skeleton
+     * @throws SQLException if there is a problem with the SQL result set
+     */
+    private static WeaponSkeleton buildWeaponSkeleton(final ResultSet r) throws SQLException {
+        final WeaponSkeleton skeleton = new WeaponSkeleton();
+
+        skeleton.theReservesMax = r.getInt("reserves");
+        skeleton.theRPM = r.getInt("fire_rate");
+        skeleton.theReloadSpeed = r.getInt("reload_speed");
+        skeleton.theMagazineMax = r.getInt("magazine");
+        skeleton.theStowSpeed = r.getInt("stow_speed");
+        skeleton.theReadySpeed = r.getInt("ready_speed");
+        skeleton.theBodyDamage = r.getInt("body_damage");
+        skeleton.thePrecisionDamage = r.getInt("precision_damage");
+
+        return skeleton;
+    }
+
+    /**
+     * Constructs a generic weapon. Most weapons can be modeled this way.
+     * @return a generic weapon model
+     */
+    private static Weapon buildGenericWeapon(final WeaponSkeleton skeleton) {
+        return new GenericWeapon(skeleton);
+    }
+
+    /**
+     * Constructs a sword model
+     * @return a sword weapon model
+     */
+    private static Weapon buildSword(final WeaponSkeleton skeleton) {
+        return new Sword(skeleton);
+    }
+
+    /**
+     * Constructs a shotgun model
+     * @return a shotgun weapon model
+     */
+    private static Weapon buildShotgun(final WeaponSkeleton skeleton) {
+        return new Shotgun(skeleton);
+    }
+
+    /**
+     * Constructs a pulse rifle model
+     * @param weaponFrame the pulse rifle frame name
+     * @return a pulse rifle weapon model
+     */
+    private static Weapon buildPulseRifle(final String weaponFrame,
+                                          final WeaponSkeleton skeleton, final Statement s) throws SQLException {
+
+        final String sql =
+                """
+                SELECT * FROM PulseRifleSpecifics
+                WHERE weapon_id = (
+                    SELECT weapon_id
+                    FROM weapons
+                    WHERE weapon_type = 'PulseRifle' AND weaponFrame = '%s'
+                )
+                """.formatted(weaponFrame);
+        s.execute(sql);
+        final ResultSet r = s.getResultSet();
+
+        return new PulseRifle(skeleton,
+                r.getInt("burst_count"),
+                r.getInt("burst_recovery")
+        );
+    }
+
+    /**
+     * Constructs a fusion rifle model
+     * @param weaponFrame the fusion rifle frame name
+     * @return a fusion rifle weapon model
+     */
+    private static Weapon buildFusionRifle(final String weaponFrame,
+                                           final WeaponSkeleton skeleton, final Statement s) throws SQLException {
+        final String sql =
+                """
+                SELECT * FROM FusionRifleSpecifics
+                WHERE weapon_id = (
+                    SELECT weapon_id
+                    FROM weapons
+                    WHERE weapon_type = 'FusionRifle' AND weapon_frame = '%s'
+                )
+                """.formatted(weaponFrame);
+        s.execute(sql);
+        final ResultSet r = s.getResultSet();
+
+        return new FusionRifle(skeleton,
+                r.getInt("charge_time"),
+                r.getInt("bolt_count"),
+                r.getInt("charge_recovery")
+        );
+    }
+
+    /**
+     * Constructs a bow model
+     * @param weaponFrame the bow frame name
+     * @return a bow weapon model
+     */
+    private static Weapon buildBow(final String weaponFrame,
+                                   final WeaponSkeleton skeleton, final Statement s) {
+        return new Bow(skeleton);
+    }
 }

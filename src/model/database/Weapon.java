@@ -42,10 +42,10 @@ public interface Weapon {
     int getReloadSpeed();
 
     /**
-     * Returns the equip speed of this weapon.
-     * @return the equip speed in milliseconds
+     * Returns the ready speed of this weapon, after stowing the other weapon.
+     * @return the ready speed in milliseconds
      */
-    int getEquipSpeed();
+    int getReadySpeed();
 
     /**
      * Returns the stow speed of this weapon.
@@ -102,10 +102,10 @@ public interface Weapon {
     void writeStowEvent(TimeSheet t);
 
     /**
-     * Marks on the timesheet the equip event.
+     * Marks on the timesheet the ready event.
      * @param t the timesheet to mark on
      */
-    void writeEquipEvent(TimeSheet t);
+    void writeReadyEvent(TimeSheet t);
 
     /**
      * Marks on the timesheet the shoot event.
@@ -121,4 +121,16 @@ public interface Weapon {
      * @param t the timesheet to mark on
      */
     void writeReloadEvent(TimeSheet t);
+
+    /**
+     * Convenience method that write the swapping event by first writing the
+     * stow for the first weapon and then the ready for the other weapon
+     * @param t the timesheet to mark on
+     * @param w1 the weapon being swapped from, the weapon that is stowed
+     * @param w2 the weapon being swapped to, the weapon that is readied
+     */
+    static void writeSwapEvent(final TimeSheet t, final Weapon w1, final Weapon w2) {
+        w1.writeStowEvent(t);
+        w2.writeReadyEvent(t);
+    }
 }
