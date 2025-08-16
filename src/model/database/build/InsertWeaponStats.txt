@@ -1,4 +1,4 @@
-INSERT INTO weapon_stats (weapon_id, reserves, fire_rate, reload_speed, magazine, stow_speed, equip_speed, body_damage, precision_damage)
+INSERT INTO weapon_stats (weapon_id, reserves, fire_rate, reload_speed, magazine, stow_speed, ready_speed, body_damage, precision_damage)
 VALUES
 -- ===========================
 -- Primaries: Auto Rifles

@@ -36,8 +36,8 @@ public class Sword extends GenericWeapon {
     }
 
     @Override
-    public void writeEquipEvent(final TimeSheet t) {
-        super.writeEquipEvent(t);
+    public void writeReadyEvent(final TimeSheet t) {
+        super.writeReadyEvent(t);
         swing = 0;
     }
 

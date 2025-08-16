@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.List;
 
 import org.sqlite.SQLiteDataSource;
 
@@ -150,7 +149,7 @@ public final class Database {
         skeleton.theReloadSpeed = r.getInt("reload_speed");
         skeleton.theMagazineMax = r.getInt("magazine");
         skeleton.theStowSpeed = r.getInt("stow_speed");
-        skeleton.theEquipSpeed = r.getInt("equip_speed");
+        skeleton.theReadySpeed = r.getInt("ready_speed");
         skeleton.theBodyDamage = r.getInt("body_damage");
         skeleton.thePrecisionDamage = r.getInt("precision_damage");
 

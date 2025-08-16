@@ -268,7 +268,7 @@ public final class ScriptReader {
 
     private static void equip(final Weapon w) {
         equipped.writeStowEvent(data);
-        w.writeEquipEvent(data);
+        w.writeReadyEvent(data);
     }
 
     private static void shoot(final damageType t) {
