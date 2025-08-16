@@ -202,8 +202,8 @@ public final class Database {
         final ResultSet r = s.getResultSet();
 
         return new PulseRifle(skeleton,
-                r.getInt("BurstCount"),
-                r.getInt("BurstRecovery")
+                r.getInt("burst_count"),
+                r.getInt("burst_recovery")
         );
     }
 
@@ -220,16 +220,16 @@ public final class Database {
                 WHERE weapon_id = (
                     SELECT weapon_id
                     FROM weapons
-                    WHERE weapon_type = 'FusionRifle' AND weaponFrame = '%s'
+                    WHERE weapon_type = 'FusionRifle' AND weapon_frame = '%s'
                 )
                 """.formatted(weaponFrame);
         s.execute(sql);
         final ResultSet r = s.getResultSet();
 
         return new FusionRifle(skeleton,
-                r.getInt("ChargeTime"),
-                r.getInt("BoltCount"),
-                r.getInt("ChargeRecovery")
+                r.getInt("charge_time"),
+                r.getInt("bolt_count"),
+                r.getInt("charge_recovery")
         );
     }
 

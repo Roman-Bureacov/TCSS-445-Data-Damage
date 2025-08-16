@@ -1,0 +1,9 @@
+INSERT INTO PulseRifleSpecifics (weapon_frame, burst_count, burst_recovery)
+VALUES
+('rapidFire',    3, 200),
+('lightweight',  3, 300),
+('legacyPR55',   3, 300),
+('adaptive',     3, 300),
+('highImpact',   3, 400),
+('aggressiveBurst', 4, 350),
+('heavyBurst',   2, 200);
