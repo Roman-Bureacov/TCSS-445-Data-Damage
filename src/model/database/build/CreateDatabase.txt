@@ -43,6 +43,27 @@ CREATE TABLE weapon_info (
     weapon_image BLOB
 );
 
+CREATE TABLE pulse_rifle_specifics (
+    weapon_id INT,
+    FOREIGN KEY (weapon_id)
+        REFERENCES weapons (weapon_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+        PRIMARY KEY (weapon_id),
+    burst_count INT DEFAULT 3 CHECK (burst_count > 0),
+    burst_recovery INT DEFAULT 300 CHECK (burst_recovery > 0);
+);
+
+CREATE TABLE fusion_rifle_specifics (
+    weapon_id INT,
+    FOREIGN KEY (weapon_id)
+        REFERENCES weapons (weapon_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+        PRIMARY KEY (weapon_id),
+        charge_time INT DEFAULT 1000 CHECK (charge_time > 0),
+        bolt_count INT DEFAULT 5 CHECK (bolt_count > 0),
+        charge_recovery INT DEFAULT 500 CHECK (charge_recovery > 0)
+);
+
 CREATE TABLE modifiers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     mod_name VARCHAR(64) NOT NULL,
