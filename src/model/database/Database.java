@@ -1,13 +1,8 @@
 package model.database;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 
 import model.database.build.DatabaseProvider;
-import org.sqlite.SQLiteDataSource;
 
 //import model.script.Weapon;
 
@@ -18,10 +13,6 @@ import org.sqlite.SQLiteDataSource;
  * @version July 2025
  */
 public final class Database {
-    private static final String DB_NAME = "datadamage.db";
-    private static final String DB_URL = "jdbc:sqlite:" + DB_NAME;
-    private static final String INIT_SCRIPT = "CreateMySQLDatabase.txt";
-    private static final SQLiteDataSource SOURCE;
 
     private static final Database instance;
 
@@ -32,8 +23,6 @@ public final class Database {
         } catch (final ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        SOURCE = new SQLiteDataSource();
-        SOURCE.setUrl(DB_URL);
         instance = new Database();
     }
 
