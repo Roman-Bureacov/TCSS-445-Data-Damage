@@ -4,22 +4,22 @@ import javafx.beans.property.*;
 import javafx.scene.image.Image;
 
 public class WeaponRow {
-    private final StringProperty weaponType  = new SimpleStringProperty("");
-    private final StringProperty  frame      = new SimpleStringProperty("");
-    private final IntegerProperty reserve    = new SimpleIntegerProperty(0);
-    private final IntegerProperty magazine   = new SimpleIntegerProperty(0);
-    private final IntegerProperty fireRate   = new SimpleIntegerProperty(0);
-    private final DoubleProperty reload      = new SimpleDoubleProperty(0.0);
-    private final IntegerProperty body       = new SimpleIntegerProperty(0);
-    private final IntegerProperty precision  = new SimpleIntegerProperty(0);
-    private final BooleanProperty kinetic    = new SimpleBooleanProperty(false);
-    private final BooleanProperty energy     = new SimpleBooleanProperty(false);
-    private final BooleanProperty power      = new SimpleBooleanProperty(false);
+    private final StringProperty weaponType = new SimpleStringProperty("");
+    private final StringProperty frame = new SimpleStringProperty("");
+    private final IntegerProperty reserve = new SimpleIntegerProperty(0);
+    private final IntegerProperty magazine = new SimpleIntegerProperty(0);
+    private final IntegerProperty fireRate = new SimpleIntegerProperty(0);
+    private final DoubleProperty reload = new SimpleDoubleProperty(0.0);
+    private final IntegerProperty body = new SimpleIntegerProperty(0);
+    private final IntegerProperty precision = new SimpleIntegerProperty(0);
+    private final BooleanProperty kinetic = new SimpleBooleanProperty(false);
+    private final BooleanProperty energy = new SimpleBooleanProperty(false);
+    private final BooleanProperty power = new SimpleBooleanProperty(false);
     private final IntegerProperty oneMagDamage = new SimpleIntegerProperty(0);
     private final IntegerProperty theoreticalTotalDamage = new SimpleIntegerProperty(0);
-    private final DoubleProperty  sustainedDps = new SimpleDoubleProperty(0.0);
-    private final DoubleProperty  trueDps      = new SimpleDoubleProperty(0.0);
-    private final StringProperty  weapon_disc = new SimpleStringProperty("");
+    private final DoubleProperty sustainedDps = new SimpleDoubleProperty(0.0);
+    private final DoubleProperty trueDps = new SimpleDoubleProperty(0.0);
+    private final StringProperty weapon_disc = new SimpleStringProperty("");
     private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
 
     public String getWeaponType(){

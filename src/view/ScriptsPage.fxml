@@ -6,13 +6,79 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.ScriptsPageController"
             prefHeight="400.0" prefWidth="600.0">
-    <BorderPane>
+
+    <BorderPane AnchorPane.leftAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.rightAnchor="0"
+                AnchorPane.topAnchor="0">
+        <left>
+            <StackPane alignment="CENTER" styleClass="weapons-form">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                <GridPane styleClass="weapons-form" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <Label styleClass="label" text="Save Name" GridPane.rowIndex="0" />
+                    <TextField styleClass="field" fx:id="saveName" promptText="Name" GridPane.rowIndex="1" prefWidth="100"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="3" />
+
+                    <Label text="Kinetic Weapon" GridPane.rowIndex="4"/>
+                    <TextField styleClass="field" fx:id="kineticFrame" promptText="Frame" GridPane.rowIndex="5"/>
+                    <TextField styleClass="field" fx:id="kineticType" promptText="Type" GridPane.rowIndex="6"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="7" />
+
+                    <Label text="Energy Weapon" GridPane.rowIndex="8"/>
+                    <TextField styleClass="field" fx:id="energyFrame" promptText="Frame" GridPane.rowIndex="9"/>
+                    <TextField styleClass="field" fx:id="energyType" promptText="Type" GridPane.rowIndex="10"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="11" />
+
+                    <Label text="Power Weapon" GridPane.rowIndex="12"/>
+                    <TextField styleClass="field" fx:id="powerFrame" promptText="Frame" GridPane.rowIndex="13"/>
+                    <TextField styleClass="field" fx:id="powerType" promptText="Type" GridPane.rowIndex="14"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="15" />
+
+                    <Label text="Average DPS" GridPane.rowIndex="16"/>
+                    <TextField styleClass="field" fx:id="avgDPS" promptText="Ave DPS" GridPane.rowIndex="17"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="18" />
+
+                    <Label text="Total Damage" GridPane.rowIndex="19"/>
+                    <TextField styleClass="field" fx:id="totalDamage" promptText="Total Damage" GridPane.rowIndex="20"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="21" />
+
+                    <Label text="Save Date (MM/DD/YY)" GridPane.rowIndex="22"/>
+                    <TextField styleClass="field" fx:id="SaveDate" promptText="Date" GridPane.rowIndex="23"/>
+                    <Label styleClass="label" text=" " GridPane.rowIndex="24" />
+
+                    <Button styleClass="field" onAction="#onSearch" GridPane.rowIndex="47">SEARCH</Button >
+
+                </GridPane>
+            </StackPane>
+        </left>
         <center>
-            <Label text="SCRIPTS SAVES AND SEARCHES" BorderPane.alignment="CENTER" textFill="white"/>
+            <StackPane alignment="CENTER">
+                <padding>
+                    <Insets top="60" right="20" bottom="60" left="20"/>
+                </padding>
+                <TableView styleClass="weapons-table" fx:id="scriptsTable"
+                           maxWidth="1500">
+                    <columns>
+                        <TableColumn styleClass="weapons-table" fx:id="colSaveName" text="Save Name"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colKineticFrame" text="Kinetic Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colKineticType" text="Kinetic Type"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colEnergyFrame" text="Energy Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colEnergyType" text="Energy Type"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPowerFrame" text="Power Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPowerType" text="Power Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colAvgDPS" text="Avg DPS"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colTotalDamage" text="Total Dmg"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colDate" text="Date"/>
+                    </columns>
+                </TableView>
+            </StackPane>
         </center>
     </BorderPane>
 </AnchorPane>
