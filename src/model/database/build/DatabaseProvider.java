@@ -21,8 +21,8 @@ public final class DatabaseProvider {
 
     private static final String WORKING_PATH = "src/model/database/build/";
     private static final String DB_NAME = "datadamage.db";
-    private static final File INIT_SCRIPT = new File(getPath("CreateDatabase.sql"));
-    private static final File DB_FILE = new File(getPath(DB_NAME));
+    private static final File INIT_SCRIPT = new File(getPath("CreateDatabase.sql").toString());
+    private static final File DB_FILE = new File(getPath(DB_NAME).toString());
     private static final String DB_URL = "jdbc:sqlite:" + DB_FILE.getPath();
 
     static {
@@ -84,13 +84,13 @@ public final class DatabaseProvider {
         final Connection c = getConnection();
         LOGGER.info("Inserting data");
         final Path[] insertionScriptPaths = {
-                Path.of(getPath("InsertWeapons.sql")),
-                Path.of(getPath("InsertFusionRifleSpecifics.sql")),
-                Path.of(getPath("InsertPulseRifleSpecifics.sql")),
-                Path.of(getPath("InsertWeaponAmmoTypes.sql")),
-                Path.of(getPath("InsertWeaponInfo.sql")),
-                Path.of(getPath("InsertWeaponSlotability.sql")),
-                Path.of(getPath("InsertWeaponStats.sql")),
+                getPath("InsertWeapons.sql"),
+                getPath("InsertFusionRifleSpecifics.sql"),
+                getPath("InsertPulseRifleSpecifics.sql"),
+                getPath("InsertWeaponAmmoTypes.sql"),
+                getPath("InsertWeaponInfo.sql"),
+                getPath("InsertWeaponSlotability.sql"),
+                getPath("InsertWeaponStats.sql"),
         };
 
         for (final Path p : insertionScriptPaths) {
@@ -108,7 +108,7 @@ public final class DatabaseProvider {
      * @param fileName the file name
      * @return the path to the file from the content source
      */
-    private static String getPath(String fileName) {
-        return Path.of(WORKING_PATH, fileName).toString();
+    private static Path getPath(String fileName) {
+        return Path.of(WORKING_PATH, fileName);
     }
 }
