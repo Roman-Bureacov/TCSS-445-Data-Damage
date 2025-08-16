@@ -1,4 +1,4 @@
-INSERT INTO slotability (weapon_id, kinetic, energy, power)
+INSERT INTO slotability (weapon_id, in_kinetic, in_energy, in_power)
 VALUES
 -- ===========================
 -- Primaries: Auto Rifles

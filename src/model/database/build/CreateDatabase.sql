@@ -4,12 +4,14 @@ CREATE TABLE weapons (
     frame TEXT NOT NULL
 );
 
-CREATE TABLE damage (
+CREATE TABLE weapon_stats (
     weapon_id INT,
-    reserve INT DEFAULT 0 CHECK (reserve >= 0),
+    reserves INT DEFAULT 0 CHECK (reserves >= 0),
     fire_rate INT DEFAULT 0 CHECK (fire_rate >= 0),
     reload_speed INT DEFAULT 0 CHECK (reload_speed >= 0),
     magazine INT DEFAULT 0 CHECK (magazine >= 0),
+    stow_speed INT DEFAULT 0,
+    ready_speed INT DEFAULT 0,
     body_damage INT DEFAULT 0 CHECK (body_damage >= 0),
     precision_damage INT DEFAULT 0 CHECK (precision_damage >= 0),
     FOREIGN KEY (weapon_id)
@@ -31,7 +33,7 @@ CREATE TABLE slotability (
 
 CREATE TABLE weapon_info (
     weapon_id INT,
-    weapon_disc TEXT,
+    weapon_desc TEXT,
     image BLOB,
     FOREIGN KEY (weapon_id)
         REFERENCES weapons (weapon_id)
@@ -110,3 +112,12 @@ CREATE TABLE fusion_rifle_specifics (
                 ON DELETE CASCADE ON UPDATE CASCADE,
             PRIMARY KEY (weapon_id)
 );
+
+CREATE TABLE ammo_types (
+    weapon_id INT,
+    ammo INT,
+    FOREIGN KEY (weapon_id)
+        REFERENCES weapons (weapon_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (weapon_id)
+)
