@@ -3,12 +3,11 @@ package model.database.build;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,17 +16,19 @@ import java.util.logging.Logger;
  * @author Roman Bureacov
  * @version August 2025
  */
-public class DatabaseProvider {
+public final class DatabaseProvider {
     private static final Logger LOGGER = Logger.getLogger("model.database.build.DatabaseProvider");
 
+    private static final String WORKING_PATH = "src/model/database/build/";
     private static final String DB_NAME = "datadamage.db";
-    private static final File INIT_SCRIPT = new File("src/model/database/build/CreateDatabase.sql");
-    private static final File DB_FILE = new File("src/model/database/build/" + DB_NAME);
+    private static final File INIT_SCRIPT = new File(getPath("CreateDatabase.sql").toString());
+    private static final File DB_FILE = new File(getPath(DB_NAME).toString());
     private static final String DB_URL = "jdbc:sqlite:" + DB_FILE.getPath();
 
     static {
         try {
             createDatabase();
+            insertDatabase();
         } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to read/create file:\n" + e.getMessage());
             throw new RuntimeException(e);
@@ -35,6 +36,10 @@ public class DatabaseProvider {
             LOGGER.log(Level.SEVERE, "Failed to run SQL script:\n" + e.getMessage());
         }
     }
+
+    private DatabaseProvider() {
+        super();
+    };
 
     /**
      * Gets the running database connection.
@@ -54,6 +59,8 @@ public class DatabaseProvider {
 
     /**
      * Constructs the database, if it does not exist yet.
+     * @throws IOException if it failed to read the init script
+     * @throws SQLException if it failed to parse the init script
      */
     private static void createDatabase() throws IOException, SQLException {
         if (!DB_FILE.exists()) {
@@ -66,5 +73,42 @@ public class DatabaseProvider {
             }
             LOGGER.info("Database creation complete!");
         }
+    }
+
+    /**
+     * Inserts all the SQLite database entries
+     * @throws IOException if it failed to read the scripts
+     * @throws SQLException if it failed to parse the insertion script(s)
+     */
+    private static void insertDatabase() throws SQLException, IOException {
+        final Connection c = getConnection();
+        LOGGER.info("Inserting data");
+        final Path[] insertionScriptPaths = {
+                getPath("InsertWeapons.sql"),
+                getPath("InsertFusionRifleSpecifics.sql"),
+                getPath("InsertPulseRifleSpecifics.sql"),
+                getPath("InsertWeaponAmmoTypes.sql"),
+                getPath("InsertWeaponInfo.sql"),
+                getPath("InsertWeaponSlotability.sql"),
+                getPath("InsertWeaponStats.sql"),
+        };
+
+        for (final Path p : insertionScriptPaths) {
+            LOGGER.info("Running " + p);
+            final String script = Files.readString(p);
+            final Statement s = c.createStatement();
+            s.execute(script);
+        }
+
+        LOGGER.info("Finished insertion");
+    }
+
+    /**
+     * Translates the file name into a relative file path.
+     * @param fileName the file name
+     * @return the path to the file from the content source
+     */
+    private static Path getPath(String fileName) {
+        return Path.of(WORKING_PATH, fileName);
     }
 }
