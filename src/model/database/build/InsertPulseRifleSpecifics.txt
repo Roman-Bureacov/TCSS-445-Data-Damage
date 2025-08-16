@@ -1,4 +1,4 @@
-INSERT INTO PulseRifleSpecifics (weapon_id, burst_count, burst_recovery)
+INSERT INTO pulse_rifle_specifics (weapon_id, burst_count, burst_recovery)
 VALUES
 (10, 3, 200),
 (11, 3, 300),
