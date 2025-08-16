@@ -1,5 +1,6 @@
 package model.script;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,8 +53,10 @@ public final class ScriptReader {
      * Reads in a script and returns a data set simulated by the script.
      * @param script the script to base the simulation upon.
      * @return the simulation data
+     * @throws IllegalArgumentException if the script has syntax errors
+     * @throws SQLException if the script failed to find data from the database
      */
-    public static TimeSheet readData(final String script) throws IllegalArgumentException {
+    public static TimeSheet readData(final String script) throws IllegalArgumentException, SQLException {
         data = new TimeSheet();
         final Scanner input = new Scanner(script);
         in = new ArrayList<>();
@@ -65,7 +68,7 @@ public final class ScriptReader {
         return data;
     }
 
-    private static void readHeader() throws IllegalArgumentException {
+    private static void readHeader() throws IllegalArgumentException, SQLException {
         String weaponType, weaponFrame;
 
         // build the three weapons from the database
@@ -76,7 +79,7 @@ public final class ScriptReader {
         readScript();
     }
 
-    private static Weapon readWeapon(final String slotName) {
+    private static Weapon readWeapon(final String slotName) throws SQLException {
         final String givenSlotName = in.get(position);
         position++;
         final String givenWeaponFrame = in.get(position);
@@ -115,7 +118,7 @@ public final class ScriptReader {
             readScript();
             if (!"}".equals(in.get(position)))
                 throw new IllegalArgumentException("Expected separated closing brace '}'");
-        }
+        } // otherwise skip this conditional
         else while(!"}".equals(in.get(position))) position++;
         position++;
 
@@ -257,26 +260,31 @@ public final class ScriptReader {
 
     private static void readFunction(final String slot, final String function) {
         final Weapon w = readWeaponSlot(slot);
-        switch(function) {
-            case "equip" -> equip(w);
-            case "shootAtPrecision" -> shoot(damageType.PRECISION);
-            case "shootAtBody" -> shoot(damageType.BODY);
-            case "reload" -> reload();
-            default -> throw new IllegalArgumentException("Unknown weapon function " + function);
+        if ("equipped".equals(slot)) {
+            switch(function) {
+                case "shootAtPrecision" -> shoot(damageType.PRECISION);
+                case "shootAtBody" -> shoot(damageType.BODY);
+                case "reload" -> reload();
+                default -> throw new IllegalArgumentException(
+                        "Unknown weapon function %s for slot %s".formatted(function, slot)
+                );
+            }
+        } else {
+            switch(function) {
+                case "equip" -> equip(w);
+                default -> throw new IllegalArgumentException(
+                        "Unknown weapon function %s for slot %s".formatted(function, slot)
+                );
+            }
         }
     }
 
     private static void equip(final Weapon w) {
-        equipped.writeStowEvent(data);
-        w.writeReadyEvent(data);
+        Weapon.writeSwapEvent(data, equipped, w);
+        equipped = w;
     }
 
     private static void shoot(final damageType t) {
-        final int damage = switch(t) {
-            case PRECISION -> equipped.getPrecisionDamage();
-            case BODY -> equipped.getBodyDamage();
-        };
-
         equipped.writeFireEvent(data, t);
     }
 
@@ -284,6 +292,11 @@ public final class ScriptReader {
         equipped.writeReloadEvent(data);
     }
 
+    /**
+     * Convenience method that gives the weapon slot based on the provided string.
+     * @param slot the slot as a string
+     * @return the Weapon object
+     */
     private static Weapon readWeaponSlot(final String slot) {
         return switch(slot) {
             case "kinetic" -> kinetic;

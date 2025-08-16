@@ -27,16 +27,18 @@ GRAMMAR
         action
 
     Action
-        slot "." function "!"
+        slot "." functionNonEquipped "!"
+        "equipped" "." functionEquipped "!"
 
     Slot
-        "equipped"
         "kinetic"
         "energy"
         "power"
 
-    function
+    FunctionNonEquipped
         "equip"
+
+    functionEquipped
         "shootAtPrecision"
         "shootAtBody"
         "reload"
