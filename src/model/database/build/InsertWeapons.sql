@@ -1,4 +1,4 @@
-INSERT INTO weapons (weapon_type, frame)
+INSERT INTO weapons (weapon_type, weapon_frame)
 VALUES
 
 -- primaries

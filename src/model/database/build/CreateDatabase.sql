@@ -1,7 +1,7 @@
 CREATE TABLE weapons (
     weapon_id INTEGER PRIMARY KEY,
     weapon_type TEXT NOT NULL,
-    frame TEXT NOT NULL
+    weapon_frame TEXT NOT NULL
 );
 
 CREATE TABLE weapon_stats (
@@ -20,28 +20,33 @@ CREATE TABLE weapon_stats (
     PRIMARY KEY (weapon_id)
 );
 
-CREATE TABLE slotability (
+CREATE TABLE weapon_ammmo (
     weapon_id INTEGER,
-    in_kinetic BOOLEAN DEFAULT FALSE,
-    in_energy BOOLEAN DEFAULT FALSE,
-    in_power BOOLEAN DEFAULT FALSE,
+    ammo_id INTEGER,
     FOREIGN KEY (weapon_id)
-        REFERENCES weapons (weapon_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (weapon_id)
+);
+
+CREATE TABLE ammo_types (
+    ammo_id INTEGER,
+    ammo TEXT,
+    FOREIGN KEY (ammo_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (ammo_id)
 );
 
 CREATE TABLE weapon_info (
     weapon_id INTEGER,
     weapon_desc TEXT,
-    image BLOB,
+    weapon_image BLOB,
     FOREIGN KEY (weapon_id)
         REFERENCES weapons (weapon_id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (weapon_id)
 );
 
-CREATE TABLE modifiers (
+CREATE TABLE modifiers ( -- TODO: what about this?
 id INTEGER AUTO_INCREMENT PRIMARY KEY,
 mod_name VARCHAR(64) NOT NULL,
 damage_mult DOUBLE DEFAULT 1,
@@ -52,27 +57,41 @@ precision_damage_mult DOUBLE DEFAULT 1
 );
 
 CREATE TABLE sims (
-id INTEGER AUTO_INCREMENT PRIMARY KEY,
-save_name VARCHAR(64) UNIQUE,
-kinetic INTEGER,
-energy INTEGER,
-power INTEGER,
-average_dps DOUBLE DEFAULT 0,
-total_damage INTEGER DEFAULT 0,
-save_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-script BLOB,
-FOREIGN KEY (kinetic)
-REFERENCES weapons (weapon_id)
-ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (energy)
-REFERENCES weapons (weapon_id)
-ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (power)
-REFERENCES weapons (weapon_id)
-ON DELETE CASCADE ON UPDATE CASCADE
+    sim_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sim_name INTEGER,
+    save_date TEXT DEFAULT CURRENT_TIMESTAMP,
+    script_id INTEGER,
+    FOREIGN KEY sims_scripts (script_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE saved_sims_times (
+CREATE TABLE sims_meta (
+    script_id INTEGER PRIMARY KEY,
+    kinetic INTEGER,
+    energy INTEGER,
+    power INTEGER,
+    average_dps REAL,
+    total_damage INTEGER,
+    FOREIGN KEY (script_id)
+        REFERENCES sims (script)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (kinetic)
+        REFERENCES weapons (weapon_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (energy)
+        REFERENCES weapons (weapon_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (power)
+        REFERENCES weapons (weapon_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE sims_scripts (
+    script_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    script TEXT,
+);
+
+CREATE TABLE saved_sims_times ( -- TODO what about this?
       id INTEGER,
       sim_timestamp DOUBLE CHECK (sim_timestamp >= 0),
       damage_instance INTEGER DEFAULT 0 CHECK (damage_instance >= 0),
@@ -82,7 +101,7 @@ CREATE TABLE saved_sims_times (
       PRIMARY KEY (id , sim_timestamp)
 );
 
-CREATE TABLE sim_time_events (
+CREATE TABLE sim_time_events ( -- TODO what about this?
      id INTEGER AUTO_INCREMENT PRIMARY KEY,
      save_id INTEGER,
      sim_timestamp DOUBLE,
@@ -112,12 +131,3 @@ CREATE TABLE fusion_rifle_specifics (
                 ON DELETE CASCADE ON UPDATE CASCADE,
             PRIMARY KEY (weapon_id)
 );
-
-CREATE TABLE ammo_types (
-    weapon_id INTEGER,
-    ammo INTEGER,
-    FOREIGN KEY (weapon_id)
-        REFERENCES weapons (weapon_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (weapon_id)
-)
