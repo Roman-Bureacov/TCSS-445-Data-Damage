@@ -85,6 +85,10 @@ public final class Database {
             case "PulseRifle" -> buildPulseRifle(weaponFrame, skeleton, s);
             case "Shotgun" -> buildShotgun(skeleton);
             case "Sword" -> buildSword(skeleton);
+            case "ScoutRifle" -> {
+                if ("Aggressive".equals(weaponFrame)) buildAggressiveScoutRifle(skeleton);
+                else buildGenericWeapon(skeleton);
+            }
             default -> buildGenericWeapon(skeleton);
         };
     }
@@ -116,6 +120,15 @@ public final class Database {
      */
     private static Weapon buildGenericWeapon(final WeaponSkeleton skeleton) {
         return new GenericWeapon(skeleton);
+    }
+
+    /**
+     * Constructs a weapon model specifically as a shell-loading aggressive scout-rifle
+     * @param skeleton the weapon skeleton
+     * @return aggressive scout rifle weapon model
+     */
+    private static Weapon buildAggressiveScoutRifle(final WeaponSkeleton skeleton) {
+        return new AggressiveScoutRifle(skeleton);
     }
 
     /**
