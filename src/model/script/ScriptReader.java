@@ -289,7 +289,6 @@ public final class ScriptReader {
         }
 
         lastBrace.removeLast();
-        position++;
     }
     
     private static void readAction() throws TimeSheet.NoMoreTimeException {

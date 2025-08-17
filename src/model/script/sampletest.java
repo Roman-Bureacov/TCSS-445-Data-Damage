@@ -4,7 +4,8 @@ import java.sql.SQLException;
 
 public class sampletest {
     public static void main(String[] args) throws SQLException {
-        final String script = """
+        final String script1 =
+                """
                 kinetic Precision AutoRifle
                 energy RapidFire SniperRifle
                 power Precision RocketLauncher
@@ -12,11 +13,36 @@ public class sampletest {
                 startswith energy
                 
                 kinetic.equip!
-                loop 4 {
+                loop 2 {
                     equipped.shootAtPrecision!
                 }
+                
+                energy.equip!
+                equipped.shootAtPrecision!
                 """;
-        for (var thing :  ScriptReader.readData(script))
+
+        final String script2 =
+                """
+                kinetic Aggressive ScoutRifle
+                energy Aggressive Shotgun
+                power Precision LinearFusionRifle
+                
+                startswith kinetic
+                
+                loop 200 {
+                    equipped.shootAtPrecision!
+                    if equipped.magazine# < 0 {
+                        equipped.reload
+                    }
+                }
+                equipped.reload!
+                """;
+
+
+        final String script = script1;
+        final var data = ScriptReader.readData(script);
+
+        for (final var thing : data)
             System.out.format("%d %d %s\n", (Integer)thing[0], (Integer)thing[1], thing[2]);
     }
 }
