@@ -44,7 +44,17 @@ CREATE TABLE weapon_info (
         REFERENCES weapons (weapon_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+/*
+CREATE TABLE modifiers ( -- TODO: what about this?
+id INTEGER AUTO_INCREMENT PRIMARY KEY,
+mod_name VARCHAR(64) NOT NULL,
+damage_mult DOUBLE DEFAULT 1,
+fire_rate_mult DOUBLE DEFAULT 1,
+reload_speed_mult DOUBLE DEFAULT 1,
+body_damage_mult DOUBLE DEFAULT 1,
+precision_damage_mult DOUBLE DEFAULT 1
+);
+*/
 CREATE TABLE sims (
     sim_id INTEGER PRIMARY KEY AUTOINCREMENT,
     sim_name TEXT,
@@ -80,7 +90,28 @@ CREATE TABLE sims_scripts (
     script_id INTEGER PRIMARY KEY AUTOINCREMENT,
     script TEXT
 );
-
+/*
+CREATE TABLE saved_sims_times ( -- TODO what about this?
+      id INTEGER,
+      sim_timestamp DOUBLE CHECK (sim_timestamp >= 0),
+      damage_instance INTEGER DEFAULT 0 CHECK (damage_instance >= 0),
+      FOREIGN KEY (id)
+          REFERENCES sims (id)
+          ON DELETE CASCADE ON UPDATE CASCADE,
+      PRIMARY KEY (id , sim_timestamp)
+);
+*/
+/*
+CREATE TABLE sim_time_events ( -- TODO what about this?
+     id INTEGER AUTO_INCREMENT PRIMARY KEY,
+     save_id INTEGER,
+     sim_timestamp DOUBLE,
+     sim_event VARCHAR(64) NOT NULL,
+     FOREIGN KEY (save_id , sim_timestamp)
+         REFERENCES saved_sims_times (id , sim_timestamp)
+         ON DELETE CASCADE ON UPDATE CASCADE
+);
+*/
 CREATE TABLE pulse_rifle_specifics (
            weapon_id INTEGER PRIMARY KEY,
            burst_count INTEGER DEFAULT 3 CHECK (burst_count > 0),

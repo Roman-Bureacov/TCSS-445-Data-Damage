@@ -68,8 +68,11 @@ public final class DatabaseProvider {
             LOGGER.info("Creating database...");
             final String creationScript = Files.readString(INIT_SCRIPT.toPath());
             for (String statement : creationScript.split(";")) {
-                final Statement s = c.createStatement();
-                s.execute(statement);
+                try (Statement s = c.createStatement()) {
+                    s.execute(statement);
+                } catch (SQLException e) {
+                    LOGGER.warning("Failed to run statement:\n" + statement + "\nCause:\n" + e);
+                }
             }
             LOGGER.info("Database creation complete!");
         }
