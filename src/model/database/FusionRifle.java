@@ -33,7 +33,9 @@ public class FusionRifle extends GenericWeapon {
     }
 
     @Override
-    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) {
+    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d)
+            throws TimeSheet.NoMoreTimeException {
+
         if (getMagazineCurrent() > 0) {
             fire(1);
             final int damage = getDamageFromType(d);

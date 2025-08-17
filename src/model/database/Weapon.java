@@ -99,13 +99,13 @@ public interface Weapon {
      * Markso n the timesheet the stow event.
      * @param t the timesheet to mark on
      */
-    void writeStowEvent(TimeSheet t);
+    void writeStowEvent(TimeSheet t) throws TimeSheet.NoMoreTimeException;
 
     /**
      * Marks on the timesheet the ready event.
      * @param t the timesheet to mark on
      */
-    void writeReadyEvent(TimeSheet t);
+    void writeReadyEvent(TimeSheet t) throws TimeSheet.NoMoreTimeException;
 
     /**
      * Marks on the timesheet the shoot event.
@@ -113,14 +113,14 @@ public interface Weapon {
      * @param t the timesheet to mark on
      * @param d the damage type
      */
-    void writeFireEvent(TimeSheet t, ScriptReader.damageType d);
+    void writeFireEvent(TimeSheet t, ScriptReader.damageType d) throws TimeSheet.NoMoreTimeException;
 
     /**
      * Marks on the timesheet the reload event.
      * Does nothing if the weapon is at magazine capacity.
      * @param t the timesheet to mark on
      */
-    void writeReloadEvent(TimeSheet t);
+    void writeReloadEvent(TimeSheet t) throws TimeSheet.NoMoreTimeException;
 
     /**
      * Convenience method that write the swapping event by first writing the
@@ -129,7 +129,8 @@ public interface Weapon {
      * @param w1 the weapon being swapped from, the weapon that is stowed
      * @param w2 the weapon being swapped to, the weapon that is readied
      */
-    static void writeSwapEvent(final TimeSheet t, final Weapon w1, final Weapon w2) {
+    static void writeSwapEvent(final TimeSheet t, final Weapon w1, final Weapon w2)
+            throws TimeSheet.NoMoreTimeException {
         w1.writeStowEvent(t);
         w2.writeReadyEvent(t);
     }

@@ -30,19 +30,20 @@ public class Sword extends GenericWeapon {
     }
 
     @Override
-    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) {
+    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d)
+            throws TimeSheet.NoMoreTimeException {
         fire(1);
         t.writeEvent(getNextSwingTime(), getDamageFromType(d), "swing sword");
     }
 
     @Override
-    public void writeReadyEvent(final TimeSheet t) {
+    public void writeReadyEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         super.writeReadyEvent(t);
         swing = 0;
     }
 
     @Override
-    public void writeStowEvent(final TimeSheet t) {
+    public void writeStowEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         super.writeStowEvent(t);
         swing = 0;
     }

@@ -106,17 +106,17 @@ public class GenericWeapon implements Weapon {
     }
 
     @Override
-    public void writeReadyEvent(final TimeSheet t) {
+    public void writeReadyEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         t.writeEvent(readySpeed, 0, "readying weapon");
     }
 
     @Override
-    public void writeStowEvent(final TimeSheet t) {
+    public void writeStowEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         t.writeEvent(stowSpeed, 0, "stowing weapon");
     }
 
     @Override
-    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) {
+    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) throws TimeSheet.NoMoreTimeException {
         if (magazineCurrent > 0) {
             fire(1);
             final int damage = getDamageFromType(d);
@@ -127,7 +127,7 @@ public class GenericWeapon implements Weapon {
     }
 
     @Override
-    public void writeReloadEvent(final TimeSheet t) {
+    public void writeReloadEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         if (magazineCurrent != magazineMax) {
             reload();
             if (magazineCurrent != magazineMax)

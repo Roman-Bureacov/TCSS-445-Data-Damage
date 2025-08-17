@@ -22,19 +22,20 @@ public abstract class ShellLoading extends GenericWeapon {
     private boolean initialShell;
 
     @Override
-    public void writeReadyEvent(final TimeSheet t) {
+    public void writeReadyEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         initialShell = true;
         super.writeReadyEvent(t);
     }
 
     @Override
-    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) {
+    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d)
+            throws TimeSheet.NoMoreTimeException {
         initialShell = true;
         super.writeFireEvent(t, d);
     }
 
     @Override
-    public void writeReloadEvent(final TimeSheet t) {
+    public void writeReloadEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         if (getMagazineCurrent() < getMagazineMax()) {
             t.writeEvent(getInitialShellTime(), 0, "loading initial shell");
             initialShell = false;
@@ -49,7 +50,7 @@ public abstract class ShellLoading extends GenericWeapon {
      * Loads a single shell rather than attempting to load all of them.
      * @param t the timesheet
      */
-    public void writeLoadShellEvent(final TimeSheet t) {
+    public void writeLoadShellEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         if (getMagazineCurrent() < getMagazineMax()) {
             if (initialShell) {
                 initialShell = false;

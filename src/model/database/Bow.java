@@ -25,13 +25,14 @@ public class Bow extends PrimaryAmmoWeapon {
     }
 
     @Override
-    public void writeReadyEvent(final TimeSheet t) {
+    public void writeReadyEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         super.writeReadyEvent(t);
         isLoaded = true;
     }
 
     @Override
-    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d) {
+    public void writeFireEvent(final TimeSheet t, final ScriptReader.damageType d)
+            throws TimeSheet.NoMoreTimeException {
         if (isLoaded) {
             final int damage = getDamageFromType(d);
             t.writeEvent(drawTime, 0, "draw bow");
@@ -41,7 +42,7 @@ public class Bow extends PrimaryAmmoWeapon {
     }
 
     @Override
-    public void writeReloadEvent(final TimeSheet t) {
+    public void writeReloadEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         super.writeReloadEvent(t);
         isLoaded = true;
     }

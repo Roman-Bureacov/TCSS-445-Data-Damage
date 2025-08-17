@@ -50,6 +50,17 @@ public final class ScriptReader {
     }
 
     /**
+     * Runs the script reader based on the input
+     * @param args the script as arg 0, nothing else
+     * @throws Exception if any exception occurs
+     */
+    public static void main(String... args) throws Exception {
+        for(final var dataPoint : readData(args[0])) {
+            System.out.printf("%20s %20s %s%n", dataPoint[0], dataPoint[1], dataPoint[2]);
+        }
+    }
+
+    /**
      * Reads in a script and returns a data set simulated by the script.
      * @param script the script to base the simulation upon.
      * @return the simulation data
@@ -63,12 +74,15 @@ public final class ScriptReader {
         lastBrace = new LinkedList<>();
         while (input.hasNext()) in.addLast(input.next());
 
-        readHeader(); // initiates the grammar
-
+        try {
+            readHeader(); // initiates the grammar
+        } catch (final TimeSheet.NoMoreTimeException e) {
+            return data;
+        }
         return data;
     }
 
-    private static void readHeader() throws IllegalArgumentException, SQLException {
+    private static void readHeader() throws IllegalArgumentException, SQLException, TimeSheet.NoMoreTimeException {
         String weaponType, weaponFrame;
 
         // build the three weapons from the database
@@ -109,7 +123,7 @@ public final class ScriptReader {
         position++;
     }
 
-    private static void readScript() {
+    private static void readScript() throws TimeSheet.NoMoreTimeException {
         while (position < in.size()) readStatement();
     }
 
@@ -121,14 +135,14 @@ public final class ScriptReader {
             while (!"}".equals(in.get(position))) {
                 readStatement();
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | TimeSheet.NoMoreTimeException e) {
             throw new IllegalArgumentException("Missing closing brace");
         }
         position++;
 
     }
     
-    private static void readStatement() {
+    private static void readStatement() throws TimeSheet.NoMoreTimeException {
         final String token = in.get(position);
         position++;
 
@@ -142,7 +156,7 @@ public final class ScriptReader {
         }
     }
     
-    private static void readConditional() {
+    private static void readConditional() throws TimeSheet.NoMoreTimeException {
         final boolean result = boolExpr();
         if (!"then".equals(in.get(position))) throw new IllegalArgumentException("Expected 'then' after condition");
         position++;
@@ -278,7 +292,7 @@ public final class ScriptReader {
         position++;
     }
     
-    private static void readAction() {
+    private static void readAction() throws TimeSheet.NoMoreTimeException {
         final String token = in.get(position);
         position++;
 
@@ -287,7 +301,7 @@ public final class ScriptReader {
         readFunction(splitToken[0], splitToken[1]);
     }
 
-    private static void readFunction(final String slot, final String function) {
+    private static void readFunction(final String slot, final String function) throws TimeSheet.NoMoreTimeException {
         final Weapon w = readWeaponSlot(slot);
         if ("equipped".equals(slot)) {
             switch(function) {
@@ -308,16 +322,16 @@ public final class ScriptReader {
         }
     }
 
-    private static void equip(final Weapon w) {
+    private static void equip(final Weapon w) throws TimeSheet.NoMoreTimeException {
         Weapon.writeSwapEvent(data, equipped, w);
         equipped = w;
     }
 
-    private static void shoot(final damageType t) {
+    private static void shoot(final damageType t) throws TimeSheet.NoMoreTimeException {
         equipped.writeFireEvent(data, t);
     }
 
-    private static void reload() {
+    private static void reload() throws TimeSheet.NoMoreTimeException {
         equipped.writeReloadEvent(data);
     }
 
