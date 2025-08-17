@@ -3,7 +3,7 @@ GRAMMAR
         "kinetic " weapon
         "energy " weapon
         "power " weapon
-        "start" slot
+        "startswith" slot
 
         script
 
@@ -19,7 +19,7 @@ GRAMMAR
 
     Script
         statement
-        statement \n script
+        statement script
 
     Statement
         conditional
@@ -44,8 +44,11 @@ GRAMMAR
         "reload"
 
     Conditional
-        "if " boolExpr " then { " script " } "
-        "if " boolExpr " then { " script " } " script
+        "if " boolExpr " then " scriptBlock
+        "if " boolExpr " then " scriptBlock script
+
+    ScriptBlock
+    "{" script "}"
 
     BoolExpr
         disjunction
@@ -102,4 +105,4 @@ GRAMMAR
         "<>"
 
     Loop
-        "loop " Integer " {" \n script \n "}"
+        "loop " Integer scriptBlock

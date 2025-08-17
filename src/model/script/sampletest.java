@@ -5,13 +5,15 @@ import java.sql.SQLException;
 public class sampletest {
     public static void main(String[] args) throws SQLException {
         final String script = """
-                kinetic Aggressive AutoRifle
+                kinetic Precision AutoRifle
                 energy RapidFire SniperRifle
                 power Precision RocketLauncher
                 
+                startswith energy
+                
                 kinetic.equip!
                 loop 4 {
-                    kinetic.shootAtPrecision!
+                    equipped.shootAtPrecision!
                 }
                 """;
         for (var thing :  ScriptReader.readData(script))

@@ -75,10 +75,18 @@ public final class ScriptReader {
         kinetic = readWeapon("kinetic");
         energy = readWeapon("energy");
         power = readWeapon("power");
+        readStartWith();
 
         readScript();
     }
 
+    /**
+     * Method intended for reading the weapons located in the header and calling back upon the database
+     * to build the weapons.
+     * @param slotName the slot to construct a weapon for
+     * @return the weapon specified in the script
+     * @throws SQLException if the database fails to somehow fetch the weapon
+     */
     private static Weapon readWeapon(final String slotName) throws SQLException {
         final String givenSlotName = in.get(position);
         position++;
@@ -92,8 +100,32 @@ public final class ScriptReader {
         } else throw new IllegalArgumentException("Unexpected slot name or invalid slot order in header.");
     }
 
+    private static void readStartWith() {
+        if (!"startswith".equals(in.get(position)))
+            throw new IllegalArgumentException("Expected 'startswith' argument, instead found " + in.get(position));
+
+        position++;
+        equipped = readWeaponSlot(in.get(position));
+        position++;
+    }
+
     private static void readScript() {
         while (position < in.size()) readStatement();
+    }
+
+    private static void readScriptBlock() {
+        if (!"{".equals(in.get(position))) throw new IllegalArgumentException("Expected opening brace '{'");
+        position++;
+
+        try {
+            while (!"}".equals(in.get(position))) {
+                readStatement();
+            }
+        } catch (IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Missing closing brace");
+        }
+        position++;
+
     }
     
     private static void readStatement() {
@@ -103,7 +135,10 @@ public final class ScriptReader {
         switch (token) {
             case "if" -> readConditional();
             case "loop" -> readLoop();
-            default -> readAction();
+            default -> {
+                position--;
+                readAction();
+            }
         }
     }
     
@@ -111,13 +146,9 @@ public final class ScriptReader {
         final boolean result = boolExpr();
         if (!"then".equals(in.get(position))) throw new IllegalArgumentException("Expected 'then' after condition");
         position++;
-        if (!"{".equals(in.get(position))) throw new IllegalArgumentException("Expected opening brace '{'");
-        position++;
 
         if (result) {
-            readScript();
-            if (!"}".equals(in.get(position)))
-                throw new IllegalArgumentException("Expected separated closing brace '}'");
+            readScriptBlock();
         } // otherwise skip this conditional
         else while(!"}".equals(in.get(position))) position++;
         position++;
@@ -233,27 +264,25 @@ public final class ScriptReader {
 
         int loopCount;
         if (loopCountToken.matches("\\d+")) loopCount = Integer.parseInt(loopCountToken);
-        else throw new IllegalArgumentException("Expected loop count but instead found " + loopCountToken);
+        else throw new IllegalArgumentException("Expected loop count integer but instead found " + loopCountToken);
 
         lastBrace.add(position); // right now we are on a brace
 
         while (loopCount > 0) {
             loopCount--;
             position = lastBrace.getLast();
-            position++;
-            readScript();
+            readScriptBlock();
         }
 
         lastBrace.removeLast();
-        if (!"}".equals(in.get(position)))
-            throw new IllegalArgumentException("Expected ending loop brace but instead found " + in.get(position));
+        position++;
     }
     
     private static void readAction() {
         final String token = in.get(position);
         position++;
 
-        if (token.endsWith("!")) throw new IllegalArgumentException("Unknown action " + token);
+        if (!token.endsWith("!")) throw new IllegalArgumentException("Unknown action " + token);
         final String[] splitToken = token.split("[.!]");
         readFunction(splitToken[0], splitToken[1]);
     }

@@ -26,14 +26,16 @@ public final class DatabaseProvider {
     private static final String DB_URL = "jdbc:sqlite:" + DB_FILE.getPath();
 
     static {
-        try {
-            createDatabase();
-            insertDatabase();
-        } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, "Failed to read/create file:\n" + e.getMessage());
-            throw new RuntimeException(e);
-        } catch (final SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to run SQL script:\n" + e.getMessage());
+        if (!DB_FILE.exists()) {
+            try {
+                createDatabase();
+                insertDatabase();
+            } catch (final IOException e) {
+                LOGGER.log(Level.SEVERE, "Failed to read/create file:\n" + e.getMessage());
+                throw new RuntimeException(e);
+            } catch (final SQLException e) {
+                LOGGER.log(Level.SEVERE, "Failed to run SQL script:\n" + e.getMessage());
+            }
         }
     }
 

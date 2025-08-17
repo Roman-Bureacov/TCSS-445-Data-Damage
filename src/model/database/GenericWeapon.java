@@ -121,8 +121,8 @@ public class GenericWeapon implements Weapon {
             fire(1);
             final int damage = getDamageFromType(d);
 
-            final int secPerMin = 60;
-            t.writeEvent(1 / rpm * secPerMin, damage, "fire");
+            final int millisPerMinute = 60 * 1000;
+            t.writeEvent(millisPerMinute / rpm, damage, "fire");
         }
     }
 

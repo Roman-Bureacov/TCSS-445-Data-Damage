@@ -62,8 +62,14 @@ public final class Database {
     public static Weapon buildWeapon(final String weaponFrame, final String weaponType) throws SQLException {
         final String sql =
                 """
-                SELECT * FROM weapons NATURAL JOIN weapon_stats USING weapon_id
-                """;
+                SELECT * 
+                FROM weapons NATURAL JOIN weapon_stats
+                WHERE weapon_id = (
+                    SELECT weapon_id
+                    FROM weapons
+                    WHERE weapon_type = '%s' AND weapon_frame = '%s'
+                )
+                """.formatted(weaponType, weaponFrame);
 
         final ResultSet r;
 
