@@ -86,8 +86,8 @@ public final class Database {
             case "Shotgun" -> buildShotgun(skeleton);
             case "Sword" -> buildSword(skeleton);
             case "ScoutRifle" -> {
-                if ("Aggressive".equals(weaponFrame)) buildAggressiveScoutRifle(skeleton);
-                else buildGenericWeapon(skeleton);
+                if ("Aggressive".equals(weaponFrame)) yield buildAggressiveScoutRifle(skeleton);
+                else yield buildGenericWeapon(skeleton);
             }
             default -> buildGenericWeapon(skeleton);
         };
