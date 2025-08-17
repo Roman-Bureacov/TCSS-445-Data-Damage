@@ -1,4 +1,4 @@
-INSERT INTO weapon_info (weapon_id, weapon_desc, image) VALUES
+INSERT INTO weapon_info (weapon_id, weapon_desc, weapon_image) VALUES
 (1, 'A powerful hand cannon with a high-impact frame.', NULL),
 (2, 'A reliable auto rifle with a balanced recoil pattern.', NULL),
 (3, 'A precision sniper rifle capable of devastating long-range shots.', NULL),

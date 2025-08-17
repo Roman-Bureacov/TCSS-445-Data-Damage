@@ -41,6 +41,10 @@ public final class DatabaseProvider {
         super();
     };
 
+    public static void main(String... args) {
+
+    }
+
     /**
      * Gets the running database connection.
      * @return the connection to the database
@@ -91,8 +95,8 @@ public final class DatabaseProvider {
                 getPath("InsertFusionRifleSpecifics.sql"),
                 getPath("InsertPulseRifleSpecifics.sql"),
                 getPath("InsertWeaponAmmoTypes.sql"),
+                getPath("InsertAmmoTypes.sql"),
                 getPath("InsertWeaponInfo.sql"),
-                getPath("InsertWeaponSlotability.sql"),
                 getPath("InsertWeaponStats.sql"),
         };
 

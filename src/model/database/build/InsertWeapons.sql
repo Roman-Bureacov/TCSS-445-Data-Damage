@@ -2,40 +2,40 @@ INSERT INTO weapons (weapon_type, weapon_frame)
 VALUES
 
 -- primaries
-('AutoRifle', 'Rapid-Fire'),
+('AutoRifle', 'RapidFire'),
 ('AutoRifle', 'Adaptive'),
 ('AutoRifle', 'Support'),
 ('AutoRifle', 'Precision'),
-('AutoRifle', 'High-Impact'),
+('AutoRifle', 'HighImpact'),
 
 ('SMG', 'Precision'),
 ('SMG', 'Aggressive'),
 ('SMG', 'Adaptive'),
 ('SMG', 'Lightweight'),
 
-('PulseRifle', 'Rapid-Fire'),
+('PulseRifle', 'RapidFire'),
 ('PulseRifle', 'Lightweight'),
-('PulseRifle', 'Legacy PR-55'),
+('PulseRifle', 'LegacyPR55'),
 ('PulseRifle', 'Adaptive'),
-('PulseRifle', 'High-Impact'),
-('PulseRifle', 'Aggressive Burst'),
-('PulseRifle', 'Heavy Burst'),
+('PulseRifle', 'HighImpact'),
+('PulseRifle', 'AggressiveBurst'),
+('PulseRifle', 'HeavyBurst'),
 
-('ScoutRifle', 'Rapid-Fire'),
+('ScoutRifle', 'RapidFire'),
 ('ScoutRifle', 'Lightweight'),
 ('ScoutRifle', 'Precision'),
-('ScoutRifle', 'High-Impact'),
+('ScoutRifle', 'HighImpact'),
 ('ScoutRifle', 'Aggressive'),
 
 ('HandCannon', 'Aggressive'),
 ('HandCannon', 'Precision'),
-('HandCannon', 'Heavy Burst'),
+('HandCannon', 'HeavyBurst'),
 ('HandCannon', 'Lightweight'),
 ('HandCannon', 'Adaptive'),
 
-('Sidearm', 'Adaptive Burst'),
-('Sidearm', 'Rapid-Fire'),
-('Sidearm', 'Heavy Burst'),
+('Sidearm', 'AdaptiveBurst'),
+('Sidearm', 'RapidFire'),
+('Sidearm', 'HeavyBurst'),
 ('Sidearm', 'Precision'),
 ('Sidearm', 'Adaptive'),
 ('Sidearm', 'Lightweight'),
@@ -44,51 +44,50 @@ VALUES
 ('Bow', 'Precision'),
 
 -- specials
-('SniperRifle', 'Rapid-Fire'),
+('SniperRifle', 'RapidFire'),
 ('SniperRifle', 'Adaptive'),
 ('SniperRifle', 'Aggressive'),
 
 ('TraceRifle', 'Adaptive'),
 
-('FusionRifle', 'Rapid-Fire'),
+('FusionRifle', 'RapidFire'),
 ('FusionRifle', 'Adaptive'),
 ('FusionRifle', 'Aggressive'),
 ('FusionRifle', 'Precision'),
-('FusionRifle', 'High-Impact'),
+('FusionRifle', 'HighImpact'),
 
-('Shotgun', 'Rapid-Fire'),
+('Shotgun', 'RapidFire'),
 ('Shotgun', 'Lightweight'),
 ('Shotgun', 'Precision'),
-('Shotgun', 'Pinpoint Slug'),
+('Shotgun', 'PinpointSlug'),
 ('Shotgun', 'Aggressive'),
-('Shotgun', 'Heavy Burst'),
+('Shotgun', 'HeavyBurst'),
 
-('BreechGrenadeLauncher', 'Double Fire'),
+('BreechGrenadeLauncher', 'DoubleFire'),
 ('BreechGrenadeLauncher', 'Lightweight'),
 ('BreechGrenadeLauncher', 'Wave'),
-('BreechGrenadeLauncher', 'Micro-Missile'),
--- (54, 'BreechGrenadeLauncher', 'Area Denial'), -- might implement later, has some quirks about it
+('BreechGrenadeLauncher', 'MicroMissile'),
 
-('Glaive', 'Rapid-Fire'),
+('Glaive', 'RapidFire'),
 ('Glaive', 'Adaptive'),
 ('Glaive', 'Aggressive'),
 
-('Sidearm', 'Rocket-Assisted'),
+('Sidearm', 'RocketAssisted'),
 
 -- power weapons
-('MachineGun', 'Rapid-Fire'),
+('MachineGun', 'RapidFire'),
 ('MachineGun', 'Aggressive'),
 ('MachineGun', 'Adaptive'),
-('MachineGun', 'High-Impact'),
+('MachineGun', 'HighImpact'),
 
-('GrenadeLauncher', 'Rapid-Fire'),
+('GrenadeLauncher', 'RapidFire'),
 ('GrenadeLauncher', 'Adaptive'),
-('GrenadeLauncher', 'Compressed Wave'),
+('GrenadeLauncher', 'CompressedWave'),
 
 ('RocketLauncher', 'Aggressive'),
 ('RocketLauncher', 'Adaptive'),
-('RocketLauncher', 'High-Impact'),
+('RocketLauncher', 'HighImpact'),
 ('RocketLauncher', 'Precision'),
 
 ('LinearFusionRifle', 'Precision'),
-('LinearFusionRifle', 'Adaptive Burst');
+('LinearFusionRifle', 'AdaptiveBurst');
