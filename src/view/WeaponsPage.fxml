@@ -26,18 +26,18 @@
                     <Label text="Frame" GridPane.rowIndex="4"/>
                     <TextField styleClass="field" fx:id="frameField" promptText="Type" GridPane.rowIndex="5"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="6" />
-                    
 
-                    <Label text="Energy Slot" GridPane.rowIndex="7"/>
-                    <CheckBox styleClass="field" fx:id="energyField" GridPane.rowIndex="8"/>
+                    <Label text="Ammo Type" GridPane.rowIndex="7"/>
+                    <fx:define>
+                        <ToggleGroup fx:id="ammoGroup"/>
+                    </fx:define>
+                    <RadioButton fx:id="primaryRadio" styleClass="field" text="Primary" onAction="#primaryAmmo" GridPane.rowIndex="8" toggleGroup="$ammoGroup"/>
 
+                    <RadioButton fx:id="specialRadio" styleClass="field" text="Special" onAction="#specialAmmo" GridPane.rowIndex="10" toggleGroup="$ammoGroup"/>
 
-                    <Label text="Kinetic Slot" GridPane.rowIndex="9"/>
-                    <CheckBox styleClass="field" fx:id="kineticField" GridPane.rowIndex="10"/>
+                    <RadioButton fx:id="heavyRadio" styleClass="field" text="Heavy" onAction="#heavyAmmo" GridPane.rowIndex="12" toggleGroup="$ammoGroup"/>
 
-                    <Label text="Power Slot" GridPane.rowIndex="11"/>
-                    <CheckBox styleClass="field" fx:id="powerField" GridPane.rowIndex="12"/>
-                    <Label styleClass="label" text=" " GridPane.rowIndex="13" />
+                    <Label styleClass="label" text=" " GridPane.rowIndex="13"/>
                     
 
                     <Label text="True DPS" GridPane.rowIndex="14"/>
@@ -108,7 +108,6 @@
                 <TableView styleClass="weapons-table" fx:id="weaponsTable"
                            maxWidth="1500">
                     <columns>
-                        <TableColumn styleClass="weapons-table" fx:id="colImage"/>
                         <TableColumn styleClass="weapons-table" fx:id="colType" text="Type"/>
                         <TableColumn styleClass="weapons-table" fx:id="colFrame" text="Frame"/>
                         <TableColumn styleClass="weapons-table" fx:id="colDescription" text="Description"/>
@@ -116,15 +115,13 @@
                         <TableColumn styleClass="weapons-table" fx:id="colTheo" text="Theo Total"/>
                         <TableColumn styleClass="weapons-table" fx:id="colSust" text="Sustained DPS"/>
                         <TableColumn styleClass="weapons-table" fx:id="colTrue" text="True DPS"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colReserve" text="Reserve"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colReserves" text="Reserves"/>
                         <TableColumn styleClass="weapons-table" fx:id="colMagazine" text="Mag"/>
                         <TableColumn styleClass="weapons-table" fx:id="colFireRate" text="RPM"/>
                         <TableColumn styleClass="weapons-table" fx:id="colReload" text="Reload(s)"/>
                         <TableColumn styleClass="weapons-table" fx:id="colBody" text="Body"/>
                         <TableColumn styleClass="weapons-table" fx:id="colPrecision" text="Precision"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colKinetic" text="Kinetic"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colEnergy" text="Energy"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colPower" text="Power"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colAmmoType" text="Ammo Type"/>
                     </columns>
                 </TableView>
             </StackPane>

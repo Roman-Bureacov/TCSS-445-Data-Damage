@@ -84,20 +84,21 @@ public class ScriptsPageController {
     private ResultSet queryScripts() throws SQLException {
         StringBuilder baseSql = new StringBuilder("""
             SELECT
-                s.save_name,
-                k.frame AS kinetic_frame,
+                s.sim_name,
+                k.weapon_frame AS kinetic_frame,
                 k.weapon_type AS kinetic_type,
-                e.frame AS energy_frame,
+                e.weapon_frame AS energy_frame,
                 e.weapon_type AS energy_type,
-                p.frame AS power_frame,
+                p.weapon_frame AS power_frame,
                 p.weapon_type AS power_type,
-                s.average_dps,
-                s.total_damage,
+                sm.average_dps,
+                sm.total_damage,
                 s.save_date
             FROM sims s
-            LEFT JOIN weapons k ON k.weapon_id = s.kinetic
-            LEFT JOIN weapons e ON e.weapon_id = s.energy
-            LEFT JOIN weapons p ON p.weapon_id = s.power;
+            Left JOIN sims_meta sm ON sm.script_id = s.sim_id
+            LEFT JOIN weapons k ON k.weapon_id = sm.kinetic
+            LEFT JOIN weapons e ON e.weapon_id = sm.energy
+            LEFT JOIN weapons p ON p.weapon_id = sm.power;
         """);
 
         List<String> queries = new ArrayList<>();
@@ -105,18 +106,18 @@ public class ScriptsPageController {
 
         if (saveName.getText() != null && !saveName.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
+                SELECT s.sim_id
                 FROM sims s
-                WHERE s.save_name = ?
+                WHERE s.sim_name = ?
             """);
             params.add(saveName.getText().trim());
         }
 
         if (kineticFrame.getText() != null && !kineticFrame.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
-                LEFT JOIN weapons w ON s.kinetic = w.weapons_id
+                SELECT sm.script_id
+                FROM sims_meta sm
+                LEFT JOIN weapons w ON sm.kinetic = w.weapons_id
                 WHERE w.frame = ?
             """);
             params.add(kineticFrame.getText().trim());
@@ -124,9 +125,9 @@ public class ScriptsPageController {
 
         if (kineticType.getText() != null && !kineticType.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
-                LEFT JOIN weapons w ON s.kinetic = w.weapons_id
+                SELECT sm.script_id
+                FROM sims_meta sm
+                LEFT JOIN weapons w ON sm.kinetic = w.weapons_id
                 WHERE w.weapon_type = ?
             """);
             params.add(kineticType.getText().trim());
@@ -134,9 +135,9 @@ public class ScriptsPageController {
 
         if (energyFrame.getText() != null && !energyFrame.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
-                LEFT JOIN weapons w ON s.energy = w.weapons_id
+                SELECT sm.script_id
+                FROM sims_meta sm
+                LEFT JOIN weapons w ON sm.energy = w.weapons_id
                 WHERE w.frame = ?
             """);
             params.add(energyFrame.getText().trim());
@@ -144,9 +145,9 @@ public class ScriptsPageController {
 
         if (energyType.getText() != null && !energyType.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
-                LEFT JOIN weapons w ON s.energy = w.weapons_id
+                SELECT sm.id
+                FROM sims_meta sm
+                LEFT JOIN weapons w ON sm.energy = w.weapons_id
                 WHERE w.weapon_type = ?
             """);
             params.add(energyType.getText().trim());
@@ -154,9 +155,9 @@ public class ScriptsPageController {
 
         if (powerFrame.getText() != null && !powerFrame.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
-                LEFT JOIN weapons w ON s.power = w.weapons_id
+                SELECT sm.id
+                FROM sims_meta sm
+                LEFT JOIN weapons w ON sm.energy = w.weapons_id
                 WHERE w.frame = ?
             """);
             params.add(powerFrame.getText().trim());
@@ -164,9 +165,9 @@ public class ScriptsPageController {
 
         if (powerType.getText() != null && !powerType.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
-                LEFT JOIN weapons w ON s.power = w.weapons_id
+                SELECT sm.id
+                FROM sims_meta sm
+                LEFT JOIN weapons w ON sm.energy = w.weapons_id
                 WHERE w.weapon_type = ?
             """);
             params.add(powerType.getText().trim());
@@ -174,8 +175,8 @@ public class ScriptsPageController {
 
         if(avgDPS.getText() != null && !avgDPS.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
+                SELECT sm.script_id
+                FROM sims_meta sm
                 WHERE average_dps = ?
             """);
             params.add(Double.parseDouble(avgDPS.getText().trim()));
@@ -183,8 +184,8 @@ public class ScriptsPageController {
 
         if(totalDamage.getText() != null && !totalDamage.getText().trim().isEmpty()) {
             queries.add("""
-                SELECT s.id
-                FROM sims s
+                SELECT sm.script_id
+                FROM sims_meta sm
                 WHERE total_damage = ?
             """);
             params.add(Integer.parseInt(totalDamage.getText().trim()));

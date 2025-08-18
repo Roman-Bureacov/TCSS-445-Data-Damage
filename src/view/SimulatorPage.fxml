@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.SimulatorPageController">
 
-        <HBox AnchorPane.topAnchor="0.0"
-              AnchorPane.rightAnchor="0.0"
-              AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0"
-              spacing="20" fillHeight="true">
+    <HBox spacing="20" fillHeight="true" AnchorPane.topAnchor="20.0"
+          AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0">
 
-            <AnchorPane HBox.hgrow="ALWAYS">
-                <fx:include source="ScriptEditor.fxml" HBox.hgrow="ALWAYS"/>
-            </AnchorPane>
+        <fx:include prefWidth="800" maxWidth="800" source="ScriptEditor.fxml" fx:id="scriptEditor" HBox.hgrow="ALWAYS"/>
+        <fx:include source="GraphDisplay.fxml" fx:id="graphDisplay" HBox.hgrow="ALWAYS"/>
 
-            <AnchorPane HBox.hgrow="ALWAYS">
-                <fx:include source="GraphDisplay.fxml" HBox.hgrow="ALWAYS"/>
-            </AnchorPane>
-        </HBox>
+    </HBox>
 </AnchorPane>
