@@ -29,6 +29,7 @@ public final class DatabaseProvider {
     static {
         if (!DB_FILE.exists()) {
             try {
+                CONNECTION = DriverManager.getConnection(DB_URL);
                 createDatabase();
                 insertDatabase();
             } catch (final IOException e) {
@@ -39,12 +40,13 @@ public final class DatabaseProvider {
                 throw new ExceptionInInitializerError(e);
             }
         }
-
-        try {
-            CONNECTION = DriverManager.getConnection(DB_URL);
-        } catch (final SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to establish connection:\n" + e.getMessage());
-            throw new ExceptionInInitializerError(e);
+        else {
+            try {
+                CONNECTION = DriverManager.getConnection(DB_URL);
+            } catch (final SQLException e) {
+                LOGGER.log(Level.SEVERE, "Failed to establish connection:\n" + e.getMessage());
+                throw new ExceptionInInitializerError(e);
+            }
         }
     }
 
@@ -62,6 +64,9 @@ public final class DatabaseProvider {
      * @throws SQLException if the connection failed
      */
     public static Connection getConnection() throws SQLException {
+        if(CONNECTION.isClosed()){
+            return DriverManager.getConnection(DB_URL);
+        }
         return CONNECTION;
     }
 
@@ -71,19 +76,17 @@ public final class DatabaseProvider {
      * @throws SQLException if it failed to parse the init script
      */
     private static void createDatabase() throws IOException, SQLException {
-        if (!DB_FILE.exists()) {
-            final Connection c = getConnection();
-            LOGGER.info("Creating database...");
-            final String creationScript = Files.readString(INIT_SCRIPT.toPath());
-            for (String statement : creationScript.split(";")) {
-                try (Statement s = c.createStatement()) {
-                    s.execute(statement);
-                } catch (SQLException e) {
-                    LOGGER.warning("Failed to run statement:\n" + statement + "\nCause:\n" + e);
-                }
+        final Connection c = getConnection();
+        LOGGER.info("Creating database...");
+        final String creationScript = Files.readString(INIT_SCRIPT.toPath());
+        for (String statement : creationScript.split(";")) {
+            try (Statement s = c.createStatement()) {
+                s.execute(statement);
+            } catch (SQLException e) {
+                LOGGER.warning("Failed to run statement:\n" + statement + "\nCause:\n" + e);
             }
-            LOGGER.info("Database creation complete!");
         }
+        LOGGER.info("Database creation complete!");
     }
 
     /**

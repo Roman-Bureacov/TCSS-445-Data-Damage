@@ -206,13 +206,12 @@ public class ScriptsPageController {
 
         List<Set<Integer>> idSets = new ArrayList<>();
         for (int i = 0; i < queries.size(); i++) {
-            try (ResultSet rs = Database.getInstance().executeQuery(queries.get(i), params.get(i))) {
-                Connection c = rs.getStatement().getConnection();
-                Set<Integer> s = new HashSet<>();
-                while (rs.next()) s.add(rs.getInt(1));
-                c.close();
-                idSets.add(s);
+            ResultSet rs = Database.getInstance().executeQuery(queries.get(i), params.get(i));
+            Set<Integer> s = new HashSet<>();
+            while (rs.next()) {
+                s.add(rs.getInt(1));
             }
+            idSets.add(s);
         }
 
         for (Set<Integer> s : idSets) {

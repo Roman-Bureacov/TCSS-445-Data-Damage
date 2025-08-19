@@ -50,7 +50,6 @@ public final class Database {
             preparedStatementstmt.setObject(i + 1, params[i]);
         }
         return preparedStatementstmt.executeQuery();
-
     }
 
     public int executeUpdate(String sql, Object... params) throws SQLException {

@@ -11,8 +11,7 @@ import model.script.ScriptReader;
 import model.script.TimeSheet;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
