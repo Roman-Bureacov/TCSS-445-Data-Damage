@@ -65,9 +65,8 @@ public final class ScriptReader {
      * @param script the script to base the simulation upon.
      * @return the simulation data
      * @throws IllegalArgumentException if the script has syntax errors
-     * @throws SQLException if the script failed to find data from the database
      */
-    public static TimeSheet readData(final String script) throws IllegalArgumentException, SQLException {
+    public static TimeSheet readData(final String script) throws IllegalArgumentException {
         data = new TimeSheet();
         final Scanner input = new Scanner(script);
         in = new ArrayList<>();
@@ -78,6 +77,8 @@ public final class ScriptReader {
             readHeader(); // initiates the grammar
         } catch (final TimeSheet.NoMoreTimeException e) {
             return data;
+        } catch (final SQLException e) {
+            throw new IllegalArgumentException("Failed to find weapons from database");
         }
         return data;
     }
