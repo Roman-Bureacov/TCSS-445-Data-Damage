@@ -3,12 +3,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
-<BorderPane styleClass="foreground-dark"
-            AnchorPane.topAnchor="20.0"
-            AnchorPane.rightAnchor="20.0"
-            AnchorPane.bottomAnchor="20.0"
-            AnchorPane.leftAnchor="0.0" xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.GraphDisplayController">
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<BorderPane styleClass="dark-chart"
+            AnchorPane.topAnchor="20.0" AnchorPane.rightAnchor="20.0"
+            AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0"
+            xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.GraphDisplayController">
+
     <center>
-        <Label text="GRAPH DISPLAY" BorderPane.alignment="CENTER" textFill="white"/>
+        <LineChart fx:id="chart" animated="true" legendVisible="false">
+            <xAxis>
+                <NumberAxis fx:id="xAxis" label="Time (s)"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yAxis" label="Cumulative Damage"/>
+            </yAxis>
+        </LineChart>
     </center>
 </BorderPane>

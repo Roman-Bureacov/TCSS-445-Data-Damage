@@ -81,6 +81,17 @@ CREATE TABLE sims_scripts (
     script TEXT
 );
 
+CREATE TABLE sim_events (
+    event_id INTEGER PRIMARY KEY,
+    script_id INTEGER,
+    timestamps INTEGER,
+    damage_instance INTEGER,
+    event_desc TEXT,
+    FOREIGN KEY (script_id)
+        REFERENCES sims (script_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE pulse_rifle_specifics (
            weapon_id INTEGER PRIMARY KEY,
            burst_count INTEGER DEFAULT 3 CHECK (burst_count > 0),

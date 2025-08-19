@@ -1,26 +1,22 @@
 package Controller;
 
 import javafx.beans.property.*;
-import javafx.scene.image.Image;
 
 public class WeaponRow {
     private final StringProperty weaponType = new SimpleStringProperty("");
     private final StringProperty frame = new SimpleStringProperty("");
-    private final IntegerProperty reserve = new SimpleIntegerProperty(0);
+    private final StringProperty ammo = new SimpleStringProperty("");
+    private final IntegerProperty reserves = new SimpleIntegerProperty(0);
     private final IntegerProperty magazine = new SimpleIntegerProperty(0);
     private final IntegerProperty fireRate = new SimpleIntegerProperty(0);
     private final DoubleProperty reload = new SimpleDoubleProperty(0.0);
     private final IntegerProperty body = new SimpleIntegerProperty(0);
     private final IntegerProperty precision = new SimpleIntegerProperty(0);
-    private final BooleanProperty kinetic = new SimpleBooleanProperty(false);
-    private final BooleanProperty energy = new SimpleBooleanProperty(false);
-    private final BooleanProperty power = new SimpleBooleanProperty(false);
     private final IntegerProperty oneMagDamage = new SimpleIntegerProperty(0);
     private final IntegerProperty theoreticalTotalDamage = new SimpleIntegerProperty(0);
     private final DoubleProperty sustainedDps = new SimpleDoubleProperty(0.0);
     private final DoubleProperty trueDps = new SimpleDoubleProperty(0.0);
-    private final StringProperty weapon_disc = new SimpleStringProperty("");
-    private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
+    private final StringProperty weapon_desc = new SimpleStringProperty("");
 
     public String getWeaponType(){
         return weaponType.get();
@@ -38,12 +34,12 @@ public class WeaponRow {
         frame.set(v);
     }
 
-    public int getReserve(){
-        return reserve.get();
+    public int getReserves(){
+        return reserves.get();
     }
 
-    public void setReserve(int v){
-        reserve.set(v);
+    public void setReserves(int v){
+        reserves.set(v);
     }
 
     public int getMagazine(){
@@ -86,28 +82,12 @@ public class WeaponRow {
         precision.set(v);
     }
 
-    public boolean isKinetic(){
-        return kinetic.get();
+    public String getAmmo(){
+        return ammo.get();
     }
 
-    public void setKinetic(boolean v){
-        kinetic.set(v);
-    }
-
-    public boolean isEnergy(){
-        return energy.get();
-    }
-
-    public void setEnergy(boolean v){
-        energy.set(v);
-    }
-
-    public boolean isPower(){
-        return power.get();
-    }
-
-    public void setPower(boolean v){
-        power.set(v);
+    public void setAmmo(String v){
+        ammo.set(v);
     }
 
     public int getOneMagDamage(){
@@ -142,20 +122,12 @@ public class WeaponRow {
         trueDps.set(v);
     }
 
-    public String getWeapon_disc() {
-        return weapon_disc.get();
+    public String getWeapon_desc() {
+        return weapon_desc.get();
     }
 
     public void setDescription(String v) {
-        weapon_disc.set(v);
-    }
-
-    public Image getImage() {
-        return image.get();
-    }
-
-    public void setImage(Image v) {
-        image.set(v);
+        weapon_desc.set(v);
     }
 }
 

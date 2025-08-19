@@ -1,9 +1,9 @@
 package Controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import model.database.Database;
 import java.sql.*;
 import java.util.*;
@@ -11,9 +11,11 @@ import java.util.*;
 public class WeaponsPageController {
     public TextField typeField;
     public TextField frameField;
-    public CheckBox energyField;
-    public CheckBox kineticField;
-    public CheckBox powerField;
+    @FXML private ToggleGroup ammoGroup;
+    public int ammoType;
+    public RadioButton primaryRadio;
+    public RadioButton specialRadio;
+    public RadioButton heavyRadio;
     public TextField trueDPSField;
     public TextField sustainedDPSField;
     public TextField theoreticalTotalDamageField;
@@ -25,7 +27,6 @@ public class WeaponsPageController {
     public TextField timeToEmptyField;
     public TextField bodyDamageField;
     public TextField precisionDamageField;
-    @FXML public TableColumn<WeaponRow, Image> colImage;
     @FXML public TableColumn<WeaponRow, String> colDescription;
     @FXML private TableColumn<WeaponRow, Integer> colOneMag;
     @FXML private TableColumn<WeaponRow, Integer> colTheo;
@@ -33,29 +34,30 @@ public class WeaponsPageController {
     @FXML private TableColumn<WeaponRow, Double>  colTrue;
     @FXML private TableView<WeaponRow> weaponsTable;
     @FXML private TableColumn<WeaponRow,String>  colType, colFrame;
-    @FXML private TableColumn<WeaponRow,Integer> colReserve, colMagazine, colFireRate, colBody, colPrecision;
+    @FXML private TableColumn<WeaponRow,Integer> colReserves, colMagazine, colFireRate, colBody, colPrecision;
     @FXML private TableColumn<WeaponRow,Double>  colReload;
-    @FXML private TableColumn<WeaponRow,Boolean> colKinetic, colEnergy, colPower;
+    @FXML private TableColumn<WeaponRow,String> colAmmoType;
 
     @FXML
     public void initialize() {
+        ammoType = 0;
+        primaryRadio.setToggleGroup(ammoGroup);
+        specialRadio.setToggleGroup(ammoGroup);
+        heavyRadio.setToggleGroup(ammoGroup);
         colOneMag.setCellValueFactory(new PropertyValueFactory<>("oneMagDamage"));
         colTheo.setCellValueFactory(new PropertyValueFactory<>("theoreticalTotalDamage"));
         colSust.setCellValueFactory(new PropertyValueFactory<>("sustainedDps"));
         colTrue.setCellValueFactory(new PropertyValueFactory<>("trueDps"));
         colType.setCellValueFactory(new PropertyValueFactory<>("weaponType"));
         colFrame.setCellValueFactory(new PropertyValueFactory<>("frame"));
-        colReserve.setCellValueFactory(new PropertyValueFactory<>("reserve"));
+        colReserves.setCellValueFactory(new PropertyValueFactory<>("reserves"));
         colMagazine.setCellValueFactory(new PropertyValueFactory<>("magazine"));
         colFireRate.setCellValueFactory(new PropertyValueFactory<>("fireRate"));
         colReload.setCellValueFactory(new PropertyValueFactory<>("reload"));
         colBody.setCellValueFactory(new PropertyValueFactory<>("body"));
         colPrecision.setCellValueFactory(new PropertyValueFactory<>("precision"));
-        colKinetic.setCellValueFactory(new PropertyValueFactory<>("kinetic"));
-        colEnergy.setCellValueFactory(new PropertyValueFactory<>("energy"));
-        colPower.setCellValueFactory(new PropertyValueFactory<>("power"));
-        colDescription.setCellValueFactory(new PropertyValueFactory<>("weapon_disc"));
-        colImage.setCellValueFactory(new PropertyValueFactory<>("image"));
+        colAmmoType.setCellValueFactory(new PropertyValueFactory<>("ammo"));
+        colDescription.setCellValueFactory(new PropertyValueFactory<>("weapon_desc"));
 
         onSearch();
     }
@@ -74,21 +76,19 @@ public class WeaponsPageController {
                     WeaponRow row = new WeaponRow();
 
                     row.setWeaponType(rs.getString("weapon_type"));
-                    row.setFrame(rs.getString("frame"));
-                    row.setReserve(rs.getInt("reserve"));
+                    row.setFrame(rs.getString("weapon_frame"));
+                    row.setReserves(rs.getInt("reserves"));
                     row.setMagazine(rs.getInt("magazine"));
                     row.setFireRate(rs.getInt("fire_rate"));
                     row.setReload(rs.getDouble("reload_speed"));
                     row.setBody(rs.getInt("body_damage"));
                     row.setPrecision(rs.getInt("precision_damage"));
-                    row.setKinetic(rs.getInt("in_kinetic") == 1);
-                    row.setEnergy(rs.getInt("in_energy")  == 1);
-                    row.setPower(rs.getInt("in_power")   == 1);
+                    row.setAmmo(rs.getString("ammo"));
                     row.setOneMagDamage(rs.getInt("one_mag_damage"));
                     row.setTheoreticalTotalDamage(rs.getInt("theoretical_total_damage"));
                     row.setSustainedDps(rs.getDouble("sustained_dps"));
                     row.setTrueDps(rs.getDouble("true_dps"));
-                    row.setDescription(rs.getString("weapon_disc"));
+                    row.setDescription(rs.getString("weapon_desc"));
 
                     weaponsTable.getItems().add(row);
                 }
@@ -101,22 +101,23 @@ public class WeaponsPageController {
     private ResultSet queryWeapons() throws SQLException {
         StringBuilder baseSql = new StringBuilder("""
             SELECT
-                w.weapon_id, w.weapon_type, w.frame,
-                wi.weapon_disc, wi.image,
-                d.reserve, d.fire_rate, d.reload_speed, d.magazine,
-                d.body_damage, d.precision_damage,
-                s.in_kinetic, s.in_energy, s.in_power,
-                (d.magazine * d.precision_damage) AS one_mag_damage,
-                (d.reserve * d.precision_damage) AS theoretical_total_damage,
-                CASE WHEN d.fire_rate IS NULL OR d.fire_rate = 0 THEN NULL
-                     ELSE ROUND ((d.magazine * d.precision_damage) / (((d.magazine - 1) * (60.0 / d.fire_rate)) + d.reload_speed ),1)
+                w.weapon_id, w.weapon_type, w.weapon_frame,
+                wi.weapon_desc,
+                ws.reserves, ws.fire_rate, ws.reload_speed, ws.magazine,
+                ws.body_damage, ws.precision_damage,
+                at.ammo,
+                (ws.magazine * ws.precision_damage) AS one_mag_damage,
+                (ws.reserves * ws.precision_damage) AS theoretical_total_damage,
+                CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
+                     ELSE ROUND ((ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed ),1)
                 END AS sustained_dps,
-                CASE WHEN d.fire_rate IS NULL OR d.fire_rate = 0 THEN NULL
-                     ELSE ROUND ((d.magazine * d.precision_damage) / (d.magazine * (60.0 / d.fire_rate)), 1) 
+                CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
+                     ELSE ROUND ((ws.magazine * ws.precision_damage) / (ws.magazine * (60.0 / ws.fire_rate)), 1) 
                 END AS true_dps 
             FROM weapons w
-            LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-            LEFT JOIN slotability s ON s.weapon_id = w.weapon_id
+            LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+            LEFT JOIN weapon_ammo wa ON wa.weapon_id = w.weapon_id
+            LEFT JOIN ammo_types at ON at.ammo_id = wa.ammo_id
             LEFT JOIN weapon_info wi ON wi.weapon_id = w.weapon_id
         """);
 
@@ -136,45 +137,27 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                WHERE w.frame = ?
+                WHERE w.weapon_frame = ?
             """);
             params.add(frameField.getText().trim());
         }
 
-        if (energyField.isSelected()) {
+        if (ammoType != 0){
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN slotability s ON s.weapon_id = w.weapon_id
-                WHERE s.in_energy = ?
+                LEFT JOIN weapon_ammo wa ON wa.weapon_id = w.weapon_id
+                WHERE wa.ammo_id = ?
             """);
-            params.add(1);
-        }
-        if (kineticField.isSelected()) {
-            queries.add("""
-                SELECT w.weapon_id
-                FROM weapons w
-                LEFT JOIN slotability s ON s.weapon_id = w.weapon_id
-                WHERE s.in_kinetic = ?
-            """);
-            params.add(1);
-        }
-        if (powerField.isSelected()) {
-            queries.add("""
-                SELECT w.weapon_id
-                FROM weapons w
-                LEFT JOIN slotability s ON s.weapon_id = w.weapon_id
-                WHERE s.in_power = ?
-            """);
-            params.add(1);
+            params.add(ammoType);
         }
 
         if (magCapacityField.getText() != null && !magCapacityField.getText().trim().isEmpty()) {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE d.magazine > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.magazine > ?
             """);
             params.add(Integer.parseInt(magCapacityField.getText().trim()));
         }
@@ -182,8 +165,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE d.reserve > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.reserves > ?
             """);
             params.add(Integer.parseInt(reservesMagazineField.getText().trim()));
         }
@@ -191,8 +174,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE d.fire_rate > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.fire_rate > ?
             """);
             params.add(Integer.parseInt(fireRateField.getText().trim()));
         }
@@ -200,8 +183,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE d.reload_speed < ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.reload_speed < ?
             """);
             params.add(Double.parseDouble(reloadSpeedField.getText().trim()));
         }
@@ -209,8 +192,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE d.body_damage > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.body_damage > ?
             """);
             params.add(Integer.parseInt(bodyDamageField.getText().trim()));
         }
@@ -218,8 +201,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE d.precision_damage > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.precision_damage > ?
             """);
             params.add(Integer.parseInt(precisionDamageField.getText().trim()));
         }
@@ -228,8 +211,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE ((d.magazine * d.precision_damage) / ( d.magazine * (60.0 / d.fire_rate) ) > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ((ws.magazine * ws.precision_damage) / ( ws.magazine * (60.0 / ws.fire_rate) ) > ?
             """);
             params.add(Double.parseDouble(trueDPSField.getText().trim()));
         }
@@ -238,8 +221,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE (d.magazine * d.precision_damage) / (((d.magazine - 1) * (60.0 / d.fire_rate)) + d.reload_speed)
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE (ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed)
             """);
             params.add(Double.parseDouble(sustainedDPSField.getText().trim()));
         }
@@ -248,8 +231,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE (d.reserve * d.precision_damage) > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE (ws.reserves * ws.precision_damage) > ?
             """);
             params.add(Double.parseDouble(theoreticalTotalDamageField.getText().trim()));
         }
@@ -258,8 +241,8 @@ public class WeaponsPageController {
             queries.add("""
                 SELECT w.weapon_id
                 FROM weapons w
-                LEFT JOIN damage d ON d.weapon_id = w.weapon_id
-                WHERE (d.magazine * d.precision_damage) > ?
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE (ws.magazine * ws.precision_damage) > ?
             """);
             params.add(Double.parseDouble(oneMagDamageField.getText().trim()));
         }
@@ -305,5 +288,17 @@ public class WeaponsPageController {
 
         Object[] bind = finalIds.stream().map(Integer::valueOf).toArray();
         return Database.getInstance().executeQuery(finalSql.toString(), bind);
+    }
+
+    public void primaryAmmo(ActionEvent actionEvent) {
+        ammoType = 1;
+    }
+
+    public void specialAmmo(ActionEvent actionEvent) {
+        ammoType = 2;
+    }
+
+    public void heavyAmmo(ActionEvent actionEvent) {
+        ammoType = 3;
     }
 }

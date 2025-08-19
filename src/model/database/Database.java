@@ -36,7 +36,7 @@ public final class Database {
         return instance;
     }
 
-     /**
+    /**
      *
      * @param sql
      * @param params
@@ -44,12 +44,39 @@ public final class Database {
      * @throws SQLException
      */
     public ResultSet executeQuery(String sql, Object... params) throws SQLException {
-        Connection conn = DatabaseProvider.getConnection();
-        PreparedStatement preparedStatementstmt = conn.prepareStatement(sql);
-        for (int i = 0; i < params.length; i++) {
-            preparedStatementstmt.setObject(i + 1, params[i]);
+        try(Connection conn = DatabaseProvider.getConnection();
+        PreparedStatement preparedStatementstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                preparedStatementstmt.setObject(i + 1, params[i]);
+            }
+            return preparedStatementstmt.executeQuery();
         }
-        return preparedStatementstmt.executeQuery();
+    }
+
+    public int executeUpdate(String sql, Object... params) throws SQLException {
+        try (Connection conn = DatabaseProvider.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++){
+                ps.setObject(i + 1, params[i]);
+            }
+            return ps.executeUpdate();
+        }
+    }
+
+    public long executeInsertReturningId(String sql, Object... params) throws SQLException {
+        try (Connection conn = DatabaseProvider.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            for (int i = 0; i < params.length; i++){
+                ps.setObject(i + 1, params[i]);
+            }
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()){
+                    return keys.getLong(1);
+                }
+                throw new SQLException("No generated key returned.");
+            }
+        }
     }
 
     /**
