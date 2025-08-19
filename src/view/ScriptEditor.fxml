@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane styleClass="text-area"
+<BorderPane styleClass="script-area"
             AnchorPane.topAnchor="20.0"
             AnchorPane.rightAnchor="0.0"
             AnchorPane.bottomAnchor="20.0"

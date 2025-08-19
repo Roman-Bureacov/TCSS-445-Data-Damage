@@ -54,8 +54,15 @@
 .text-area {
     -fx-background-insets: 0;
     -fx-border-color: #232323;
-
 }
+
+.script-area {
+    -fx-background-insets: 0;
+    -fx-border-color: #232323;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 15px;
+}
+
 .text-area .content {
     -fx-background-color: #2b2d30;
     -fx-border-color: #232323;
