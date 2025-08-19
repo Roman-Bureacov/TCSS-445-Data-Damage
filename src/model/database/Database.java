@@ -49,9 +49,7 @@ public final class Database {
             for (int i = 0; i < params.length; i++) {
                 preparedStatementstmt.setObject(i + 1, params[i]);
             }
-            ResultSet resultSet = preparedStatementstmt.executeQuery();
-            conn.close();
-            return resultSet;
+            return preparedStatementstmt.executeQuery();
         }
     }
 
@@ -61,9 +59,7 @@ public final class Database {
             for (int i = 0; i < params.length; i++){
                 ps.setObject(i + 1, params[i]);
             }
-            int id = ps.executeUpdate();
-            conn.close();
-            return id;
+            return ps.executeUpdate();
         }
     }
 
@@ -76,9 +72,7 @@ public final class Database {
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()){
-                    long id = keys.getLong(1);
-                    conn.close();
-                    return id;
+                    return keys.getLong(1);
                 }
                 throw new SQLException("No generated key returned.");
             }
