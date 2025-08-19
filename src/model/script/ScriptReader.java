@@ -157,20 +157,19 @@ public final class ScriptReader {
     }
     
     private static void readConditional() throws TimeSheet.NoMoreTimeException {
-        final boolean result = boolExpr();
+        final boolean result = readBoolExpr();
         if (!"then".equals(in.get(position))) throw new IllegalArgumentException("Expected 'then' after condition");
         position++;
 
         if (result) {
             readScriptBlock();
         } // otherwise skip this conditional
-        else while(!"}".equals(in.get(position))) position++;
-        position++;
+        else skipToClosingBrace();
 
         readScript();
     }
     
-    private static boolean boolExpr() {
+    private static boolean readBoolExpr() {
         return readDisjunction();
     }
 
@@ -193,23 +192,19 @@ public final class ScriptReader {
     }
 
     private static boolean readNegation() {
-
         if ("NOT".equals(in.get(position))) {
             position++;
             return !readNegation();
         } else {
-            position--;
             return readCondition();
         }
-
     }
 
     private static boolean readCondition() {
         final String token = in.get(position);
 
         if (token.endsWith("?")) return readBooleanStat();
-        else if (token.endsWith("#")) return readNumericStatComparison();
-        else throw new IllegalArgumentException("Unknown stat query " + token);
+        else return readNumericStatComparison();
     }
 
     private static boolean readBooleanStat() {
@@ -223,6 +218,7 @@ public final class ScriptReader {
             case "kinetic" -> readBooleanMember(kinetic, booleanStat);
             case "energy" -> readBooleanMember(energy, booleanStat);
             case "power" -> readBooleanMember(power, booleanStat);
+            case "equipped" -> readBooleanMember(equipped, booleanStat);
             default -> throw new IllegalArgumentException("Unknown slot in token " + token);
         };
 
@@ -237,58 +233,84 @@ public final class ScriptReader {
     }
 
     private static boolean readNumericStatComparison() {
-        final String[] queryL = in.get(position).split("[.#]");
-        final String[] queryR = in.get(position + 2).split("[.#]");
-        // split on non-word to get the word tokens
-        final int statL = readNumericStat(queryL[0], queryL[1]);
-        final int statR = readNumericStat(queryR[0], queryR[1]);
+        final int statL = readStat();
 
+        final String operator = in.get(position);
         position++;
-        final boolean result = switch(in.get(position)) {
+
+        final int statR = readStat();
+
+        return switch(operator) {
             case ">" -> statL > statR;
             case ">=" -> statL >= statR;
             case "<" -> statL < statR;
             case "<=" -> statL <= statR;
             case "=" -> statL == statR;
             case "<>" -> statL != statR;
-            default -> throw new IllegalArgumentException("Unexpected value: " + in.get(position));
+            default -> throw new IllegalArgumentException("Unexpected inequality operator: " + operator);
         };
-
-        position += 2; // advance to next word
-        return result;
     }
 
-    private static int readNumericStat(final String slot, final String numericStat) {
-        final Weapon w = readWeaponSlot(slot);
+    private static int readStat() {
+        final String token = in.get(position);
+        position++;
 
-        return switch(numericStat) {
-            case "magazine" -> w.getMagazineCurrent();
-            case "magazineMax" -> w.getMagazineMax();
-            case "reloadSpeed" -> w.getReloadSpeed();
-            case "reserves" -> w.getReservesCurrent();
-            case "reservesMax" -> w.getReservesMax();
-            default -> throw new IllegalArgumentException("Unknown numeric stat " + numericStat);
-        };
+        if (token.endsWith("#")) {
+            final String[] query = token.split("[.#]");
+
+            final Weapon w = readWeaponSlot(query[0]);
+
+            return switch (query[1]) {
+                case "magazine" -> w.getMagazineCurrent();
+                case "magazineMax" -> w.getMagazineMax();
+                case "reloadSpeed" -> w.getReloadSpeed();
+                case "reserves" -> w.getReservesCurrent();
+                case "reservesMax" -> w.getReservesMax();
+                default -> throw new IllegalArgumentException("Unknown numeric stat " + query[1]);
+            };
+        } else {
+            return Integer.parseInt(token);
+        }
 
     }
 
     private static void readLoop() {
-        final String loopCountToken = in.get(position);
+        final String token = in.get(position);
         position++;
+        
+        if ("while".equals(token)) { // loop while loop
+            final int boolExprStart = position;
+            boolean condition = readBoolExpr();
 
-        int loopCount;
-        if (loopCountToken.matches("\\d+")) loopCount = Integer.parseInt(loopCountToken);
-        else throw new IllegalArgumentException("Expected loop count integer but instead found " + loopCountToken);
+            lastBrace.add(position);
 
-        lastBrace.add(position); // right now we are on a brace
+            while (condition) {
+                position = lastBrace.getLast();
+                readScriptBlock();
+                position = boolExprStart;
+                condition = readBoolExpr();
+            }
 
-        while (loopCount > 0) {
-            loopCount--;
-            position = lastBrace.getLast();
-            readScriptBlock();
+            skipToClosingBrace();
+
+            lastBrace.removeLast();
+
+        } else { // loop count loop
+
+            int loopCount;
+            if (token.matches("\\d+")) loopCount = Integer.parseInt(token);
+            else throw new IllegalArgumentException("Expected loop count integer but instead found " + token);
+
+            lastBrace.add(position); // right now we are on a brace
+
+            while (loopCount > 0) {
+                loopCount--;
+                position = lastBrace.getLast();
+                readScriptBlock();
+            }
+
+            lastBrace.removeLast();
         }
-
-        lastBrace.removeLast();
     }
     
     private static void readAction() throws TimeSheet.NoMoreTimeException {
@@ -349,4 +371,21 @@ public final class ScriptReader {
         };
     }
 
+    /**
+     * Convenience method that moves the position to the next closing brace.
+     * The position variable is modified to be on the token ahead of the closing brace
+     */
+    private static void skipToClosingBrace() {
+        int depth = 1;
+        boolean endBraceFound = false;
+        while (depth != 0 && !endBraceFound) {
+            final String token = in.get(position);
+            position++;
+            if ("{".equals(token)) depth++;
+            else if ("}".equals(token)) {
+                depth--;
+                endBraceFound = true;
+            }
+        }
+    }
 }

@@ -38,9 +38,27 @@ public class sampletest {
                 equipped.reload!
                 """;
 
+        final String script3 =
+                """
+                kinetic Aggressive HandCannon
+                energy RapidFire Shotgun
+                power RapidFire MachineGun
+                
+                startswith kinetic
+                
+                loop while equipped.magazine# > 0 {
+                    equipped.shootAtPrecision!
+                }
+                
+                energy.equip!
+                
+                loop while NOT equipped.isMagazineEmpty? {
+                    equipped.shootAtBody!
+                }
+                """;
 
-        final String script = script1;
-        final var data = ScriptReader.readData(script);
+
+        final var data = ScriptReader.readData(script3);
 
         for (final var thing : data)
             System.out.format("%d %d %s\n", (Integer)thing[0], (Integer)thing[1], thing[2]);
