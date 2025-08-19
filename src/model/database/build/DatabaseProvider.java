@@ -24,6 +24,7 @@ public final class DatabaseProvider {
     private static final File INIT_SCRIPT = new File(getPath("CreateDatabase.sql").toString());
     private static final File DB_FILE = new File(getPath(DB_NAME).toString());
     private static final String DB_URL = "jdbc:sqlite:" + DB_FILE.getPath();
+    private static final Connection CONNECTION;
 
     static {
         if (!DB_FILE.exists()) {
@@ -35,7 +36,15 @@ public final class DatabaseProvider {
                 throw new RuntimeException(e);
             } catch (final SQLException e) {
                 LOGGER.log(Level.SEVERE, "Failed to run SQL script:\n" + e.getMessage());
+                throw new RuntimeException(e);
             }
+        }
+
+        try {
+            CONNECTION = DriverManager.getConnection(DB_URL);
+        } catch (final SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to establish connection:\n" + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -53,14 +62,7 @@ public final class DatabaseProvider {
      * @throws SQLException if the connection failed
      */
     public static Connection getConnection() throws SQLException {
-        final Connection c;
-        try {
-             c = DriverManager.getConnection(DB_URL);
-        } catch (final SQLException e) {
-            LOGGER.log(Level.SEVERE, "Failed to establish connection:\n" + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return c;
+        return CONNECTION;
     }
 
     /**
