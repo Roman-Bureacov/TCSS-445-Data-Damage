@@ -62,7 +62,7 @@ public class ScriptsPageController {
                 while (rs.next()) {
                     ScriptRow row = new ScriptRow();
 
-                    row.setSaveName(rs.getString("save_name"));
+                    row.setSaveName(rs.getString("sim_name"));
                     row.setKineticWeaponFrame(rs.getString("kinetic_frame"));
                     row.setKineticWeaponType(rs.getString("kinetic_type"));
                     row.setEnergyWeaponFrame(rs.getString("energy_frame"));

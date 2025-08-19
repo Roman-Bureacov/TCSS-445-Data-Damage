@@ -69,7 +69,7 @@ public class ScriptEditorController {
     private void runScript() {
         try {
             TimeSheet timesheet = ScriptReader.readData(getText());
-//            saveSimulation(timesheet);
+            saveSimulation(timesheet);
             if (onRun != null) onRun.accept(timesheet);
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,62 +80,62 @@ public class ScriptEditorController {
         }
     }
 
-//    private void saveSimulation(TimeSheet timesheet) throws Exception {
-//        try {
-//            long scriptId = 0;
-//            String simsScriptsInsertQuery = "INSERT INTO sims_scripts (script) VALUES (?)";
-//            List<Object> params = new ArrayList<>();
-//            params.add(this.getText());
-//            scriptId = Database.getInstance().executeInsertReturningId(simsScriptsInsertQuery, params);
-//            params.clear();
-//
-//            String simsInsertQuery = "INSERT INTO sims (script_id) VALUES (?)";
-//            params.add(scriptId);
-//            Database.getInstance().executeUpdate(simsInsertQuery, params);
-//            params.clear();
-//
-//            int totalDamage = 0;
-//            int maxMs = 0;
-//            for (Object[] row : timesheet) {
-//                Integer tMs = (Integer) row[0];
-//                Integer dmg = (Integer) row[1];
-//                if (tMs != null && tMs > maxMs) {
-//                    maxMs = tMs;
-//                }
-//                if (dmg != null && dmg > 0) {
-//                    totalDamage += dmg;
-//                }
-//            }
-//
-//            double secondsPerSim = 60.0;
-//            double averageDps = totalDamage / secondsPerSim;
-//
-//            String simsMetaInsertStatement = "INSERT INTO sims_meta (script_id, average_dps, total_damage) " +
-//                    "VALUES (?, ?, ?)";
-//            params.add(scriptId);
-//            params.add(averageDps);
-//            params.add(totalDamage);
-//            Database.getInstance().executeUpdate(simsMetaInsertStatement, params);
-//            params.clear();
-//
-//            for (Object[] row : timesheet) {
-//                Integer tMs = (Integer) row[0];
-//                Integer dmg = (Integer) row[1];
-//                String event = (String) row[2];
-//
-//                String simsEventsInsertQuery = "INSERT INTO sim_events (script_id, timestamps, damage_instance, event_desc) " +
-//                        "VALUES (?, ?, ?, ?)";
-//                params.add(scriptId);
-//                params.add(tMs);
-//                params.add(dmg);
-//                params.add(event);
-//
-//                Database.getInstance().executeUpdate(simsEventsInsertQuery, params);
-//                params.clear();
-//            }
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void saveSimulation(TimeSheet timesheet) throws Exception {
+        try {
+            long scriptId = 0;
+            String simsScriptsInsertQuery = "INSERT INTO sims_scripts (script) VALUES (?)";
+            List<Object> params = new ArrayList<>();
+            params.add(this.getText());
+            scriptId = Database.getInstance().executeInsertReturningId(simsScriptsInsertQuery, params);
+            params.clear();
+
+            String simsInsertQuery = "INSERT INTO sims (script_id) VALUES (?)";
+            params.add(scriptId);
+            Database.getInstance().executeUpdate(simsInsertQuery, params);
+            params.clear();
+
+            int totalDamage = 0;
+            int maxMs = 0;
+            for (Object[] row : timesheet) {
+                Integer tMs = (Integer) row[0];
+                Integer dmg = (Integer) row[1];
+                if (tMs != null && tMs > maxMs) {
+                    maxMs = tMs;
+                }
+                if (dmg != null && dmg > 0) {
+                    totalDamage += dmg;
+                }
+            }
+
+            double secondsPerSim = 60.0;
+            double averageDps = totalDamage / secondsPerSim;
+
+            String simsMetaInsertStatement = "INSERT INTO sims_meta (script_id, average_dps, total_damage) " +
+                    "VALUES (?, ?, ?)";
+            params.add(scriptId);
+            params.add(averageDps);
+            params.add(totalDamage);
+            Database.getInstance().executeUpdate(simsMetaInsertStatement, params.toArray());
+            params.clear();
+
+            for (Object[] row : timesheet) {
+                Integer tMs = (Integer) row[0];
+                Integer dmg = (Integer) row[1];
+                String event = (String) row[2];
+
+                String simsEventsInsertQuery = "INSERT INTO sim_events (script_id, timestamps, damage_instance, event_desc) " +
+                        "VALUES (?, ?, ?, ?)";
+                params.add(scriptId);
+                params.add(tMs);
+                params.add(dmg);
+                params.add(event);
+
+                Database.getInstance().executeUpdate(simsEventsInsertQuery, params.toArray());
+                params.clear();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
