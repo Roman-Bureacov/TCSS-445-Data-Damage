@@ -82,14 +82,14 @@ CREATE TABLE sims_scripts (
 );
 
 CREATE TABLE sim_events (
+    event_id INTEGER PRIMARY KEY,
     script_id INTEGER,
     timestamps INTEGER,
     damage_instance INTEGER,
     event_desc TEXT,
     FOREIGN KEY (script_id)
         REFERENCES sims (script_id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (script_id, timestamps)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE pulse_rifle_specifics (

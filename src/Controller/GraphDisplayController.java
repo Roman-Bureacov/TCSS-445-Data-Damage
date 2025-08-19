@@ -25,36 +25,47 @@ public class GraphDisplayController {
 
     public void renderDamage(TimeSheet timesheet) {
         chart.getData().clear();
-        if (timesheet == null) return;
-
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-        int maxMs = 0;
-        for (Object[] row : timesheet) {
-            if (row == null || row.length < 2) continue;
-            if (!(row[0] instanceof Integer) || !(row[1] instanceof Integer)) continue;
-            int tMs = (Integer) row[0];
-            if (tMs > maxMs) maxMs = tMs;
+        if (timesheet == null) {
+            return;
         }
-        double maxSec = maxMs / 1000.0;
-        double scale = (maxSec > 0) ? (60.0 / maxSec) : 1.0;
+
+        XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series<>();
+        cumulativeSeries.setName("Cumulative");
+
+        XYChart.Series<Number, Number> instantSeries = new XYChart.Series<>();
+        instantSeries.setName("Hit Damage");
 
         double cumulative = 0.0;
-        series.getData().add(new XYChart.Data<>(0.0, 0.0));
+        cumulativeSeries.getData().add(new XYChart.Data<>(0.0, 0.0));
+        instantSeries.getData().add(new XYChart.Data<>(0.0, 0.0));
 
         for (Object[] row : timesheet) {
-            if (row == null || row.length < 2) continue;
-            if (!(row[0] instanceof Integer) || !(row[1] instanceof Integer)) continue;
             int tMs = (Integer) row[0];
             int dmg = (Integer) row[1];
-            if (dmg <= 0) continue;
+            if (dmg <= 0){
+                continue; // ignore non-damage events
+            }
+
+            double t = (tMs / 1000.0);
+
+            // cumulative line
             cumulative += dmg;
-            double tSecScaled = (tMs / 1000.0) * scale;
-            series.getData().add(new XYChart.Data<>(tSecScaled, cumulative));
+            cumulativeSeries.getData().add(new XYChart.Data<>(t, cumulative));
+
+            // "stem" spike at time t: baseline -> spike -> baseline
+            instantSeries.getData().add(new XYChart.Data<>(t, 0));
+            instantSeries.getData().add(new XYChart.Data<>(t, dmg));
+            instantSeries.getData().add(new XYChart.Data<>(t, 0));
         }
+
+        // extend to right edge
+        cumulativeSeries.getData().add(new XYChart.Data<>(60.0, cumulative));
+        instantSeries.getData().add(new XYChart.Data<>(60.0, 0));
 
         xAxis.setLowerBound(0);
         xAxis.setUpperBound(60);
-        chart.getData().add(series);
+
+        chart.setCreateSymbols(false); // optional: cleaner lines
+        chart.getData().addAll(cumulativeSeries, instantSeries);
     }
 }
