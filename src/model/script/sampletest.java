@@ -62,5 +62,6 @@ public class sampletest {
 
         for (final var thing : data)
             System.out.format("%d %d %s\n", (Integer)thing[0], (Integer)thing[1], thing[2]);
+
     }
 }

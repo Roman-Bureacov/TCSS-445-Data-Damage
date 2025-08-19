@@ -67,6 +67,7 @@ public final class ScriptReader {
      * @throws IllegalArgumentException if the script has syntax errors
      */
     public static TimeSheet readData(final String script) throws IllegalArgumentException {
+        position = 0;
         data = new TimeSheet();
         final Scanner input = new Scanner(script);
         in = new ArrayList<>();
