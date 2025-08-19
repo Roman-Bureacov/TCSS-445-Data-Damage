@@ -33,10 +33,10 @@ public final class DatabaseProvider {
                 insertDatabase();
             } catch (final IOException e) {
                 LOGGER.log(Level.SEVERE, "Failed to read/create file:\n" + e.getMessage());
-                throw new RuntimeException(e);
+                throw new ExceptionInInitializerError(e);
             } catch (final SQLException e) {
                 LOGGER.log(Level.SEVERE, "Failed to run SQL script:\n" + e.getMessage());
-                throw new RuntimeException(e);
+                throw new ExceptionInInitializerError(e);
             }
         }
 
@@ -44,7 +44,7 @@ public final class DatabaseProvider {
             CONNECTION = DriverManager.getConnection(DB_URL);
         } catch (final SQLException e) {
             LOGGER.log(Level.SEVERE, "Failed to establish connection:\n" + e.getMessage());
-            throw new RuntimeException(e);
+            throw new ExceptionInInitializerError(e);
         }
     }
 
