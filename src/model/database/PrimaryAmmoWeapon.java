@@ -1,5 +1,7 @@
 package model.database;
 
+import model.script.TimeSheet;
+
 /**
  * A class that represents a primary-ammo weapon, specifically with unlimited reserves.
  * @author Roman Bureacov
@@ -15,4 +17,5 @@ public class PrimaryAmmoWeapon extends GenericWeapon {
         if (getMagazineMax() != getMagazineCurrent())
             setMagazineCurrent(getMagazineMax());
     }
+
 }

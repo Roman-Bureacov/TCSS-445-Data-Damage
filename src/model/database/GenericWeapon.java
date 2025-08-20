@@ -130,8 +130,7 @@ public class GenericWeapon implements Weapon {
     public void writeReloadEvent(final TimeSheet t) throws TimeSheet.NoMoreTimeException {
         if (magazineCurrent != magazineMax) {
             reload();
-            if (magazineCurrent != magazineMax)
-                t.writeEvent(reloadSpeed, 0, "reload");
+            t.writeEvent(reloadSpeed, 0, "reload");
         }
     }
 
