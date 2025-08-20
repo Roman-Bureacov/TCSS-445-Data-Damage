@@ -126,6 +126,8 @@ public final class Database {
     private static WeaponSkeleton buildWeaponSkeleton(final ResultSet r) throws SQLException {
         final WeaponSkeleton skeleton = new WeaponSkeleton();
 
+        skeleton.theWeaponFrame = r.getString("weapon_frame");
+        skeleton.theWeaponType = r.getString("weapon_type");
         skeleton.theReservesMax = r.getInt("reserves");
         skeleton.theRPM = r.getInt("fire_rate");
         skeleton.theReloadSpeed = r.getInt("reload_speed");
@@ -134,6 +136,28 @@ public final class Database {
         skeleton.theReadySpeed = r.getInt("ready_speed");
         skeleton.theBodyDamage = r.getInt("body_damage");
         skeleton.thePrecisionDamage = r.getInt("precision_damage");
+
+        // get ammo
+        final String sql =
+                """
+                SELECT ammo
+                FROM ammo_types
+                WHERE ammo_id = (
+                    SELECT ammo_id
+                    FROM weapons NATURAL JOIN weapon_ammo
+                    WHERE weapon_frame = ? AND weapon_type = ?
+                );
+                """;
+        try {
+            skeleton.theAmmo =
+                Weapon.getAmmoFromString(
+                    Database.getInstance()
+                    .executeQuery(sql, skeleton.theWeaponFrame, skeleton.theWeaponType)
+                    .getString( "ammo")
+                );
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Failed to fetch ammo type from database");
+        }
 
         return skeleton;
     }

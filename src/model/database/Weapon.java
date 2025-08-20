@@ -24,6 +24,20 @@ public interface Weapon {
     }
 
     /**
+     * Translates the ammo string into the corresponding ammo type enum
+     * @param ammoString the ammo as a string
+     * @return the ammo enum, null if not defined
+     */
+    static Ammo getAmmoFromString(final String ammoString) {
+        return switch(ammoString) {
+            case "Primary" -> Ammo.PRIMARY;
+            case "Special" -> Ammo.SPECIAL;
+            case "Heavy" -> Ammo.HEAVY;
+            default -> null;
+        };
+    }
+
+    /**
      * Returns the precision damage of this weapon.
      * @return the precision damage
      */
