@@ -59,11 +59,60 @@ public class sampletest {
 
         final String script4 =
                 """
-                        
+                kinetic Precision AutoRifle
+                energy RapidFire SniperRifle
+                power Precision RocketLauncher
+                
+                startswith energy
+                
+                loop 20 {
+                    kinetic.equip!
+                    loop 5 {
+                        equipped.shootAtPrecision!
+                    }
+                
+                    energy.equip!
+                    equipped.shootAtPrecision!
+                
+                    power.equip!
+                    loop 5 {
+                        equipped.shootAtPrecision!
+                    }
+                }
+                
+                energy.equip!
+                equipped.shootAtPrecision!
+                """;
+
+        final String script5 =
+                """
+                kinetic Precision AutoRifle
+                energy RapidFire SniperRifle
+                power Precision RocketLauncher
+                
+                startswith energy
+                
+                loop 2 {
+                    kinetic.equip!
+                    loop 2 {
+                        equipped.shootAtPrecision!
+                    }
+
+                    energy.equip!
+                    equipped.shootAtPrecision!
+
+                    power.equip!
+                    loop 2 {
+                        equipped.shootAtPrecision!
+                    }
+                }
+                
+                energy.equip!
+                equipped.shootAtPrecision!
                 """;
 
 
-        final var data = ScriptReader.readData(script3);
+        final var data = ScriptReader.readData(script4);
 
         for (final var thing : data)
             System.out.format("%10d %20d %s\n", (Integer)thing[0], (Integer)thing[1], thing[2]);

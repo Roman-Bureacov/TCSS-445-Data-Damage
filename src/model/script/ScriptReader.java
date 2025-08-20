@@ -154,7 +154,7 @@ public final class ScriptReader {
         while (position < in.size()) readStatement();
     }
 
-    private static void readScriptBlock() {
+    private static void readScriptBlock() throws TimeSheet.NoMoreTimeException {
         if (!"{".equals(in.get(position))) throw new IllegalArgumentException("Expected opening brace '{'");
         position++;
 
@@ -162,7 +162,7 @@ public final class ScriptReader {
             while (!"}".equals(in.get(position))) {
                 readStatement();
             }
-        } catch (IndexOutOfBoundsException | TimeSheet.NoMoreTimeException e) {
+        } catch (final IndexOutOfBoundsException e) {
             throw new IllegalArgumentException("Missing closing brace");
         }
         position++;
@@ -301,7 +301,7 @@ public final class ScriptReader {
 
     }
 
-    private static void readLoop() {
+    private static void readLoop() throws TimeSheet.NoMoreTimeException {
         final String token = in.get(position);
         position++;
         
