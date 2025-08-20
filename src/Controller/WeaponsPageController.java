@@ -253,51 +253,52 @@ public class WeaponsPageController {
 
         List<Set<Integer>> idSets = new ArrayList<>();
         for (int i = 0; i < queries.size(); i++) {
-                ResultSet rs = Database.getInstance().executeQuery(queries.get(i), params.get(i));
-                Set<Integer> s = new HashSet<>();
-                while (rs.next()){
-                    s.add(rs.getInt(1));
-                }
-                idSets.add(s);
+            ResultSet rs = Database.getInstance().executeQuery(queries.get(i), params.get(i));
+            Set<Integer> s = new HashSet<>();
+            while (rs.next()){
+                s.add(rs.getInt(1));
             }
-
-            for (Set<Integer> s : idSets) {
-                if (s.isEmpty()) {
-                    return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
-                }
-            }
-
-            idSets.sort((a, b) -> Integer.compare(a.size(), b.size()));
-            Set<Integer> finalIds = new LinkedHashSet<>(idSets.get(0));
-            for (int i = 1; i < idSets.size(); i++) {
-                finalIds.retainAll(idSets.get(i));
-                if (finalIds.isEmpty()) {
-                    return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
-                }
-            }
-
-            StringBuilder finalSql = new StringBuilder(baseSql);
-            finalSql.append(" WHERE w.weapon_id IN (");
-            int n = finalIds.size();
-            for (int i = 0; i < n; i++) {
-                finalSql.append("?");
-                if (i < n - 1) finalSql.append(", ");
-            }
-            finalSql.append(")");
-
-            Object[] bind = finalIds.stream().map(Integer::valueOf).toArray();
-            return Database.getInstance().executeQuery(finalSql.toString(), bind);
+            idSets.add(s);
         }
 
-        public void primaryAmmo(ActionEvent actionEvent) {
-            ammoType = 1;
+        for (Set<Integer> s : idSets) {
+            if (s.isEmpty()) {
+                return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
+            }
         }
 
-        public void specialAmmo(ActionEvent actionEvent) {
-            ammoType = 2;
+        idSets.sort((a, b) -> Integer.compare(a.size(), b.size()));
+        Set<Integer> finalIds = new LinkedHashSet<>(idSets.get(0));
+        for (int i = 1; i < idSets.size(); i++) {
+            finalIds.retainAll(idSets.get(i));
+            if (finalIds.isEmpty()) {
+                return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
+            }
         }
 
-        public void heavyAmmo(ActionEvent actionEvent) {
-            ammoType = 3;
+        StringBuilder finalSql = new StringBuilder(baseSql);
+        finalSql.append(" WHERE w.weapon_id IN (");
+        int n = finalIds.size();
+        for (int i = 0; i < n; i++) {
+            finalSql.append("?");
+            if (i < n - 1) finalSql.append(", ");
         }
+        finalSql.append(")");
+
+        Object[] bind = finalIds.stream().map(Integer::valueOf).toArray();
+        return Database.getInstance().executeQuery(finalSql.toString(), bind);
     }
+
+    public void primaryAmmo(ActionEvent actionEvent) {
+        ammoType = 1;
+    }
+
+    public void specialAmmo(ActionEvent actionEvent) {
+        ammoType = 2;
+    }
+
+    public void heavyAmmo(ActionEvent actionEvent) {
+        ammoType = 3;
+    }
+
+}
