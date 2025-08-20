@@ -91,22 +91,20 @@ public final class Database {
                 WHERE weapon_id = (
                     SELECT weapon_id
                     FROM weapons
-                    WHERE weapon_type = '%s' AND weapon_frame = '%s'
+                    WHERE weapon_type = ? AND weapon_frame = ?
                 )
-                """.formatted(weaponType, weaponFrame);
+                """;
 
-        final ResultSet r;
-
-        final Connection c = DatabaseProvider.getConnection();
-        final Statement s = c.createStatement();
-        r = s.executeQuery(sql);
+        final ResultSet r = Database
+                .getInstance()
+                .executeQuery(sql, weaponType, weaponFrame);
 
         final WeaponSkeleton skeleton = buildWeaponSkeleton(r);
 
         return switch(weaponType) {
-            case "Bow" -> buildBow(weaponFrame, skeleton, s);
-            case "FusionRifle" -> buildFusionRifle(weaponFrame, skeleton, s);
-            case "PulseRifle" -> buildPulseRifle(weaponFrame, skeleton, s);
+            case "Bow" -> buildBow(weaponFrame, skeleton);
+            case "FusionRifle" -> buildFusionRifle(weaponFrame, skeleton);
+            case "PulseRifle" -> buildPulseRifle(weaponFrame, skeleton);
             case "Shotgun" -> buildShotgun(skeleton);
             case "Sword" -> buildSword(skeleton);
             case "ScoutRifle" -> {
@@ -204,19 +202,19 @@ public final class Database {
      * @return a pulse rifle weapon model
      */
     private static Weapon buildPulseRifle(final String weaponFrame,
-                                          final WeaponSkeleton skeleton, final Statement s) throws SQLException {
+                                          final WeaponSkeleton skeleton) throws SQLException {
 
         final String sql =
                 """
-                SELECT * FROM PulseRifleSpecifics
+                SELECT * FROM pulse_rifle_specifics
                 WHERE weapon_id = (
                     SELECT weapon_id
                     FROM weapons
-                    WHERE weapon_type = 'PulseRifle' AND weaponFrame = '%s'
+                    WHERE weapon_type = 'PulseRifle' AND weapon_frame = ?
                 )
-                """.formatted(weaponFrame);
-        s.execute(sql);
-        final ResultSet r = s.getResultSet();
+                """;
+
+        final ResultSet r = Database.getInstance().executeQuery(sql, skeleton.theWeaponFrame);
 
         return new PulseRifle(skeleton,
                 r.getInt("burst_count"),
@@ -230,18 +228,18 @@ public final class Database {
      * @return a fusion rifle weapon model
      */
     private static Weapon buildFusionRifle(final String weaponFrame,
-                                           final WeaponSkeleton skeleton, final Statement s) throws SQLException {
+                                           final WeaponSkeleton skeleton) throws SQLException {
         final String sql =
                 """
-                SELECT * FROM FusionRifleSpecifics
+                SELECT * FROM fusion_rifle_specifics
                 WHERE weapon_id = (
                     SELECT weapon_id
                     FROM weapons
-                    WHERE weapon_type = 'FusionRifle' AND weapon_frame = '%s'
+                    WHERE weapon_type = 'FusionRifle' AND weapon_frame = ?
                 )
-                """.formatted(weaponFrame);
-        s.execute(sql);
-        final ResultSet r = s.getResultSet();
+                """;
+
+        final ResultSet r = Database.getInstance().executeQuery(sql, skeleton.theWeaponFrame);
 
         return new FusionRifle(skeleton,
                 r.getInt("charge_time"),
@@ -255,8 +253,7 @@ public final class Database {
      * @param weaponFrame the bow frame name
      * @return a bow weapon model
      */
-    private static Weapon buildBow(final String weaponFrame,
-                                   final WeaponSkeleton skeleton, final Statement s) {
+    private static Weapon buildBow(final String weaponFrame, final WeaponSkeleton skeleton) {
         return new Bow(skeleton);
     }
 }
