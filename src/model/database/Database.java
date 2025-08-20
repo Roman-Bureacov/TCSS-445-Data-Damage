@@ -175,6 +175,9 @@ public final class Database {
      * @return a generic weapon model
      */
     private static Weapon buildGenericWeapon(final WeaponSkeleton skeleton) {
+        if (skeleton.theAmmo == Weapon.Ammo.PRIMARY) {
+            return new PrimaryAmmoWeapon(skeleton);
+        }
         return new GenericWeapon(skeleton);
     }
 
