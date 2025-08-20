@@ -45,34 +45,42 @@ public final class Database {
      */
     public ResultSet executeQuery(String sql, Object... params) throws SQLException {
         Connection conn = DatabaseProvider.getConnection();
-        PreparedStatement preparedStatementstmt = conn.prepareStatement(sql);
+        PreparedStatement ps = conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
-            preparedStatementstmt.setObject(i + 1, params[i]);
+            ps.setObject(i + 1, params[i]);
         }
-        return preparedStatementstmt.executeQuery();
+
+        try {
+            ps.closeOnCompletion();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ps.executeQuery();
     }
 
     public int executeUpdate(String sql, Object... params) throws SQLException {
-        Connection conn = DatabaseProvider.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        for (int i = 0; i < params.length; i++){
-            ps.setObject(i + 1, params[i]);
+        try (Connection conn = DatabaseProvider.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++){
+                ps.setObject(i + 1, params[i]);
+            }
+            return ps.executeUpdate();
         }
-        return ps.executeUpdate();
     }
 
     public long executeInsertReturningId(String sql, Object... params) throws SQLException {
-        Connection conn = DatabaseProvider.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        for (int i = 0; i < params.length; i++){
-            ps.setObject(i + 1, params[i]);
-        }
-        ps.executeUpdate();
-        try (ResultSet keys = ps.getGeneratedKeys()) {
-            if (keys.next()){
-                return keys.getLong(1);
+        try (Connection conn = DatabaseProvider.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            for (int i = 0; i < params.length; i++){
+                ps.setObject(i + 1, params[i]);
             }
-            throw new SQLException("No generated key returned.");
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()){
+                    return keys.getLong(1);
+                }
+                throw new SQLException("No generated key returned.");
+            }
         }
     }
 
@@ -150,11 +158,11 @@ public final class Database {
                 """;
         try {
             skeleton.theAmmo =
-                Weapon.getAmmoFromString(
-                    Database.getInstance()
-                    .executeQuery(sql, skeleton.theWeaponFrame, skeleton.theWeaponType)
-                    .getString( "ammo")
-                );
+                    Weapon.getAmmoFromString(
+                            Database.getInstance()
+                                    .executeQuery(sql, skeleton.theWeaponFrame, skeleton.theWeaponType)
+                                    .getString( "ammo")
+                    );
         } catch (final Exception e) {
             throw new IllegalArgumentException("Failed to fetch ammo type from database");
         }

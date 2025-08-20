@@ -6,8 +6,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.database.Database;
+import model.database.build.DatabaseProvider;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -53,35 +55,13 @@ public class ScriptsPageController {
 
     public void onSearch() {
         try {
-            ResultSet rs = queryScripts();
-            Connection conn = rs.getStatement().getConnection();
-
-            try (rs; conn) {
-                scriptsTable.getItems().clear();
-
-                while (rs.next()) {
-                    ScriptRow row = new ScriptRow();
-
-                    row.setSaveName(rs.getString("sim_name"));
-                    row.setKineticWeaponFrame(rs.getString("kinetic_frame"));
-                    row.setKineticWeaponType(rs.getString("kinetic_type"));
-                    row.setEnergyWeaponFrame(rs.getString("energy_frame"));
-                    row.setEnergyWeaponType(rs.getString("energy_type"));
-                    row.setPowerWeaponFrame(rs.getString("power_frame"));
-                    row.setPowerWeaponType(rs.getString("power_type"));
-                    row.setAvgDPS(rs.getDouble("average_dps"));
-                    row.setTotalDPS(rs.getInt("total_damage"));
-                    row.setSaveDate(rs.getString("save_date"));
-
-                    scriptsTable.getItems().add(row);
-                }
-            }
+            scriptsTable.getItems().setAll(queryScripts());
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private ResultSet queryScripts() throws SQLException {
+    private List<ScriptRow> queryScripts() throws SQLException {
         StringBuilder baseSql = new StringBuilder("""
             SELECT
                 s.sim_name,
@@ -98,147 +78,101 @@ public class ScriptsPageController {
             Left JOIN sims_meta sm ON sm.script_id = s.sim_id
             LEFT JOIN weapons k ON k.weapon_id = sm.kinetic
             LEFT JOIN weapons e ON e.weapon_id = sm.energy
-            LEFT JOIN weapons p ON p.weapon_id = sm.power;
+            LEFT JOIN weapons p ON p.weapon_id = sm.power
         """);
 
-        List<String> queries = new ArrayList<>();
-        List<Object> params  = new ArrayList<>();
+        List<String> where = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
 
-        if (saveName.getText() != null && !saveName.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT s.sim_id
-                FROM sims s
-                WHERE s.sim_name = ?
-            """);
+        // Filters (all optional)
+        if (!isBlank(saveName)) {
+            where.add("s.sim_name = ?");
             params.add(saveName.getText().trim());
         }
 
-        if (kineticFrame.getText() != null && !kineticFrame.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.script_id
-                FROM sims_meta sm
-                LEFT JOIN weapons w ON sm.kinetic = w.weapons_id
-                WHERE w.frame = ?
-            """);
+        if (!isBlank(kineticFrame)) {
+            where.add("k.weapon_frame = ?");
             params.add(kineticFrame.getText().trim());
         }
 
-        if (kineticType.getText() != null && !kineticType.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.script_id
-                FROM sims_meta sm
-                LEFT JOIN weapons w ON sm.kinetic = w.weapons_id
-                WHERE w.weapon_type = ?
-            """);
+        if (!isBlank(kineticType)) {
+            where.add("k.weapon_type = ?");
             params.add(kineticType.getText().trim());
         }
 
-        if (energyFrame.getText() != null && !energyFrame.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.script_id
-                FROM sims_meta sm
-                LEFT JOIN weapons w ON sm.energy = w.weapons_id
-                WHERE w.frame = ?
-            """);
+        if (!isBlank(energyFrame)) {
+            where.add("e.weapon_frame = ?");
             params.add(energyFrame.getText().trim());
         }
 
-        if (energyType.getText() != null && !energyType.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.id
-                FROM sims_meta sm
-                LEFT JOIN weapons w ON sm.energy = w.weapons_id
-                WHERE w.weapon_type = ?
-            """);
+        if (!isBlank(energyType)) {
+            where.add("e.weapon_type = ?");
             params.add(energyType.getText().trim());
         }
 
-        if (powerFrame.getText() != null && !powerFrame.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.id
-                FROM sims_meta sm
-                LEFT JOIN weapons w ON sm.energy = w.weapons_id
-                WHERE w.frame = ?
-            """);
+        if (!isBlank(powerFrame)) {
+            where.add("p.weapon_frame = ?");
             params.add(powerFrame.getText().trim());
         }
 
-        if (powerType.getText() != null && !powerType.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.id
-                FROM sims_meta sm
-                LEFT JOIN weapons w ON sm.energy = w.weapons_id
-                WHERE w.weapon_type = ?
-            """);
+        if (!isBlank(powerType)) {
+            where.add("p.weapon_type = ?");
             params.add(powerType.getText().trim());
         }
 
-        if(avgDPS.getText() != null && !avgDPS.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.script_id
-                FROM sims_meta sm
-                WHERE average_dps = ?
-            """);
-            params.add(Double.parseDouble(avgDPS.getText().trim()));
+        if (!isBlank(avgDPS)) {
+            // equality on doubles can be harsh; if you prefer a threshold use >=
+            where.add("sm.average_dps >= ?");
+            params.add(parseDouble(avgDPS));
         }
 
-        if(totalDamage.getText() != null && !totalDamage.getText().trim().isEmpty()) {
-            queries.add("""
-                SELECT sm.script_id
-                FROM sims_meta sm
-                WHERE total_damage = ?
-            """);
-            params.add(Integer.parseInt(totalDamage.getText().trim()));
+        if (!isBlank(totalDamage)) {
+            where.add("sm.total_damage >= ?");
+            params.add(parseInt(totalDamage));
         }
 
-//        if(saveDate.getText() != null && !saveDate.getText().trim().isEmpty()) {
-//            queries.add("""
-//                SELECT s.id
-//                FROM sims s
-//                WHERE save_date = ?
-//            """);
-//            params.add(saveDate.getText().trim());
-//        }
-
-        if (queries.isEmpty()) {
-            return Database.getInstance().executeQuery(baseSql.toString());
+        if (!isBlank(saveDate)) {
+            // exact date match (assuming save_date is ISO timestamp)
+            where.add("DATE(s.save_date) = DATE(?)");
+            params.add(saveDate.getText().trim());
         }
 
-        List<Set<Integer>> idSets = new ArrayList<>();
-        for (int i = 0; i < queries.size(); i++) {
-            ResultSet rs = Database.getInstance().executeQuery(queries.get(i), params.get(i));
-            Set<Integer> s = new HashSet<>();
-            while (rs.next()) {
-                s.add(rs.getInt(1));
+        if (!where.isEmpty()) {
+            baseSql.append(" WHERE ").append(String.join(" AND ", where));
+        }
+        baseSql.append(" ORDER BY s.save_date DESC");
+
+        try (Connection conn = DatabaseProvider.getConnection();
+             PreparedStatement ps = conn.prepareStatement(baseSql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
-            idSets.add(s);
-        }
 
-        for (Set<Integer> s : idSets) {
-            if (s.isEmpty()) {
-                return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
-            }
-        }
-
-        idSets.sort((a, b) -> Integer.compare(a.size(), b.size()));
-        Set<Integer> finalIds = new LinkedHashSet<>(idSets.get(0));
-        for (int i = 1; i < idSets.size(); i++) {
-            finalIds.retainAll(idSets.get(i));
-            if (finalIds.isEmpty()) {
-                return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
+            try (ResultSet rs = ps.executeQuery()) {
+                List<ScriptRow> rows = new ArrayList<>();
+                while (rs.next()) {
+                    ScriptRow row = new ScriptRow();
+                    row.setSaveName(rs.getString("sim_name"));
+                    row.setKineticWeaponFrame(rs.getString("kinetic_frame"));
+                    row.setKineticWeaponType(rs.getString("kinetic_type"));
+                    row.setEnergyWeaponFrame(rs.getString("energy_frame"));
+                    row.setEnergyWeaponType(rs.getString("energy_type"));
+                    row.setPowerWeaponFrame(rs.getString("power_frame"));
+                    row.setPowerWeaponType(rs.getString("power_type"));
+                    row.setAvgDPS(rs.getDouble("average_dps"));
+                    row.setTotalDPS(rs.getInt("total_damage"));
+                    row.setSaveDate(rs.getString("save_date"));
+                    rows.add(row);
+                }
+                return rows;
             }
         }
-
-        StringBuilder finalSql = new StringBuilder(baseSql);
-        finalSql.append(" WHERE s.id IN (");
-        int n = finalIds.size();
-        for (int i = 0; i < n; i++) {
-            finalSql.append("?");
-            if (i < n - 1) finalSql.append(", ");
-        }
-        finalSql.append(")");
-
-        Object[] bind = finalIds.stream().map(Integer::valueOf).toArray();
-        return Database.getInstance().executeQuery(finalSql.toString(), bind);
     }
+
+    private static boolean isBlank(TextField tf) {
+        return tf == null || tf.getText() == null || tf.getText().trim().isEmpty();
+    }
+    private static int parseInt(TextField tf)    { return Integer.parseInt(tf.getText().trim()); }
+    private static double parseDouble(TextField tf) { return Double.parseDouble(tf.getText().trim()); }
 }

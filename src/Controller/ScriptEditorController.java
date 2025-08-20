@@ -120,7 +120,7 @@ public class ScriptEditorController {
                     energy AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
                     power AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?)
                 INSERT INTO sims_meta (script_id, kinetic, energy, power, average_dps, total_damage)
-                SELECT ?, k.weapon_id, e.weapon_id, p.weapon_id, ?, ?
+                SELECT ?, kinetic.weapon_id, energy.weapon_id, power.weapon_id, ?, ?
                 FROM kinetic, energy, power;
                 """;
 
