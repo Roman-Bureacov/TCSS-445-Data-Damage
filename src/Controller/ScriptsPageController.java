@@ -91,7 +91,7 @@ public class ScriptsPageController {
                 e.weapon_type AS energy_type,
                 p.weapon_frame AS power_frame,
                 p.weapon_type AS power_type,
-                sm.average_dps,
+                ROUND(sm.average_dps, 2) AS average_dps,
                 sm.total_damage,
                 s.save_date
             FROM sims s

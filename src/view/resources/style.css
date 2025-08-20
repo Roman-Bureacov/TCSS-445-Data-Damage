@@ -51,6 +51,12 @@
     -fx-font-size: 16;
 }
 
+.script-name {
+    -fx-background-color: #2b2d30;
+    -fx-border-color: #232323;
+    -fx-text-fill: #e6e6e6;
+}
+
 .text-area {
     -fx-background-insets: 0;
     -fx-border-color: #232323;

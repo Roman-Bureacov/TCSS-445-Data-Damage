@@ -10,6 +10,7 @@
             AnchorPane.leftAnchor="20.0" xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.ScriptEditorController">
     <top>
         <HBox styleClass="background-dark">
+            <TextField fx:id="scriptName" styleClass="script-name" text="Script Name"/>
             <Button styleClass="scriptEditorMenuButtons" text="Load" onAction="#loadFromFile"/>
             <Button styleClass="scriptEditorMenuButtons" text="Save" onAction="#saveToFile"/>
             <Button styleClass="scriptEditorMenuButtons" text="Run" onAction="#runScript"/>

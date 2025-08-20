@@ -4,20 +4,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import model.database.Database;
+import model.database.Weapon;
+import model.database.build.DatabaseProvider;
 import model.script.ScriptReader;
 import model.script.TimeSheet;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ScriptEditorController {
+    public TextField scriptName;
     @FXML
     private TextArea editor;
 
@@ -68,7 +71,8 @@ public class ScriptEditorController {
     private void runScript() {
         try {
             TimeSheet timesheet = ScriptReader.readData(getText());
-            saveSimulation(timesheet);
+            Weapon[] weapons = ScriptReader.getWeapons(getText());
+            saveSimulation(timesheet, weapons);
             if (onRun != null) onRun.accept(timesheet);
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +83,7 @@ public class ScriptEditorController {
         }
     }
 
-    private void saveSimulation(TimeSheet timesheet) throws Exception {
+    private void saveSimulation(TimeSheet timesheet, Weapon[] weapons) throws Exception {
         try {
             long scriptId = 0;
             String simsScriptsInsertQuery = "INSERT INTO sims_scripts (script) VALUES (?)";
@@ -88,9 +92,10 @@ public class ScriptEditorController {
             scriptId = Database.getInstance().executeInsertReturningId(simsScriptsInsertQuery, params);
             params.clear();
 
-            String simsInsertQuery = "INSERT INTO sims (script_id) VALUES (?)";
+            String simsInsertQuery = "INSERT INTO sims (script_id, sim_name) VALUES (?, ?)";
             params.add(scriptId);
-            Database.getInstance().executeUpdate(simsInsertQuery, params);
+            params.add(scriptName.getText());
+            Database.getInstance().executeUpdate(simsInsertQuery, params.toArray());
             params.clear();
 
             int totalDamage = 0;
@@ -109,12 +114,25 @@ public class ScriptEditorController {
             double secondsPerSim = 60.0;
             double averageDps = totalDamage / secondsPerSim;
 
-            String simsMetaInsertStatement = "INSERT INTO sims_meta (script_id, average_dps, total_damage) " +
-                    "VALUES (?, ?, ?)";
-            params.add(scriptId);
-            params.add(averageDps);
-            params.add(totalDamage);
-            Database.getInstance().executeUpdate(simsMetaInsertStatement, params.toArray());
+            String insertScriptMeta = """
+                WITH
+                    kinetic AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
+                    energy AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
+                    power AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?)
+                INSERT INTO sims_meta (script_id, kinetic, energy, power, average_dps, total_damage)
+                SELECT ?, k.weapon_id, e.weapon_id, p.weapon_id, ?, ?
+                FROM kinetic, energy, power;
+                """;
+
+            Database.getInstance().executeUpdate(
+                    insertScriptMeta,
+                    weapons[0].getWeaponFrame(), weapons[0].getWeaponType(),
+                    weapons[1].getWeaponFrame(), weapons[1].getWeaponType(),
+                    weapons[2].getWeaponFrame(), weapons[2].getWeaponType(),
+                    scriptId,
+                    averageDps,
+                    totalDamage
+            );
             params.clear();
 
             for (Object[] row : timesheet) {
