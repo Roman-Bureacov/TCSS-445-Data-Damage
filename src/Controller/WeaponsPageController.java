@@ -5,8 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.database.Database;
-import model.database.build.DatabaseProvider;
-
 import java.sql.*;
 import java.util.*;
 
@@ -41,7 +39,7 @@ public class WeaponsPageController {
     @FXML private TableColumn<WeaponRow,String> colAmmoType;
 
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize() {
         ammoType = 0;
         primaryRadio.setToggleGroup(ammoGroup);
         specialRadio.setToggleGroup(ammoGroup);
@@ -65,115 +63,18 @@ public class WeaponsPageController {
     }
 
     @FXML
-    public void onSearch() throws SQLException {
-        weaponsTable.getItems().setAll(this.queryWeapons());
-    }
+    public void onSearch() {
+        try {
+            ResultSet rs = queryWeapons();
+            Connection conn = rs.getStatement().getConnection();
 
-    private List<WeaponRow> queryWeapons() throws SQLException {
-        StringBuilder sql = new StringBuilder("""
-        SELECT
-            w.weapon_id, w.weapon_type, w.weapon_frame,
-            wi.weapon_desc,
-            ws.reserves, ws.fire_rate, ws.reload_speed, ws.magazine,
-            ws.body_damage, ws.precision_damage,
-            at.ammo,
-            (ws.magazine * ws.precision_damage) AS one_mag_damage,
-            (ws.reserves * ws.precision_damage) AS theoretical_total_damage,
-            CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
-                 ELSE ROUND((ws.magazine * ws.precision_damage) /
-                            (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed), 1)
-            END AS sustained_dps,
-            CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
-                 ELSE ROUND((ws.magazine * ws.precision_damage) /
-                            (ws.magazine * (60.0 / ws.fire_rate)), 1)
-            END AS true_dps
-        FROM weapons w
-        LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
-        LEFT JOIN weapon_ammo  wa ON wa.weapon_id = w.weapon_id
-        LEFT JOIN ammo_types   at ON at.ammo_id = wa.ammo_id
-        LEFT JOIN weapon_info  wi ON wi.weapon_id = w.weapon_id
-    """);
+            try (rs; conn) {
 
-        List<String> where = new ArrayList<>();
-        List<Object> params = new ArrayList<>();
+                weaponsTable.getItems().clear();
 
-        // Simple filters
-        if (!isBlank(typeField)) { where.add("w.weapon_type = ?"); params.add(typeField.getText().trim()); }
-        if (!isBlank(frameField)) { where.add("w.weapon_frame = ?"); params.add(frameField.getText().trim()); }
-
-        // Ammo filter (doesn't break LEFT JOINs)
-        if (ammoType != 0) {
-            where.add("""
-            EXISTS (SELECT 1 FROM weapon_ammo wa2
-                    WHERE wa2.weapon_id = w.weapon_id AND wa2.ammo_id = ?)
-        """);
-            params.add(ammoType);
-        }
-
-        // Stat filters (note: WHERE on ws.* effectively turns the LEFT JOIN into INNER for those rows)
-        if (!isBlank(magCapacityField)) {
-            where.add("ws.magazine > ?");
-            params.add(parseInt(magCapacityField));
-        }
-
-        if (!isBlank(reservesMagazineField)) {
-            where.add("ws.reserves  > ?");
-            params.add(parseInt(reservesMagazineField));
-        }
-
-        if (!isBlank(fireRateField)) {
-            where.add("ws.fire_rate > ?");
-            params.add(parseInt(fireRateField));
-        }
-
-        if (!isBlank(reloadSpeedField)) {
-            where.add("ws.reload_speed < ?");
-            params.add(parseDouble(reloadSpeedField));
-        }
-
-        if (!isBlank(bodyDamageField)) {
-            where.add("ws.body_damage > ?");
-            params.add(parseInt(bodyDamageField));
-        }
-
-        if (!isBlank(precisionDamageField)) {
-            where.add("ws.precision_damage > ?");
-            params.add(parseInt(precisionDamageField));
-        }
-
-        // Derived metrics in WHERE (guard against NULL/0 fire_rate)
-        if (!isBlank(trueDPSField)) {
-            where.add("(ws.fire_rate > 0 AND (ws.magazine * ws.precision_damage) / (ws.magazine * (60.0 / ws.fire_rate)) > ?)");
-            params.add(parseDouble(trueDPSField));
-        }
-        if (!isBlank(sustainedDPSField)) {
-            where.add("(ws.fire_rate > 0 AND (ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed) > ?)");
-            params.add(parseDouble(sustainedDPSField));
-        }
-        if (!isBlank(theoreticalTotalDamageField)) {
-            where.add("(ws.reserves * ws.precision_damage) > ?");
-            params.add(parseDouble(theoreticalTotalDamageField));
-        }
-        if (!isBlank(oneMagDamageField)) {
-            where.add("(ws.magazine * ws.precision_damage) > ?");
-            params.add(parseDouble(oneMagDamageField));
-        }
-
-        if (!where.isEmpty()) {
-            sql.append(" WHERE ").append(String.join(" AND ", where));
-        }
-
-        try (Connection conn = DatabaseProvider.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                List<WeaponRow> rows = new ArrayList<>();
                 while (rs.next()) {
                     WeaponRow row = new WeaponRow();
+
                     row.setWeaponType(rs.getString("weapon_type"));
                     row.setFrame(rs.getString("weapon_frame"));
                     row.setReserves(rs.getInt("reserves"));
@@ -188,34 +89,215 @@ public class WeaponsPageController {
                     row.setSustainedDps(rs.getDouble("sustained_dps"));
                     row.setTrueDps(rs.getDouble("true_dps"));
                     row.setDescription(rs.getString("weapon_desc"));
-                    rows.add(row);
+
+                    weaponsTable.getItems().add(row);
                 }
-                return rows;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    private static boolean isBlank(TextField tf) {
-        return tf.getText() == null || tf.getText().trim().isEmpty();
-    }
+    private ResultSet queryWeapons() throws SQLException {
+        StringBuilder baseSql = new StringBuilder("""
+            SELECT
+                w.weapon_id, w.weapon_type, w.weapon_frame,
+                wi.weapon_desc,
+                ws.reserves, ws.fire_rate, ws.reload_speed, ws.magazine,
+                ws.body_damage, ws.precision_damage,
+                at.ammo,
+                (ws.magazine * ws.precision_damage) AS one_mag_damage,
+                (ws.reserves * ws.precision_damage) AS theoretical_total_damage,
+                CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
+                     ELSE ROUND ((ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed ),1)
+                END AS sustained_dps,
+                CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
+                     ELSE ROUND ((ws.magazine * ws.precision_damage) / (ws.magazine * (60.0 / ws.fire_rate)), 1) 
+                END AS true_dps 
+            FROM weapons w
+            LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+            LEFT JOIN weapon_ammo wa ON wa.weapon_id = w.weapon_id
+            LEFT JOIN ammo_types at ON at.ammo_id = wa.ammo_id
+            LEFT JOIN weapon_info wi ON wi.weapon_id = w.weapon_id
+        """);
 
-    private static int parseInt(TextField tf) {
-        return Integer.parseInt(tf.getText().trim());
-    }
+        List<String> queries = new ArrayList<>();
+        List<Object> params  = new ArrayList<>();
 
-    private static double parseDouble(TextField tf) {
-        return Double.parseDouble(tf.getText().trim());
-    }
+        if (typeField.getText() != null && !typeField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                WHERE w.weapon_type = ?
+            """);
+            params.add(typeField.getText().trim());
+        }
 
-    public void primaryAmmo(ActionEvent actionEvent) {
-        ammoType = 1;
-    }
+        if (frameField.getText() != null && !frameField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                WHERE w.weapon_frame = ?
+            """);
+            params.add(frameField.getText().trim());
+        }
 
-    public void specialAmmo(ActionEvent actionEvent) {
-        ammoType = 2;
-    }
+        if (ammoType != 0){
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_ammo wa ON wa.weapon_id = w.weapon_id
+                WHERE wa.ammo_id = ?
+            """);
+            params.add(ammoType);
+        }
 
-    public void heavyAmmo(ActionEvent actionEvent) {
-        ammoType = 3;
+        if (magCapacityField.getText() != null && !magCapacityField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.magazine > ?
+            """);
+            params.add(Integer.parseInt(magCapacityField.getText().trim()));
+        }
+        if (reservesMagazineField.getText() != null && !reservesMagazineField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.reserves > ?
+            """);
+            params.add(Integer.parseInt(reservesMagazineField.getText().trim()));
+        }
+        if (fireRateField.getText() != null && !fireRateField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.fire_rate > ?
+            """);
+            params.add(Integer.parseInt(fireRateField.getText().trim()));
+        }
+        if (reloadSpeedField.getText() != null && !reloadSpeedField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.reload_speed < ?
+            """);
+            params.add(Double.parseDouble(reloadSpeedField.getText().trim()));
+        }
+        if (bodyDamageField.getText() != null && !bodyDamageField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.body_damage > ?
+            """);
+            params.add(Integer.parseInt(bodyDamageField.getText().trim()));
+        }
+        if (precisionDamageField.getText() != null && !precisionDamageField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ws.precision_damage > ?
+            """);
+            params.add(Integer.parseInt(precisionDamageField.getText().trim()));
+        }
+
+        if(trueDPSField.getText() != null && !trueDPSField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE ((ws.magazine * ws.precision_damage) / ( ws.magazine * (60.0 / ws.fire_rate) ) > ?
+            """);
+            params.add(Double.parseDouble(trueDPSField.getText().trim()));
+        }
+
+        if(sustainedDPSField.getText() != null && !sustainedDPSField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE (ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed)
+            """);
+            params.add(Double.parseDouble(sustainedDPSField.getText().trim()));
+        }
+
+        if(theoreticalTotalDamageField.getText() != null && !theoreticalTotalDamageField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE (ws.reserves * ws.precision_damage) > ?
+            """);
+            params.add(Double.parseDouble(theoreticalTotalDamageField.getText().trim()));
+        }
+
+        if(oneMagDamageField.getText() != null && !oneMagDamageField.getText().trim().isEmpty()) {
+            queries.add("""
+                SELECT w.weapon_id
+                FROM weapons w
+                LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
+                WHERE (ws.magazine * ws.precision_damage) > ?
+            """);
+            params.add(Double.parseDouble(oneMagDamageField.getText().trim()));
+        }
+
+        if (queries.isEmpty()) {
+            return Database.getInstance().executeQuery(baseSql.toString());
+        }
+
+        List<Set<Integer>> idSets = new ArrayList<>();
+        for (int i = 0; i < queries.size(); i++) {
+                ResultSet rs = Database.getInstance().executeQuery(queries.get(i), params.get(i));
+                Set<Integer> s = new HashSet<>();
+                while (rs.next()){
+                    s.add(rs.getInt(1));
+                }
+                idSets.add(s);
+            }
+
+            for (Set<Integer> s : idSets) {
+                if (s.isEmpty()) {
+                    return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
+                }
+            }
+
+            idSets.sort((a, b) -> Integer.compare(a.size(), b.size()));
+            Set<Integer> finalIds = new LinkedHashSet<>(idSets.get(0));
+            for (int i = 1; i < idSets.size(); i++) {
+                finalIds.retainAll(idSets.get(i));
+                if (finalIds.isEmpty()) {
+                    return Database.getInstance().executeQuery(baseSql + " WHERE 1=0");
+                }
+            }
+
+            StringBuilder finalSql = new StringBuilder(baseSql);
+            finalSql.append(" WHERE w.weapon_id IN (");
+            int n = finalIds.size();
+            for (int i = 0; i < n; i++) {
+                finalSql.append("?");
+                if (i < n - 1) finalSql.append(", ");
+            }
+            finalSql.append(")");
+
+            Object[] bind = finalIds.stream().map(Integer::valueOf).toArray();
+            return Database.getInstance().executeQuery(finalSql.toString(), bind);
+        }
+
+        public void primaryAmmo(ActionEvent actionEvent) {
+            ammoType = 1;
+        }
+
+        public void specialAmmo(ActionEvent actionEvent) {
+            ammoType = 2;
+        }
+
+        public void heavyAmmo(ActionEvent actionEvent) {
+            ammoType = 3;
+        }
     }
-}
