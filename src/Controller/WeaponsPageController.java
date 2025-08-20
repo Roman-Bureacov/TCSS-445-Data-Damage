@@ -300,4 +300,5 @@ public class WeaponsPageController {
     public void heavyAmmo(ActionEvent actionEvent) {
         ammoType = 3;
     }
+
 }

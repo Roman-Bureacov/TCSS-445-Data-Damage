@@ -63,11 +63,21 @@ public final class DatabaseProvider {
      * @return the connection to the database
      * @throws SQLException if the connection failed
      */
+//    public static Connection getConnection() throws SQLException {
+//        if(CONNECTION.isClosed()){
+//            return DriverManager.getConnection(DB_URL);
+//        }
+//        return CONNECTION;
+//    }
+
     public static Connection getConnection() throws SQLException {
-        if(CONNECTION.isClosed()){
-            return DriverManager.getConnection(DB_URL);
+        Connection conn = DriverManager.getConnection(DB_URL + "?busy_timeout=5000");
+        try (Statement s = conn.createStatement()) {
+            s.execute("PRAGMA journal_mode=WAL");
+            s.execute("PRAGMA synchronous=NORMAL");
+            s.execute("PRAGMA busy_timeout=5000");
         }
-        return CONNECTION;
+        return conn;
     }
 
     /**

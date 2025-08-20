@@ -98,7 +98,7 @@ public class ScriptsPageController {
             Left JOIN sims_meta sm ON sm.script_id = s.sim_id
             LEFT JOIN weapons k ON k.weapon_id = sm.kinetic
             LEFT JOIN weapons e ON e.weapon_id = sm.energy
-            LEFT JOIN weapons p ON p.weapon_id = sm.power;
+            LEFT JOIN weapons p ON p.weapon_id = sm.power
         """);
 
         List<String> queries = new ArrayList<>();
@@ -177,7 +177,7 @@ public class ScriptsPageController {
             queries.add("""
                 SELECT sm.script_id
                 FROM sims_meta sm
-                WHERE average_dps = ?
+                WHERE average_dps > ?
             """);
             params.add(Double.parseDouble(avgDPS.getText().trim()));
         }
@@ -186,7 +186,7 @@ public class ScriptsPageController {
             queries.add("""
                 SELECT sm.script_id
                 FROM sims_meta sm
-                WHERE total_damage = ?
+                WHERE total_damage > ?
             """);
             params.add(Integer.parseInt(totalDamage.getText().trim()));
         }
@@ -230,7 +230,7 @@ public class ScriptsPageController {
         }
 
         StringBuilder finalSql = new StringBuilder(baseSql);
-        finalSql.append(" WHERE s.id IN (");
+        finalSql.append(" WHERE s.sim_id IN (");
         int n = finalIds.size();
         for (int i = 0; i < n; i++) {
             finalSql.append("?");
