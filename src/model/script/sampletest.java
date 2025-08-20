@@ -57,11 +57,18 @@ public class sampletest {
                 }
                 """;
 
+        final String script4 =
+                """
+                        
+                """;
+
 
         final var data = ScriptReader.readData(script3);
 
         for (final var thing : data)
-            System.out.format("%d %d %s\n", (Integer)thing[0], (Integer)thing[1], thing[2]);
+            System.out.format("%10d %20d %s\n", (Integer)thing[0], (Integer)thing[1], thing[2]);
 
+        for (final var thing : data.getDPSTimesheet(5000))
+            System.out.format("%10d %20f %10s\n", thing[0], thing[1], thing[2]);
     }
 }

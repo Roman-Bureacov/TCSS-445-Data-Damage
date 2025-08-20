@@ -2,6 +2,7 @@ package model.script;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,8 +21,36 @@ import java.util.List;
  */
 public class TimeSheet implements Iterable<Object[]> {
     private static final int SIXTY_SECONDS = 60000;
+    private static final double SEC_PER_MS = 1/1000d;
     private int eventPlayhead = 0;
     private final List<Object[]> timesheet = new ArrayList<>();
+
+    /**
+     * Returns the appropriate damage-per-second as a function of time timesheet
+     * based on this timesheet.
+     * @param resolution the number of milliseconds to iterate over
+     * @return the DPS based on this timesheet as a list of object,
+     * with the first column as the integer timestamps, the second column as the double DPS,
+     * and the third column as null
+     */
+    public TimeSheet getDPSTimesheet(final int resolution) {
+        final TimeSheet t = new TimeSheet();
+        int damageSum = 0;
+        int position = 0;
+        final int len = this.timesheet.size();
+        for (int ms = 1; ms < SIXTY_SECONDS; ms += resolution) {
+            while (position < len) {
+                final Object[] datapoint = this.timesheet.get(position);
+                if ((Integer)datapoint[0] < ms) {
+                    damageSum += (Integer)datapoint[1];
+                    position++;
+                } else break;
+            }
+            t.timesheet.add(new Object[] {ms, (double)damageSum / (ms * SEC_PER_MS), null});
+        }
+
+        return t;
+    }
 
     /**
      * Writes an event into the time sheet from the playhead and then
@@ -65,4 +94,5 @@ public class TimeSheet implements Iterable<Object[]> {
             super("Timesheet has surpassed 60 seconds");
         }
     }
+
 }
