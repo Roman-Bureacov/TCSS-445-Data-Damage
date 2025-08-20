@@ -61,18 +61,34 @@ public final class ScriptReader {
     }
 
     /**
+     * Reads the weapons being used in the script and returns them as a three-element array.
+     * @param script the script to be read
+     * @return a three element containing first the kinetic slot, the energy slot, and then the power slot
+     * @throws IllegalArgumentException if the script failed to read the weapons
+     */
+    public static Weapon[] getWeapons(final String script) throws IllegalArgumentException {
+        setup(script);
+
+        try {
+            kinetic = readWeapon("kinetic");
+            energy = readWeapon("energy");
+            power = readWeapon("power");
+        } catch (final SQLException e) {
+            throw new IllegalArgumentException("Failed to find weapons from database");
+        }
+
+        return new Weapon[] {kinetic, energy, power};
+    }
+
+
+    /**
      * Reads in a script and returns a data set simulated by the script.
      * @param script the script to base the simulation upon.
      * @return the simulation data
      * @throws IllegalArgumentException if the script has syntax errors
      */
     public static TimeSheet readData(final String script) throws IllegalArgumentException {
-        position = 0;
-        data = new TimeSheet();
-        final Scanner input = new Scanner(script);
-        in = new ArrayList<>();
-        lastBrace = new LinkedList<>();
-        while (input.hasNext()) in.addLast(input.next());
+        setup(script);
 
         try {
             readHeader(); // initiates the grammar
@@ -82,6 +98,15 @@ public final class ScriptReader {
             throw new IllegalArgumentException("Failed to find weapons from database");
         }
         return data;
+    }
+
+    private static void setup(final String script) {
+        position = 0;
+        data = new TimeSheet();
+        final Scanner input = new Scanner(script);
+        in = new ArrayList<>();
+        lastBrace = new LinkedList<>();
+        while (input.hasNext()) in.addLast(input.next());
     }
 
     private static void readHeader() throws IllegalArgumentException, SQLException, TimeSheet.NoMoreTimeException {
