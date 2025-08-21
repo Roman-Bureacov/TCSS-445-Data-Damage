@@ -75,6 +75,8 @@ public final class ScriptReader {
             power = readWeapon("power");
         } catch (final SQLException e) {
             throw new IllegalArgumentException("Failed to find weapons from database");
+        } catch (final IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Reached EOS but expected additional tokens");
         }
 
         return new Weapon[] {kinetic, energy, power};
