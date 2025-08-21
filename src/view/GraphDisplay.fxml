@@ -11,13 +11,24 @@
             xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.GraphDisplayController">
 
     <center>
-        <LineChart fx:id="chart" animated="true" legendVisible="false">
-            <xAxis>
-                <NumberAxis fx:id="xAxis" label="Time (s)"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis fx:id="yAxis" label="Cumulative Damage"/>
-            </yAxis>
-        </LineChart>
+        <VBox spacing="10">
+            <LineChart fx:id="totalDamageChart" animated="true" legendVisible="false">
+                <xAxis>
+                    <NumberAxis fx:id="totalDamageX" label="Time (s)"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="totalDamageY" label="Cumulative Damage"/>
+                </yAxis>
+            </LineChart>
+
+            <LineChart fx:id="DPSChart" animated="true" legendVisible="false">
+                <xAxis>
+                    <NumberAxis fx:id="DPSX" label="Time (s)"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="DPSY" label="DPS"/>
+                </yAxis>
+            </LineChart>
+        </VBox>
     </center>
 </BorderPane>

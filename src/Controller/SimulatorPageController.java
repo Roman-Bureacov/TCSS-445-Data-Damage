@@ -9,6 +9,9 @@ public class SimulatorPageController {
 
     @FXML
     private void initialize() {
-        scriptEditorController.setOnRun(timesheet -> graphDisplayController.renderDamage(timesheet));
+        scriptEditorController.setOnRun(timesheet -> {
+            graphDisplayController.renderDamage(timesheet);
+            graphDisplayController.renderDpsChart(timesheet);
+        });
     }
 }
