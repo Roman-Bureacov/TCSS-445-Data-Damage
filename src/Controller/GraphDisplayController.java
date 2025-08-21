@@ -110,6 +110,7 @@ public class GraphDisplayController {
 
         double average = 0;
         int count = 0;
+        double maxAvgDPSAfter1Sec = 0;
         for (Object[] row : DPSTimeSheet) {
             int tMs = (Integer) row[0];
             double DPS = (Double) row[1];
@@ -124,6 +125,10 @@ public class GraphDisplayController {
 
             DPSSeries.getData().add(new XYChart.Data<>(t, DPS));
 
+            if(tMs > 1000 && DPS > maxAvgDPSAfter1Sec) {
+                maxAvgDPSAfter1Sec = DPS;
+            }
+
             instantSeries.getData().add(new XYChart.Data<>(t, 0));
             instantSeries.getData().add(new XYChart.Data<>(t, DPS));
         }
@@ -133,7 +138,7 @@ public class GraphDisplayController {
         DPSX.setLowerBound(0);
         DPSX.setUpperBound(SIXTY_SECONDS);
         DPSY.setLowerBound(0);
-        DPSY.setUpperBound(average * 2);
+        DPSY.setUpperBound(maxAvgDPSAfter1Sec);
         DPSY.setTickUnit(average / 4);
 
         DPSChart.setCreateSymbols(false); // optional: cleaner lines
