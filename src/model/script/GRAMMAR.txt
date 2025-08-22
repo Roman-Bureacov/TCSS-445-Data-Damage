@@ -45,7 +45,6 @@ GRAMMAR
 
     Conditional
         "if " boolExpr " then " scriptBlock
-        "if " boolExpr " then " scriptBlock script
 
     ScriptBlock
     "{" script "}"
