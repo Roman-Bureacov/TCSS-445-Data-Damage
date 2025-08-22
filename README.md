@@ -9,10 +9,10 @@ To load a script, find its id in the scripts page, enter that id on the simulati
 Load ID text field and hit load.
 
 
-Sample sim scripts:
+# Sample Sim Scripts
 
-script1:
-
+## script1
+```
 kinetic Precision AutoRifle
 energy RapidFire SniperRifle
 power Precision RocketLauncher
@@ -26,11 +26,10 @@ loop 2 {
 
 energy.equip!
 equipped.shootAtPrecision!
+```
 
-
-
-script2:
-                
+## script2
+```
 kinetic Aggressive ScoutRifle
 energy Aggressive Shotgun
 power Precision LinearFusionRifle
@@ -44,10 +43,10 @@ loop 200 {
     }
 }
 equipped.reload!
+```
 
-
-script3:
-                
+## script3
+```
 kinetic Aggressive HandCannon
 energy RapidFire Shotgun
 power RapidFire MachineGun
@@ -63,16 +62,15 @@ energy.equip!
 loop while NOT equipped.isMagazineEmpty? {
     equipped.shootAtBody!
 }
+```
 
-
-script4:
-
+## script4
+```
 kinetic Precision AutoRifle
 energy RapidFire SniperRifle
 power Precision RocketLauncher
 
 startswith energy
-
 loop 20 {
     kinetic.equip!
     loop 5 {
@@ -90,10 +88,10 @@ loop 20 {
 
 energy.equip!
 equipped.shootAtPrecision!
+```
 
-
-script5:
-                
+## script5
+```
 kinetic Precision AutoRifle
 energy RapidFire SniperRifle
 power Precision RocketLauncher
@@ -117,3 +115,4 @@ loop 2 {
 
 energy.equip!
 equipped.shootAtPrecision!
+```
