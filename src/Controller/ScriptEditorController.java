@@ -5,13 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import model.database.Database;
 import model.database.Weapon;
 import model.script.ScriptReader;
 import model.script.TimeSheet;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,21 +161,23 @@ public class ScriptEditorController {
             double averageDps = totalDamage / secondsPerSim;
 
             String insertScriptMeta = """
-                WITH
-                    kinetic AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
-                    energy AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
-                    power AS (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?)
-                INSERT INTO sims_meta (script_id, kinetic, energy, power, average_dps, total_damage)
-                SELECT ?, kinetic.weapon_id, energy.weapon_id, power.weapon_id, ?, ?
-                FROM kinetic, energy, power;
+                    INSERT INTO sims_meta (script_id, kinetic, energy, power, average_dps, total_damage)
+                    VALUES (
+                        ?,
+                        (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
+                        (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
+                        (SELECT weapon_id FROM weapons WHERE weapon_frame = ? AND weapon_type = ?),
+                        ?,
+                        ?
+                    );
                 """;
 
             Database.getInstance().executeUpdate(
                     insertScriptMeta,
+                    scriptId,
                     theWeapons[0].getWeaponFrame(), theWeapons[0].getWeaponType(),
                     theWeapons[1].getWeaponFrame(), theWeapons[1].getWeaponType(),
                     theWeapons[2].getWeaponFrame(), theWeapons[2].getWeaponType(),
-                    scriptId,
                     averageDps,
                     totalDamage
             );

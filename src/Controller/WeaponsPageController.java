@@ -161,7 +161,7 @@ public class WeaponsPageController {
                 (ws.magazine * ws.precision_damage) AS one_mag_damage,
                 (ws.reserves * ws.precision_damage) AS theoretical_total_damage,
                 CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
-                     ELSE ROUND ((ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed ),1)
+                     ELSE ROUND ((ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed), 1)
                 END AS sustained_dps,
                 CASE WHEN ws.fire_rate IS NULL OR ws.fire_rate = 0 THEN NULL
                      ELSE ROUND ((ws.magazine * ws.precision_damage) / (ws.magazine * (60.0 / ws.fire_rate)), 1) 
