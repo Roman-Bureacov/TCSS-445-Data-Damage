@@ -405,6 +405,7 @@ public final class ScriptReader {
      * The position variable is modified to be on the token ahead of the closing brace
      */
     private static void skipToClosingBrace() {
+        position++; // skip the opening brace
         int depth = 1;
         boolean endBraceFound = false;
         while (!(depth == 0 && endBraceFound)) {
