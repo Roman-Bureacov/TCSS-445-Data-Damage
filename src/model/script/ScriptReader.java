@@ -194,7 +194,6 @@ public final class ScriptReader {
             readScriptBlock();
         } // otherwise skip this conditional
         else skipToClosingBrace();
-        position++;
 
         readScript();
     }
@@ -408,7 +407,7 @@ public final class ScriptReader {
     private static void skipToClosingBrace() {
         int depth = 1;
         boolean endBraceFound = false;
-        while (depth != 0 && !endBraceFound) {
+        while (!(depth == 0 && endBraceFound)) {
             final String token = in.get(position);
             position++;
             if ("{".equals(token)) depth++;
