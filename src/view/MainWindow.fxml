@@ -10,7 +10,6 @@
                 AnchorPane.rightAnchor="0.0"
                 AnchorPane.topAnchor="0.0">
         <top>
-<!--            <fx:include source="DDMenuBar.fxml"/>-->
         </top>
         <left>
             <fx:include source="SideMenu.fxml" fx:id="mySideMenu"/>
