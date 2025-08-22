@@ -14,7 +14,7 @@
                 AnchorPane.rightAnchor="0"
                 AnchorPane.topAnchor="0">
         <left>
-            <StackPane alignment="CENTER" styleClass="weapons-form">
+            <StackPane styleClass="weapons-form">
                 <padding>
                     <Insets top="20" right="20" bottom="20" left="20"/>
                 </padding>
@@ -46,10 +46,6 @@
                     <TextField styleClass="field" fx:id="totalDamage" promptText="Total Damage" GridPane.rowIndex="20"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="21" />
 
-                    <Label text="Save Date (MM/DD/YY)" GridPane.rowIndex="22"/>
-                    <TextField styleClass="field" fx:id="SaveDate" promptText="Date" GridPane.rowIndex="23"/>
-                    <Label styleClass="label" text=" " GridPane.rowIndex="24" />
-
                     <Button styleClass="field" onAction="#onSearch" GridPane.rowIndex="47">SEARCH</Button >
 
                 </GridPane>
@@ -63,13 +59,14 @@
                 <TableView styleClass="weapons-table" fx:id="scriptsTable"
                            maxWidth="1000">
                     <columns>
+                        <TableColumn styleClass="weapons-table" fx:id="colScriptID" text="Script ID"/>
                         <TableColumn styleClass="weapons-table" fx:id="colSaveName" text="Save Name"/>
                         <TableColumn styleClass="weapons-table" fx:id="colKineticFrame" text="Kinetic Frame"/>
                         <TableColumn styleClass="weapons-table" fx:id="colKineticType" text="Kinetic Type"/>
                         <TableColumn styleClass="weapons-table" fx:id="colEnergyFrame" text="Energy Frame"/>
                         <TableColumn styleClass="weapons-table" fx:id="colEnergyType" text="Energy Type"/>
                         <TableColumn styleClass="weapons-table" fx:id="colPowerFrame" text="Power Frame"/>
-                        <TableColumn styleClass="weapons-table" fx:id="colPowerType" text="Power Frame"/>
+                        <TableColumn styleClass="weapons-table" fx:id="colPowerType" text="Power Type"/>
                         <TableColumn styleClass="weapons-table" fx:id="colAvgDPS" text="Avg DPS"/>
                         <TableColumn styleClass="weapons-table" fx:id="colTotalDamage" text="Total Dmg"/>
                         <TableColumn styleClass="weapons-table" fx:id="colDate" text="Date"/>

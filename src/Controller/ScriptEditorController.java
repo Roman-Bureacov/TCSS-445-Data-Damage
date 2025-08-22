@@ -5,75 +5,68 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import model.database.Database;
 import model.database.Weapon;
-import model.database.build.DatabaseProvider;
 import model.script.ScriptReader;
 import model.script.TimeSheet;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * Controller for the script editor. Responsible for getting user's scripts, calling the script reader and then getting
+ * the scripts to the graph display.
+ *
+ * @author Kaleb Anagnostou
+ * @version 2025 August
+ */
 public class ScriptEditorController {
-    public TextField scriptName;
-    @FXML
-    private TextArea editor;
-
+    /** The text field that sets the script name when saved. */
+    @FXML public TextField myScriptName;
+    /** The text field that sets the script id when loading. */
+    @FXML public TextField myScriptID;
+    /** The text area where the user inputs script. */
+    @FXML private TextArea myEditor;
+    /** The simulation timesheet. */
+    private TimeSheet myTimeSheet;
+    /** The simulation weapons. */
+    private Weapon[] myWeapons;
+    /** Consumer that passes the timesheet from the script editor to the graph controller to update when run. */
     private Consumer<TimeSheet> onRun;
 
-    public void setOnRun(Consumer<TimeSheet> onRun) { this.onRun = onRun; }
-
-    @FXML
-    private void initialize() {
-        editor.setOnKeyPressed(e -> {
-            if (Objects.requireNonNull(e.getCode()) == KeyCode.S) {
-                if (e.isControlDown() || e.isMetaDown()) saveToFile();
-            }
-        });
+    /**
+     * Sets onRun to be the function passed in.
+     */
+    public void setOnRun(Consumer<TimeSheet> onRun) {
+        this.onRun = onRun;
     }
 
+    /**
+     * Getter for the text in the editor textfield.
+     */
     public String getText() {
-        return editor.getText();
+        return myEditor.getText();
     }
 
-    public void setText(String text) {
-        editor.setText(text);
+    /**
+     * Setter for the text in the editor textfield.
+     */
+    public void setText(String theText) {
+        myEditor.setText(theText);
     }
 
-    public void saveToFile() {
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files", "*.txt", "*.md", "*.cfg", "*.*"));
-        File file = fc.showSaveDialog(editor.getScene().getWindow());
-        if (file == null) return;
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-            w.write(editor.getText());
-        } catch (IOException ex) { ex.printStackTrace(); }
-    }
-
-    public void loadFromFile() {
-        FileChooser fc = new FileChooser();
-        File file = fc.showOpenDialog(editor.getScene().getWindow());
-        if (file == null) return;
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-            editor.setText(r.lines().reduce((a,b)->a+"\n"+b).orElse(""));
-        } catch (IOException ex) { ex.printStackTrace(); }
-    }
-
-    public void runScript(ActionEvent ignored) {
-        runScript();
-    }
-
-    private void runScript() {
+    /**
+     * Saves the text in the editor to a txt file.
+     */
+    public void saveToDB() {
         try {
-            TimeSheet timesheet = ScriptReader.readData(getText());
-            Weapon[] weapons = ScriptReader.getWeapons(getText());
-            saveSimulation(timesheet, weapons);
-            if (onRun != null) onRun.accept(timesheet);
+            myTimeSheet = ScriptReader.readData(getText());
+            myWeapons = ScriptReader.getWeapons(getText());
+            saveSimulation(myTimeSheet, myWeapons);
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -83,7 +76,63 @@ public class ScriptEditorController {
         }
     }
 
-    private void saveSimulation(TimeSheet timesheet, Weapon[] weapons) throws Exception {
+    /**
+     * Load text from a choose file into the editor.
+     */
+    public void loadFromDB() {
+        try{
+            String scriptTextFromIDQuery = """
+                SELECT script FROM sims_scripts WHERE script_id = ?
+                """;
+            ResultSet rs = Database.getInstance().executeQuery(scriptTextFromIDQuery, Integer.parseInt(myScriptID.getText()));
+            if(rs.next()) {
+                String script = rs.getString("script").substring(1, rs.getString("script").length() - 1);
+                setText(script);
+            } else {
+                setText("");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setContentText("Cannot find script id: " + myScriptID.getText());
+                alert.showAndWait();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Runs the script through the simulator and script reader. Passes the time sheet to on run to display in the graph.
+     *
+     * @param theActionEvent clicking the run button is the action. Needed because javafx expects this method signature.
+     */
+    public void runScript(ActionEvent theActionEvent) {
+        try {
+            myTimeSheet = ScriptReader.readData(getText());
+            myWeapons = ScriptReader.getWeapons(getText());
+            if (onRun != null) {
+                onRun.accept(myTimeSheet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Takes the time sheet and weapons array and inserts them into the database in the proper tables.
+     *
+     * @param theTimesheet the time sheets with sim time events.
+     * @param theWeapons the weapons used in the simulation.
+     */
+    private void saveSimulation(TimeSheet theTimesheet, Weapon[] theWeapons) {
         try {
             long scriptId = 0;
             String simsScriptsInsertQuery = "INSERT INTO sims_scripts (script) VALUES (?)";
@@ -94,13 +143,13 @@ public class ScriptEditorController {
 
             String simsInsertQuery = "INSERT INTO sims (script_id, sim_name) VALUES (?, ?)";
             params.add(scriptId);
-            params.add(scriptName.getText());
+            params.add(myScriptName.getText());
             Database.getInstance().executeUpdate(simsInsertQuery, params.toArray());
             params.clear();
 
             int totalDamage = 0;
             int maxMs = 0;
-            for (Object[] row : timesheet) {
+            for (Object[] row : theTimesheet) {
                 Integer tMs = (Integer) row[0];
                 Integer dmg = (Integer) row[1];
                 if (tMs != null && tMs > maxMs) {
@@ -126,16 +175,16 @@ public class ScriptEditorController {
 
             Database.getInstance().executeUpdate(
                     insertScriptMeta,
-                    weapons[0].getWeaponFrame(), weapons[0].getWeaponType(),
-                    weapons[1].getWeaponFrame(), weapons[1].getWeaponType(),
-                    weapons[2].getWeaponFrame(), weapons[2].getWeaponType(),
+                    theWeapons[0].getWeaponFrame(), theWeapons[0].getWeaponType(),
+                    theWeapons[1].getWeaponFrame(), theWeapons[1].getWeaponType(),
+                    theWeapons[2].getWeaponFrame(), theWeapons[2].getWeaponType(),
                     scriptId,
                     averageDps,
                     totalDamage
             );
             params.clear();
 
-            for (Object[] row : timesheet) {
+            for (Object[] row : theTimesheet) {
                 Integer tMs = (Integer) row[0];
                 Integer dmg = (Integer) row[1];
                 String event = (String) row[2];

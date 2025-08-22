@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+
 <BorderPane styleClass="dark-chart"
             AnchorPane.topAnchor="20.0" AnchorPane.rightAnchor="20.0"
             AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0"
@@ -12,21 +11,21 @@
 
     <center>
         <VBox spacing="10">
-            <LineChart fx:id="totalDamageChart" animated="true" legendVisible="false">
+            <LineChart fx:id="myTotalDamageChart" legendVisible="false">
                 <xAxis>
-                    <NumberAxis fx:id="totalDamageX" label="Time (s)"/>
+                    <NumberAxis fx:id="myTotalDamageX" label="Time (s)"/>
                 </xAxis>
                 <yAxis>
-                    <NumberAxis fx:id="totalDamageY" label="Cumulative Damage"/>
+                    <NumberAxis fx:id="myTotalDamageY" label="Cumulative Damage"/>
                 </yAxis>
             </LineChart>
 
-            <LineChart fx:id="DPSChart" animated="true" legendVisible="false">
+            <LineChart fx:id="myDPSChart" legendVisible="false">
                 <xAxis>
-                    <NumberAxis fx:id="DPSX" label="Time (s)"/>
+                    <NumberAxis fx:id="myDPSX" label="Time (s)"/>
                 </xAxis>
                 <yAxis>
-                    <NumberAxis fx:id="DPSY" label="DPS"/>
+                    <NumberAxis fx:id="myDPSY" label="DPS"/>
                 </yAxis>
             </LineChart>
         </VBox>

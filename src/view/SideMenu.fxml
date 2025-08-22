@@ -12,7 +12,7 @@
             AnchorPane.leftAnchor="0.0"
             fx:controller="Controller.SideMenuController">
 
-    <VBox styleClass="side-menu" VBox.vgrow="ALWAYS" minWidth="200" fillWidth="true" alignment="TOP_LEFT"
+    <VBox styleClass="side-menu" VBox.vgrow="ALWAYS" minWidth="200"
           AnchorPane.topAnchor="0.0"
           AnchorPane.rightAnchor="0.0"
           AnchorPane.bottomAnchor="0.0"

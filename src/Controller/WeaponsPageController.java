@@ -8,38 +8,85 @@ import model.database.Database;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * The controller for the weapons page.
+ *
+ * @author Kaleb Anagnostou
+ * @version 2025 August
+ */
 public class WeaponsPageController {
-    public TextField typeField;
-    public TextField frameField;
+    /** Weapon type to search for in the database. */
+    @FXML private TextField typeField;
+    /** Weapon frame to search for in the database. */
+    @FXML private TextField frameField;
+    /** Toggle group for the radio buttons. */
     @FXML private ToggleGroup ammoGroup;
-    public int ammoType;
-    public RadioButton primaryRadio;
-    public RadioButton specialRadio;
-    public RadioButton heavyRadio;
-    public TextField trueDPSField;
-    public TextField sustainedDPSField;
-    public TextField theoreticalTotalDamageField;
-    public TextField oneMagDamageField;
-    public TextField magCapacityField;
-    public TextField reservesMagazineField;
-    public TextField fireRateField;
-    public TextField reloadSpeedField;
-    public TextField timeToEmptyField;
-    public TextField bodyDamageField;
-    public TextField precisionDamageField;
-    @FXML public TableColumn<WeaponRow, String> colDescription;
-    @FXML private TableColumn<WeaponRow, Integer> colOneMag;
-    @FXML private TableColumn<WeaponRow, Integer> colTheo;
-    @FXML private TableColumn<WeaponRow, Double>  colSust;
-    @FXML private TableColumn<WeaponRow, Double>  colTrue;
+    /** Weapon ammo type to search for in the database. */
+    private int ammoType;
+    /** Radio button to set ammo type to search for in the database to kinetic. */
+    @FXML private RadioButton primaryRadio;
+    /** Radio button to set ammo type to search for in the database to energy. */
+    @FXML private RadioButton specialRadio;
+    /** Radio button to set ammo type to search for in the database to power. */
+    @FXML private RadioButton heavyRadio;
+    /** Weapon true dps to search for in the database. */
+    @FXML private TextField trueDPSField;
+    /** Weapon sustained dps to search for in the database. */
+    @FXML private TextField sustainedDPSField;
+    /** Weapon theoretical total damage to search for in the database. */
+    @FXML private TextField theoreticalTotalDamageField;
+    /** Weapon one magazine damage to search for in the database. */
+    @FXML private TextField oneMagDamageField;
+    /** Weapon magazine cpacity to search for in the database. */
+    @FXML private TextField magCapacityField;
+    /** Weapon reserve magazines to search for in the database. */
+    @FXML private TextField reservesMagazineField;
+    /** Weapon fire rate to search for in the database. */
+    @FXML private TextField fireRateField;
+    /** Weapon reload speed to search for in the database. */
+    @FXML private TextField reloadSpeedField;
+    /** Weapon time to empty to search for in the database. */
+    @FXML private TextField timeToEmptyField;
+    /** Weapon body damage to search for in the database. */
+    @FXML private TextField bodyDamageField;
+    /** Weapon precision dmage to search for in the database. */
+    @FXML private TextField precisionDamageField;
+    /** The table displaying the query results. */
     @FXML private TableView<WeaponRow> weaponsTable;
-    @FXML private TableColumn<WeaponRow,String>  colType, colFrame;
-    @FXML private TableColumn<WeaponRow,Integer> colReserves, colMagazine, colFireRate, colBody, colPrecision;
+    /** Column that will display the weapon's type. */
+    @FXML private TableColumn<WeaponRow,String> colType;
+    /** Column that will display the weapon's frame. */
+    @FXML private TableColumn<WeaponRow,String> colFrame;
+    /** Column that will display the weapon's description. */
+    @FXML public TableColumn<WeaponRow, String> colDescription;
+    /** Column that will display the weapon's one mag damage. */
+    @FXML private TableColumn<WeaponRow, Integer> colOneMag;
+    /** Column that will display the weapon's theoretical total damage. */
+    @FXML private TableColumn<WeaponRow, Integer> colTheo;
+    /** Column that will display the weapon's sustainable dps. */
+    @FXML private TableColumn<WeaponRow, Double>  colSust;
+    /** Column that will display the weapon's true damage. */
+    @FXML private TableColumn<WeaponRow, Double>  colTrue;
+    /** Column that will display the weapon's precision damage. */
+    @FXML private TableColumn<WeaponRow,Integer> colPrecision;
+    /** Column that will display the weapon's body damage. */
+    @FXML private TableColumn<WeaponRow,Integer> colBody;
+    /** Column that will display the weapon's fire rate. */
+    @FXML private TableColumn<WeaponRow,Integer> colFireRate;
+    /** Column that will display the weapon's mazine capacity. */
+    @FXML private TableColumn<WeaponRow,Integer> colMagazine;
+    /** Column that will display the weapon's reserves. */
+    @FXML private TableColumn<WeaponRow,Integer> colReserves;
+    /** Column that will display the weapon's reload speed. */
     @FXML private TableColumn<WeaponRow,Double>  colReload;
+    /** Column that will display the weapon's ammo type. */
     @FXML private TableColumn<WeaponRow,String> colAmmoType;
 
-    @FXML
-    public void initialize() {
+    /**
+     * Sets up the property value factories so that the table will update when it gets a new result set. Calls the
+     * search with no parameters to populate the table without any filter queries.
+     */
+    @FXML public void initialize() {
         ammoType = 0;
         primaryRadio.setToggleGroup(ammoGroup);
         specialRadio.setToggleGroup(ammoGroup);
@@ -62,8 +109,10 @@ public class WeaponsPageController {
         onSearch();
     }
 
-    @FXML
-    public void onSearch() {
+    /**
+     * Opens a DB connection and queries the DB. Sets the results set entries to be the column data in the table.
+     */
+    @FXML public void onSearch() {
         try {
             ResultSet rs = queryWeapons();
             Connection conn = rs.getStatement().getConnection();
@@ -98,6 +147,9 @@ public class WeaponsPageController {
         }
     }
 
+    /**
+     * Constructs a query and gets back the necessary data to construct the table.
+     */
     private ResultSet queryWeapons() throws SQLException {
         StringBuilder baseSql = new StringBuilder("""
             SELECT
@@ -212,7 +264,7 @@ public class WeaponsPageController {
                 SELECT w.weapon_id
                 FROM weapons w
                 LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
-                WHERE ((ws.magazine * ws.precision_damage) / ( ws.magazine * (60.0 / ws.fire_rate) ) > ?
+                WHERE ((ws.magazine * ws.precision_damage) / (ws.magazine * (60.0 / ws.fire_rate))) > ?
             """);
             params.add(Double.parseDouble(trueDPSField.getText().trim()));
         }
@@ -222,7 +274,7 @@ public class WeaponsPageController {
                 SELECT w.weapon_id
                 FROM weapons w
                 LEFT JOIN weapon_stats ws ON ws.weapon_id = w.weapon_id
-                WHERE (ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed)
+                WHERE (ws.magazine * ws.precision_damage) / (((ws.magazine - 1) * (60.0 / ws.fire_rate)) + ws.reload_speed) > ?
             """);
             params.add(Double.parseDouble(sustainedDPSField.getText().trim()));
         }
@@ -267,8 +319,8 @@ public class WeaponsPageController {
             }
         }
 
-        idSets.sort((a, b) -> Integer.compare(a.size(), b.size()));
-        Set<Integer> finalIds = new LinkedHashSet<>(idSets.get(0));
+        idSets.sort(Comparator.comparingInt(Set::size));
+        Set<Integer> finalIds = new LinkedHashSet<>(idSets.getFirst());
         for (int i = 1; i < idSets.size(); i++) {
             finalIds.retainAll(idSets.get(i));
             if (finalIds.isEmpty()) {
@@ -285,19 +337,34 @@ public class WeaponsPageController {
         }
         finalSql.append(")");
 
-        Object[] bind = finalIds.stream().map(Integer::valueOf).toArray();
-        return Database.getInstance().executeQuery(finalSql.toString(), bind);
+        Object[] paramlist = finalIds.toArray();
+        return Database.getInstance().executeQuery(finalSql.toString(), paramlist);
     }
 
-    public void primaryAmmo(ActionEvent actionEvent) {
+    /**
+     * Sets the ammo type to primary.
+     *
+     * @param theActionEvent the action event that triggers this method. Necessary for JavaFx.
+     */
+    public void primaryAmmo(ActionEvent theActionEvent) {
         ammoType = 1;
     }
 
-    public void specialAmmo(ActionEvent actionEvent) {
+    /**
+     * Sets the ammo type to special.
+     *
+     * @param theActionEvent the action event that triggers this method. Necessary for JavaFx.
+     */
+    public void specialAmmo(ActionEvent theActionEvent) {
         ammoType = 2;
     }
 
-    public void heavyAmmo(ActionEvent actionEvent) {
+    /**
+     * Sets the ammo type to heavy.
+     *
+     * @param theActionEvent the action event that triggers this method. Necessary for JavaFx.
+     */
+    public void heavyAmmo(ActionEvent theActionEvent) {
         ammoType = 3;
     }
 

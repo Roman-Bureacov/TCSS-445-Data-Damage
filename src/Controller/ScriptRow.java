@@ -2,135 +2,161 @@ package Controller;
 
 import javafx.beans.property.*;
 
+/**
+ * A row containing scripts information that will be displayed in the scripts page.
+ *
+ * @author Kaleb Anagnostou
+ * @version 2025 August
+ */
 public class ScriptRow {
-    private final StringProperty saveName = new SimpleStringProperty("");
-    private final StringProperty kineticWeaponType = new SimpleStringProperty("");
-    private final StringProperty kineticWeaponFrame = new SimpleStringProperty("");
-    private final StringProperty energyWeaponType = new SimpleStringProperty("");
-    private final StringProperty energyWeaponFrame = new SimpleStringProperty("");
-    private final StringProperty powerWeaponType = new SimpleStringProperty("");
-    private final StringProperty powerWeaponFrame = new SimpleStringProperty("");
-    private final DoubleProperty avgDPS = new SimpleDoubleProperty(0.0);
-    private final IntegerProperty totalDPS = new SimpleIntegerProperty(0);
-    private final StringProperty saveDate = new SimpleStringProperty("");
+    /** The id of the sim script. */
+    private final IntegerProperty myScriptId = new SimpleIntegerProperty(0);
+    /** The name of the sim. */
+    private final StringProperty mySaveName = new SimpleStringProperty("");
+    /** The type of kinetic weapon used in the sim. */
+    private final StringProperty myKineticWeaponType = new SimpleStringProperty("");
+    /** The frame of the kinetic weapon used in the sim. */
+    private final StringProperty myKineticWeaponFrame = new SimpleStringProperty("");
+    /** The type of energy weapon used in the sim. */
+    private final StringProperty myEnergyWeaponType = new SimpleStringProperty("");
+    /** The frame of the energy weapon used in the sim. */
+    private final StringProperty myEnergyWeaponFrame = new SimpleStringProperty("");
+    /** The type of power weapon used in the sim. */
+    private final StringProperty myPowerWeaponType = new SimpleStringProperty("");
+    /** The frame of the power weapon used in the sim. */
+    private final StringProperty myPowerWeaponFrame = new SimpleStringProperty("");
+    /** The average DPS in the sim. */
+    private final DoubleProperty myAvgDPS = new SimpleDoubleProperty(0.0);
+    /** The total cumulative damage in the sim. */
+    private final IntegerProperty myTotalDPS = new SimpleIntegerProperty(0);
+    /** The date the sim was saved. */
+    private final StringProperty mySaveDate = new SimpleStringProperty("");
 
-    public String getSaveName() {
-        return saveName.get();
+    public int getScriptId() {
+        return myScriptId.get();
     }
 
-    public StringProperty saveNameProperty() {
-        return saveName;
+    public String getSaveName() {
+        return mySaveName.get();
+    }
+
+    public StringProperty mySaveNameProperty() {
+        return mySaveName;
     }
 
     public String getKineticWeaponType() {
-        return kineticWeaponType.get();
+        return myKineticWeaponType.get();
     }
 
-    public StringProperty kineticWeaponTypeProperty() {
-        return kineticWeaponType;
+    public StringProperty myKineticWeaponTypeProperty() {
+        return myKineticWeaponType;
     }
 
     public String getKineticWeaponFrame() {
-        return kineticWeaponFrame.get();
+        return myKineticWeaponFrame.get();
     }
 
-    public StringProperty kineticWeaponFrameProperty() {
-        return kineticWeaponFrame;
+    public StringProperty myKineticWeaponFrameProperty() {
+        return myKineticWeaponFrame;
     }
 
     public String getEnergyWeaponType() {
-        return energyWeaponType.get();
+        return myEnergyWeaponType.get();
     }
 
-    public StringProperty energyWeaponTypeProperty() {
-        return energyWeaponType;
+    public StringProperty myEnergyWeaponTypeProperty() {
+        return myEnergyWeaponType;
     }
 
     public String getEnergyWeaponFrame() {
-        return energyWeaponFrame.get();
+        return myEnergyWeaponFrame.get();
     }
 
-    public StringProperty energyWeaponFrameProperty() {
-        return energyWeaponFrame;
+    public StringProperty myEnergyWeaponFrameProperty() {
+        return myEnergyWeaponFrame;
     }
 
     public String getPowerWeaponType() {
-        return powerWeaponType.get();
+        return myPowerWeaponType.get();
     }
 
-    public StringProperty powerWeaponTypeProperty() {
-        return powerWeaponType;
+    public StringProperty myPowerWeaponTypeProperty() {
+        return myPowerWeaponType;
     }
 
     public String getPowerWeaponFrame() {
-        return powerWeaponFrame.get();
+        return myPowerWeaponFrame.get();
     }
 
-    public StringProperty powerWeaponFrameProperty() {
-        return powerWeaponFrame;
+    public StringProperty myPowerWeaponFrameProperty() {
+        return myPowerWeaponFrame;
     }
 
-    public double getAvgDPS() {
-        return avgDPS.get();
+    public double getMyAvgDPS() {
+        return myAvgDPS.get();
     }
 
     public DoubleProperty avgDPSProperty() {
-        return avgDPS;
+        return myAvgDPS;
     }
 
     public int getTotalDPS() {
-        return totalDPS.get();
+        return myTotalDPS.get();
     }
 
     public IntegerProperty totalDPSProperty() {
-        return totalDPS;
+        return myTotalDPS;
     }
 
     public String getSaveDate() {
-        return saveDate.get();
+        return mySaveDate.get();
     }
 
-    public StringProperty saveDateProperty() {
-        return saveDate;
+    public StringProperty mySaveDateProperty() {
+        return mySaveDate;
+    }
+
+    public void setScriptId(int theScriptId) {
+        myScriptId.set(theScriptId);
     }
 
     public void setSaveName(String theSaveName) {
-        saveName.set(theSaveName);
+        mySaveName.set(theSaveName);
     }
 
     public void setKineticWeaponType(String theKineticWeaponType){
-        kineticWeaponType.set(theKineticWeaponType);
+        myKineticWeaponType.set(theKineticWeaponType);
     }
 
     public void setKineticWeaponFrame(String theKineticWeaponFrame){
-        kineticWeaponFrame.set(theKineticWeaponFrame);
+        myKineticWeaponFrame.set(theKineticWeaponFrame);
     }
 
     public void setEnergyWeaponType(String theEnergyWeaponType){
-        energyWeaponType.set(theEnergyWeaponType);
+        myEnergyWeaponType.set(theEnergyWeaponType);
     }
 
-    public void setEnergyWeaponFrame(String theEnergyWeaponFrame){
-        energyWeaponFrame.set(theEnergyWeaponFrame);
+    public void setMyEnergyWeaponFrame(String theEnergyWeaponFrame){
+        myEnergyWeaponFrame.set(theEnergyWeaponFrame);
     }
 
     public void setPowerWeaponType(String thePowerWeaponType){
-        powerWeaponType.set(thePowerWeaponType);
+        myPowerWeaponType.set(thePowerWeaponType);
     }
 
     public void setPowerWeaponFrame(String thePowerWeaponFrame){
-        powerWeaponFrame.set(thePowerWeaponFrame);
+        myPowerWeaponFrame.set(thePowerWeaponFrame);
     }
 
     public void setAvgDPS(double theAvgDPS){
-        avgDPS.set(theAvgDPS);
+        myAvgDPS.set(theAvgDPS);
     }
 
-    public void setTotalDPS(int theTotalDPS){
-        totalDPS.set(theTotalDPS);
+    public void setMyTotalDPS(int theTotalDPS){
+        myTotalDPS.set(theTotalDPS);
     }
 
     public void setSaveDate(String theSaveDate){
-        saveDate.set(theSaveDate);
+        mySaveDate.set(theSaveDate);
     }
 }

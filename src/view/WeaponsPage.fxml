@@ -14,7 +14,7 @@
                 AnchorPane.rightAnchor="0"
                 AnchorPane.topAnchor="0">
         <left>
-            <StackPane alignment="CENTER" styleClass="weapons-form">
+            <StackPane styleClass="weapons-form">
                 <padding>
                     <Insets top="20" right="20" bottom="20" left="20"/>
                 </padding>
@@ -32,71 +32,52 @@
                         <ToggleGroup fx:id="ammoGroup"/>
                     </fx:define>
                     <RadioButton fx:id="primaryRadio" styleClass="field" text="Primary" onAction="#primaryAmmo" GridPane.rowIndex="8" toggleGroup="$ammoGroup"/>
-
                     <RadioButton fx:id="specialRadio" styleClass="field" text="Special" onAction="#specialAmmo" GridPane.rowIndex="10" toggleGroup="$ammoGroup"/>
-
                     <RadioButton fx:id="heavyRadio" styleClass="field" text="Heavy" onAction="#heavyAmmo" GridPane.rowIndex="12" toggleGroup="$ammoGroup"/>
 
                     <Label styleClass="label" text=" " GridPane.rowIndex="13"/>
-                    
 
                     <Label text="True DPS" GridPane.rowIndex="14"/>
                     <TextField styleClass="field" fx:id="trueDPSField" promptText="Type" GridPane.rowIndex="15"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="16" />
-                    
 
                     <Label text="Sustained DPS" GridPane.rowIndex="17"/>
                     <TextField styleClass="field" fx:id="sustainedDPSField" promptText="Type" GridPane.rowIndex="18"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="19" />
-                    
 
                     <Label text="Theoretical Total Damage" GridPane.rowIndex="20"/>
                     <TextField styleClass="field" fx:id="theoreticalTotalDamageField" promptText="Type" GridPane.rowIndex="21"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="22" />
-                    
 
                     <Label text="1 Mag Damage" GridPane.rowIndex="23"/>
                     <TextField styleClass="field" fx:id="oneMagDamageField" promptText="Type" GridPane.rowIndex="24"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="25" />
-                    
 
                     <Label text="Magazine Capacity" GridPane.rowIndex="26"/>
                     <TextField styleClass="field" fx:id="magCapacityField" promptText="Type" GridPane.rowIndex="27"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="28" />
-                    
 
                     <Label text="Reserves + Magazine" GridPane.rowIndex="29"/>
                     <TextField styleClass="field" fx:id="reservesMagazineField" promptText="Type" GridPane.rowIndex="30"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="31" />
-                    
 
                     <Label text="Fire Rate (RPM)" GridPane.rowIndex="32"/>
                     <TextField styleClass="field" fx:id="fireRateField" promptText="Type" GridPane.rowIndex="33"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="34" />
-                    
 
                     <Label text="Reload Speed (s)" GridPane.rowIndex="35"/>
                     <TextField styleClass="field" fx:id="reloadSpeedField" promptText="Type" GridPane.rowIndex="36"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="37" />
-                    
-
-                    <Label text="Time to Empty (s)" GridPane.rowIndex="38"/>
-                    <TextField styleClass="field" fx:id="timeToEmptyField" promptText="Type" GridPane.rowIndex="39"/>
-                    <Label styleClass="label" text=" " GridPane.rowIndex="40" />
-                    
 
                     <Label text="Body Damage" GridPane.rowIndex="41"/>
                     <TextField styleClass="field" fx:id="bodyDamageField" promptText="Type" GridPane.rowIndex="42"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="43" />
-                    
 
                     <Label text="Precision Damage" GridPane.rowIndex="44"/>
                     <TextField styleClass="field" fx:id="precisionDamageField" promptText="Type" GridPane.rowIndex="45"/>
                     <Label styleClass="label" text=" " GridPane.rowIndex="46" />
-                    
 
                     <Button styleClass="field" onAction="#onSearch" GridPane.rowIndex="47">SEARCH</Button >
-
                 </GridPane>
             </StackPane>
         </left>

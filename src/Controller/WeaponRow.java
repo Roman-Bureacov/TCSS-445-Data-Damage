@@ -2,132 +2,152 @@ package Controller;
 
 import javafx.beans.property.*;
 
+/**
+ * A row containing weapon information that will be displayed in the weapons page table.
+ *
+ * @author Kaleb Anagnostou
+ * @version 2025 August
+ */
 public class WeaponRow {
-    private final StringProperty weaponType = new SimpleStringProperty("");
-    private final StringProperty frame = new SimpleStringProperty("");
-    private final StringProperty ammo = new SimpleStringProperty("");
-    private final IntegerProperty reserves = new SimpleIntegerProperty(0);
-    private final IntegerProperty magazine = new SimpleIntegerProperty(0);
-    private final IntegerProperty fireRate = new SimpleIntegerProperty(0);
-    private final DoubleProperty reload = new SimpleDoubleProperty(0.0);
-    private final IntegerProperty body = new SimpleIntegerProperty(0);
-    private final IntegerProperty precision = new SimpleIntegerProperty(0);
-    private final IntegerProperty oneMagDamage = new SimpleIntegerProperty(0);
-    private final IntegerProperty theoreticalTotalDamage = new SimpleIntegerProperty(0);
-    private final DoubleProperty sustainedDps = new SimpleDoubleProperty(0.0);
-    private final DoubleProperty trueDps = new SimpleDoubleProperty(0.0);
-    private final StringProperty weapon_desc = new SimpleStringProperty("");
+    /** The weapon type. */
+    private final StringProperty myWeaponType = new SimpleStringProperty("");
+    /** The weapon frame. */
+    private final StringProperty myFrame = new SimpleStringProperty("");
+    /** The weapon ammo type. */
+    private final StringProperty myAmmo = new SimpleStringProperty("");
+    /** The weapon reserves. */
+    private final IntegerProperty myReserves = new SimpleIntegerProperty(0);
+    /** The weapon magazine size. */
+    private final IntegerProperty myMagazine = new SimpleIntegerProperty(0);
+    /** The weapon fire rate. */
+    private final IntegerProperty myFireRate = new SimpleIntegerProperty(0);
+    /** The weapon reload speed. */
+    private final DoubleProperty myReload = new SimpleDoubleProperty(0.0);
+    /** The weapon body damage. */
+    private final IntegerProperty myBody = new SimpleIntegerProperty(0);
+    /** The weapon precision damage. */
+    private final IntegerProperty myPrecision = new SimpleIntegerProperty(0);
+    /** The weapon one mag damage. */
+    private final IntegerProperty myOneMagDamage = new SimpleIntegerProperty(0);
+    /** The weapon theoretical total damage. */
+    private final IntegerProperty myTheoreticalTotalDamage = new SimpleIntegerProperty(0);
+    /** The weapon sustained dps. */
+    private final DoubleProperty mySustainedDps = new SimpleDoubleProperty(0.0);
+    /** The weapon true dps. */
+    private final DoubleProperty myTrueDps = new SimpleDoubleProperty(0.0);
+    /** The weapon description. */
+    private final StringProperty myWeaponDesc = new SimpleStringProperty("");
 
     public String getWeaponType(){
-        return weaponType.get();
-    }
-
-    public void setWeaponType(String v){
-        weaponType.set(v);
+        return myWeaponType.get();
     }
 
     public String getFrame(){
-        return frame.get();
-    }
-
-    public void setFrame(String v){
-        frame.set(v);
+        return myFrame.get();
     }
 
     public int getReserves(){
-        return reserves.get();
-    }
-
-    public void setReserves(int v){
-        reserves.set(v);
+        return myReserves.get();
     }
 
     public int getMagazine(){
-        return magazine.get();
-    }
-
-    public void setMagazine(int v){
-        magazine.set(v);
+        return myMagazine.get();
     }
 
     public int getFireRate(){
-        return fireRate.get();
-    }
-
-    public void setFireRate(int v){
-        fireRate.set(v);
+        return myFireRate.get();
     }
 
     public double getReload(){
-        return reload.get();
-    }
-
-    public void setReload(double v){
-        reload.set(v);
+        return myReload.get();
     }
 
     public int getBody(){
-        return body.get();
-    }
-
-    public void setBody(int v){
-        body.set(v);
+        return myBody.get();
     }
 
     public int getPrecision(){
-        return precision.get();
-    }
-
-    public void setPrecision(int v){
-        precision.set(v);
+        return myPrecision.get();
     }
 
     public String getAmmo(){
-        return ammo.get();
-    }
-
-    public void setAmmo(String v){
-        ammo.set(v);
+        return myAmmo.get();
     }
 
     public int getOneMagDamage(){
-        return oneMagDamage.get();
-    }
-
-    public void setOneMagDamage(int v){
-        oneMagDamage.set(v);
+        return myOneMagDamage.get();
     }
 
     public int getTheoreticalTotalDamage(){
-        return theoreticalTotalDamage.get();
-    }
-
-    public void setTheoreticalTotalDamage(int v){
-        theoreticalTotalDamage.set(v);
+        return myTheoreticalTotalDamage.get();
     }
 
     public double getSustainedDps(){
-        return sustainedDps.get();
-    }
-
-    public void setSustainedDps(double v){
-        sustainedDps.set(v);
+        return mySustainedDps.get();
     }
 
     public double getTrueDps(){
-        return trueDps.get();
-    }
-
-    public void setTrueDps(double v){
-        trueDps.set(v);
+        return myTrueDps.get();
     }
 
     public String getWeapon_desc() {
-        return weapon_desc.get();
+        return myWeaponDesc.get();
     }
 
-    public void setDescription(String v) {
-        weapon_desc.set(v);
+    public void setWeaponType(String theWeaponType){
+        myWeaponType.set(theWeaponType);
+    }
+
+    public void setFrame(String theWeaponFrame){
+        myFrame.set(theWeaponFrame);
+    }
+
+    public void setReserves(int theReserves){
+        myReserves.set(theReserves);
+    }
+
+    public void setMagazine(int theMagazine){
+        myMagazine.set(theMagazine);
+    }
+
+    public void setFireRate(int theFireRate){
+        myFireRate.set(theFireRate);
+    }
+
+    public void setReload(double theReloadSpeed){
+        myReload.set(theReloadSpeed);
+    }
+
+    public void setBody(int theBodyDamage){
+        myBody.set(theBodyDamage);
+    }
+
+    public void setPrecision(int thePrecisionDamage){
+        myPrecision.set(thePrecisionDamage);
+    }
+
+    public void setAmmo(String theAmmoType){
+        myAmmo.set(theAmmoType);
+    }
+
+    public void setOneMagDamage(int theOneMagDamage){
+        myOneMagDamage.set(theOneMagDamage);
+    }
+
+    public void setTheoreticalTotalDamage(int theTheoreticalTotalDamage){
+        myTheoreticalTotalDamage.set(theTheoreticalTotalDamage);
+    }
+
+    public void setSustainedDps(double theSustainedDps){
+        mySustainedDps.set(theSustainedDps);
+    }
+
+    public void setTrueDps(double theTrueDps){
+        myTrueDps.set(theTrueDps);
+    }
+
+    public void setDescription(String theDescription) {
+        myWeaponDesc.set(theDescription);
     }
 }
 

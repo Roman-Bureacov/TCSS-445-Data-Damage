@@ -13,37 +13,52 @@ import model.script.TimeSheet;
  * @version August 2025
  */
 public class GraphDisplayController {
+    /** Time the simulator runs for.*/
     private static final int SIXTY_SECONDS = 60;
+    /** Seconds per Millisecond. */
     private static final double SEC_PER_MS = 1 / 1000d;
+    /** Width of the graph.*/
     private static final double Y_WIDTH = 100;
-    
-    @FXML private LineChart<Number, Number> totalDamageChart;
-    @FXML private NumberAxis totalDamageX;
-    @FXML private NumberAxis totalDamageY;
-    
-    @FXML private LineChart<Number, Number> DPSChart;
-    @FXML private NumberAxis DPSX;
-    @FXML private NumberAxis DPSY;
 
-    @FXML
-    private void initialize() {
-        totalDamageX.setAutoRanging(false);
-        totalDamageX.setLowerBound(0);
-        totalDamageX.setUpperBound(SIXTY_SECONDS);
-        totalDamageY.setPrefWidth(Y_WIDTH);
-        totalDamageChart.setCreateSymbols(false);
+    /** Graph for cumulative damage.*/
+    @FXML private LineChart<Number, Number> myTotalDamageChart;
+    /** X-axis for total damage.*/
+    @FXML private NumberAxis myTotalDamageX;
+    /** y-axis for total damage.*/
+    @FXML private NumberAxis myTotalDamageY;
+    /** Graph for average dps over time.*/
+    @FXML private LineChart<Number, Number> myDPSChart;
+    /** X-axis for average dps.*/
+    @FXML private NumberAxis myDPSX;
+    /** Y-axis for average dps.*/
+    @FXML private NumberAxis myDPSY;
 
-        DPSX.setAutoRanging(false);
-        DPSX.setLowerBound(0);
-        DPSX.setUpperBound(SIXTY_SECONDS);
-        DPSY.setAutoRanging(false);
-        DPSY.setPrefWidth(Y_WIDTH);
-        DPSChart.setCreateSymbols(false);
+    /**
+     * Initializes the graphs in the display window.
+     */
+    @FXML private void initialize() {
+        myTotalDamageX.setAutoRanging(false);
+        myTotalDamageX.setLowerBound(0);
+        myTotalDamageX.setUpperBound(SIXTY_SECONDS);
+        myTotalDamageY.setPrefWidth(Y_WIDTH);
+        myTotalDamageChart.setCreateSymbols(false);
+
+        myDPSX.setAutoRanging(false);
+        myDPSX.setLowerBound(0);
+        myDPSX.setUpperBound(SIXTY_SECONDS);
+        myDPSY.setAutoRanging(false);
+        myDPSY.setPrefWidth(Y_WIDTH);
+        myDPSChart.setCreateSymbols(false);
     }
 
-    public void renderDamage(final TimeSheet timesheet) {
-        totalDamageChart.getData().clear();
-        if (timesheet == null) {
+    /**
+     * Takes a TimeSheet and adds the time-damage data to the total damage graph.
+     *
+     * @param theTimeSheet The theTimeSheet that has damage instance data that needs graphed.
+     */
+    public void renderDamage(final TimeSheet theTimeSheet) {
+        myTotalDamageChart.getData().clear();
+        if (theTimeSheet == null) {
             return;
         }
 
@@ -57,7 +72,7 @@ public class GraphDisplayController {
         cumulativeSeries.getData().add(new XYChart.Data<>(0.0, 0.0));
         instantSeries.getData().add(new XYChart.Data<>(0.0, 0.0));
 
-        for (Object[] row : timesheet) {
+        for (Object[] row : theTimeSheet) {
             int tMs = (Integer) row[0];
             int dmg = (Integer) row[1];
             if (dmg <= 0){
@@ -77,25 +92,25 @@ public class GraphDisplayController {
         cumulativeSeries.getData().add(new XYChart.Data<>(SIXTY_SECONDS, cumulative));
         instantSeries.getData().add(new XYChart.Data<>(SIXTY_SECONDS, 0));
 
-        totalDamageX.setLowerBound(0);
-        totalDamageX.setUpperBound(SIXTY_SECONDS);
+        myTotalDamageX.setLowerBound(0);
+        myTotalDamageX.setUpperBound(SIXTY_SECONDS);
 
-        totalDamageChart.setCreateSymbols(false); // optional: cleaner lines
-        totalDamageChart.getData().addAll(cumulativeSeries, instantSeries);
+        myTotalDamageChart.setCreateSymbols(false);
+        myTotalDamageChart.getData().addAll(cumulativeSeries, instantSeries);
     }
 
 
     /**
-     * Renders the DPS chart based on the timesheet. This method
-     * will convert the timesheet into its corresponding
+     * Renders the DPS chart based on the theTimesheet. This method
+     * will convert the theTimesheet into its corresponding
      * DPS counterpart.
-     * @param timesheet the timesheet to render the DPS on
+     * @param theTimesheet the theTimesheet to render the DPS on
      */
-    public void renderDpsChart(final TimeSheet timesheet) {
-        final TimeSheet DPSTimeSheet = timesheet.getDPSTimesheet(250);
+    public void renderDpsChart(final TimeSheet theTimesheet) {
+        final TimeSheet DPSTimeSheet = theTimesheet.getDPSTimesheet(250);
 
-        DPSChart.getData().clear();
-        if (timesheet == null) {
+        myDPSChart.getData().clear();
+        if (theTimesheet == null) {
             return;
         }
 
@@ -135,14 +150,13 @@ public class GraphDisplayController {
 
         average = average/count;
 
-        DPSX.setLowerBound(0);
-        DPSX.setUpperBound(SIXTY_SECONDS);
-        DPSY.setLowerBound(0);
-        DPSY.setUpperBound(maxAvgDPSAfter1Sec);
-        DPSY.setTickUnit(average / 4);
+        myDPSX.setLowerBound(0);
+        myDPSX.setUpperBound(SIXTY_SECONDS);
+        myDPSY.setLowerBound(0);
+        myDPSY.setUpperBound(maxAvgDPSAfter1Sec);
+        myDPSY.setTickUnit(average / 4);
 
-        DPSChart.setCreateSymbols(false); // optional: cleaner lines
-        DPSChart.getData().addAll(DPSSeries, instantSeries);
+        myDPSChart.setCreateSymbols(false);
+        myDPSChart.getData().addAll(DPSSeries, instantSeries);
     }
-
 }

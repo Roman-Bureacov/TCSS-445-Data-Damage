@@ -6,7 +6,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.SimulatorPageController">
 
-    <HBox spacing="20" fillHeight="true" AnchorPane.topAnchor="20.0"
+    <HBox spacing="20" AnchorPane.topAnchor="20.0"
           AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0">
 
         <fx:include prefWidth="800" maxWidth="800" source="ScriptEditor.fxml" fx:id="scriptEditor" HBox.hgrow="ALWAYS"/>

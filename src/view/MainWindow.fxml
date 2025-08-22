@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane styleClass="background-dark" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainWindowController">
-    <children>
-        <BorderPane fx:id="rootBorder"
-                    AnchorPane.bottomAnchor="0.0"
-                    AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0"
-                    AnchorPane.topAnchor="0.0">
-            <top>
-                <fx:include source="DDMenuBar.fxml" />
-            </top>
-            <left>
-                <fx:include source="SideMenu.fxml" fx:id="sideMenu"/>
-            </left>
-            <center>
-            </center>
-        </BorderPane>
-    </children>
+<AnchorPane styleClass="background-dark" xmlns="http://javafx.com/javafx/11.0.14-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainWindowController">
+    <BorderPane fx:id="myRootBorder"
+                AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0">
+        <top>
+            <fx:include source="DDMenuBar.fxml"/>
+        </top>
+        <left>
+            <fx:include source="SideMenu.fxml" fx:id="mySideMenu"/>
+        </left>
+        <center>
+        </center>
+    </BorderPane>
 </AnchorPane>

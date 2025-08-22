@@ -73,6 +73,7 @@
     -fx-background-color: #2b2d30;
     -fx-border-color: #232323;
 }
+
 .text-area, .text-area .content, .text-area:focused {
     -fx-text-fill: #e6e6e6;
     -fx-highlight-fill: #264f78;
@@ -118,54 +119,55 @@
     -fx-background-radius: 0;
 }
 
-
-
-
 .dark-chart {
-    -fx-background-color: transparent;           /* let parent bg show */
+    -fx-background-color: transparent;
 }
 
-/* plot area behind the lines */
 .dark-chart .chart-plot-background {
-    -fx-background-color: #121416;               /* dark panel */
+    -fx-background-color: #121416;
     -fx-background-insets: 0;
     -fx-background-radius: 8;
 }
 
-/* grid lines */
 .dark-chart .chart-vertical-grid-lines,
 .dark-chart .chart-horizontal-grid-lines {
     -fx-stroke: #2a2f36;
 }
 
-/* axis text + ticks */
 .dark-chart .axis {
     -fx-tick-label-fill: #c9d1d9;
     -fx-text-fill: #c9d1d9;
 }
+
 .dark-chart .axis .axis-tick-mark,
 .dark-chart .axis .axis-minor-tick-mark {
     -fx-stroke: #3a4048;
 }
 
-/* legend */
 .dark-chart .chart-legend {
     -fx-background-color: transparent;
 }
+
 .dark-chart .chart-legend-item {
     -fx-text-fill: #c9d1d9;
 }
 
-/* line thickness (and optional colors) */
 .dark-chart .chart-series-line {
     -fx-stroke-width: 2.0px;
 }
-/* Optional per-series colors (comment out if you prefer defaults) */
-.dark-chart .default-color0.chart-series-line { -fx-stroke: #64b5f6; }
-.dark-chart .default-color1.chart-series-line { -fx-stroke: #81c784; }
-.dark-chart .default-color2.chart-series-line { -fx-stroke: #ffb74d; }
 
-/* optional: hide point symbols for smoother lines */
+.dark-chart .default-color0.chart-series-line {
+    -fx-stroke: #64b5f6;
+}
+
+.dark-chart .default-color1.chart-series-line {
+    -fx-stroke: #81c784;
+}
+
+.dark-chart .default-color2.chart-series-line {
+    -fx-stroke: #ffb74d;
+}
+
 .dark-chart .chart-line-symbol {
     -fx-background-color: transparent;
     -fx-padding: 0;
