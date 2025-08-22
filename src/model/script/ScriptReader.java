@@ -194,6 +194,7 @@ public final class ScriptReader {
             readScriptBlock();
         } // otherwise skip this conditional
         else skipToClosingBrace();
+        position++;
 
         readScript();
     }

@@ -38,8 +38,8 @@ startswith kinetic
 
 loop 200 {
     equipped.shootAtPrecision!
-    if equipped.magazine# < 0 {
-        equipped.reload
+    if equipped.magazine# < 0 then {
+        equipped.reload!
     }
 }
 equipped.reload!
