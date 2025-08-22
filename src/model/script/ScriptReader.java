@@ -102,6 +102,10 @@ public final class ScriptReader {
         return data;
     }
 
+    /**
+     * Sets up variables for script parsing.
+     * @param script the script to read and break into space-delimited tokens
+     */
     private static void setup(final String script) {
         position = 0;
         data = new TimeSheet();
@@ -111,6 +115,12 @@ public final class ScriptReader {
         while (input.hasNext()) in.addLast(input.next());
     }
 
+    /**
+     * Reads the script header.
+     * @throws IllegalArgumentException if an error occurs during script parsing
+     * @throws SQLException if an SQL query failed
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readHeader() throws IllegalArgumentException, SQLException, TimeSheet.NoMoreTimeException {
         String weaponType, weaponFrame;
 
@@ -143,6 +153,9 @@ public final class ScriptReader {
         } else throw new IllegalArgumentException("Unexpected slot name or invalid slot order in header.");
     }
 
+    /**
+     * Reads the starts with block
+     */
     private static void readStartWith() {
         if (!"startswith".equals(in.get(position)))
             throw new IllegalArgumentException("Expected 'startswith' argument, instead found " + in.get(position));
@@ -152,10 +165,18 @@ public final class ScriptReader {
         position++;
     }
 
+    /**
+     * Reads the next tokens as a script.
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readScript() throws TimeSheet.NoMoreTimeException {
         while (position < in.size()) readStatement();
     }
 
+    /**
+     * Reads the next tokens as a script block.
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readScriptBlock() throws TimeSheet.NoMoreTimeException {
         if (!"{".equals(in.get(position))) throw new IllegalArgumentException("Expected opening brace '{'");
         position++;
@@ -170,7 +191,11 @@ public final class ScriptReader {
         position++;
 
     }
-    
+
+    /**
+     * Reads the next tokens as a statement.
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readStatement() throws TimeSheet.NoMoreTimeException {
         final String token = in.get(position);
         position++;
@@ -184,7 +209,11 @@ public final class ScriptReader {
             }
         }
     }
-    
+
+    /**
+     * Reads the next tokens as a conditional statement
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readConditional() throws TimeSheet.NoMoreTimeException {
         final boolean result = readBoolExpr();
         if (!"then".equals(in.get(position))) throw new IllegalArgumentException("Expected 'then' after condition");
@@ -197,11 +226,19 @@ public final class ScriptReader {
 
         readScript();
     }
-    
+
+    /**
+     * Reads the next tokens as a boolean expression
+     * @return the result of the boolean expression
+     */
     private static boolean readBoolExpr() {
         return readDisjunction();
     }
 
+    /**
+     * Reads the next tokens as a disjunction
+     * @return the result of the disjunction
+     */
     private static boolean readDisjunction() {
         final boolean b = readConjunction();
 
@@ -211,6 +248,10 @@ public final class ScriptReader {
         } else return b;
     }
 
+    /**
+     * Reads the next tokens as a conjunction.
+     * @return the result of the conjunction
+     */
     private static boolean readConjunction() {
         final boolean b = readNegation();
 
@@ -220,6 +261,10 @@ public final class ScriptReader {
         } else return b;
     }
 
+    /**
+     * Reads the next tokens as a negation.
+     * @return the result of the negation
+     */
     private static boolean readNegation() {
         if ("NOT".equals(in.get(position))) {
             position++;
@@ -229,6 +274,10 @@ public final class ScriptReader {
         }
     }
 
+    /**
+     * Reads the next tokens as a boolean condition
+     * @return the result of the boolean condition
+     */
     private static boolean readCondition() {
         final String token = in.get(position);
 
@@ -236,6 +285,10 @@ public final class ScriptReader {
         else return readNumericStatComparison();
     }
 
+    /**
+     * Reads the next tokens as a boolean stat query
+     * @return the boolean stat read out
+     */
     private static boolean readBooleanStat() {
         final String token = in.get(position);
         // split on non-word to get the word tokens
@@ -253,6 +306,12 @@ public final class ScriptReader {
 
     }
 
+    /**
+     * Reads the boolean member of the weapon
+     * @param w the weapon to read from
+     * @param booleanStat the stat name
+     * @return the weapon boolean stat
+     */
     private static boolean readBooleanMember(final Weapon w, final String booleanStat) {
         return switch (booleanStat) {
             case "isEmpty", "isReservesEmpty" -> w.getReservesCurrent() == 0;
@@ -261,6 +320,10 @@ public final class ScriptReader {
         };
     }
 
+    /**
+     * Reads the next tokens as a stat comparator stat
+     * @return the result of the comparison
+     */
     private static boolean readNumericStatComparison() {
         final int statL = readStat();
 
@@ -280,6 +343,10 @@ public final class ScriptReader {
         };
     }
 
+    /**
+     * Reads the next tokens as a stat query
+     * @return the stat read out
+     */
     private static int readStat() {
         final String token = in.get(position);
         position++;
@@ -303,6 +370,10 @@ public final class ScriptReader {
 
     }
 
+    /**
+     * Reads the next tokens as a loop.
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readLoop() throws TimeSheet.NoMoreTimeException {
         final String token = in.get(position);
         position++;
@@ -341,7 +412,11 @@ public final class ScriptReader {
             lastBrace.removeLast();
         }
     }
-    
+
+    /**
+     * Reads the next tokens as an action
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readAction() throws TimeSheet.NoMoreTimeException {
         final String token = in.get(position);
         position++;
@@ -351,6 +426,12 @@ public final class ScriptReader {
         readFunction(splitToken[0], splitToken[1]);
     }
 
+    /**
+     * Performs a function on the slot.
+     * @param slot the weapon slot trying to do an action
+     * @param function the function to perform
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void readFunction(final String slot, final String function) throws TimeSheet.NoMoreTimeException {
         final Weapon w = readWeaponSlot(slot);
         if ("equipped".equals(slot)) {
@@ -372,15 +453,29 @@ public final class ScriptReader {
         }
     }
 
+    /**
+     * Performs a weapon swap event.
+     * @param w the weapon to equip and ready
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void equip(final Weapon w) throws TimeSheet.NoMoreTimeException {
         Weapon.writeSwapEvent(data, equipped, w);
         equipped = w;
     }
 
+    /**
+     * performs a shoot action on the equipped weapon
+     * @param t the damage type
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void shoot(final damageType t) throws TimeSheet.NoMoreTimeException {
         equipped.writeFireEvent(data, t);
     }
 
+    /**
+     * performs a reload action on the equipped weapon
+     * @throws TimeSheet.NoMoreTimeException if this tries to write an event outside the timesheet bounds
+     */
     private static void reload() throws TimeSheet.NoMoreTimeException {
         equipped.writeReloadEvent(data);
     }
@@ -402,7 +497,7 @@ public final class ScriptReader {
 
     /**
      * Convenience method that moves the position to the next closing brace.
-     * The position variable is modified to be on the token ahead of the closing brace
+     * The position variable is modified to be on the token ahead of the closing brace.
      */
     private static void skipToClosingBrace() {
         position++; // skip the opening brace
